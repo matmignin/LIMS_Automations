@@ -4,16 +4,16 @@
 
 clipChange(){
   global
-  sleep 50
+  sleep 75
   if SimpleClip
     return
   if Instr(Clipboard, "[P]",true,1,1){
     ProductTab.AddProductFromClipboard()
 		clip.codesRegex()
 		; clipBar.Flash()
-		Ifwinactive, Edit Formulation
+		If winactive("Edit Formulation")
 			ProductTab.AddNewFormulation()
-		ifwinactive, Edit Product
+		if winactive("Edit Product")
 			ProductTab.AddNewProduct()
 		return
   }
@@ -30,6 +30,7 @@ clipChange(){
 		}
     ClippedData:=Clipboard
 		UsedLimits:=
+
 		AllowPrefixes:=
     FileDelete, ClippedExcelData.txt
     sleep 400
@@ -91,6 +92,7 @@ clipChange(){
     ; iniwrite, %Description%, Settings.ini, CopiedSpecs, Description
   else if Winactive("Results Definition") || Winactive("Results ahk_exe eln.exe") {
     clip.ParseSpecsTable(1)
+		; return
 	}
   else if Winactive("Composition"){
     clip.ParseIngredientsTable()
@@ -121,7 +123,7 @@ clipChange(){
     clip.codesRegex()
 		AllProducts:=GetAllProducts(" ")
 		AllBatches:=GetAllBatches(" ")
-    sleep 20
+    sleep 50
 		return
 	}
 
@@ -342,7 +344,7 @@ Gui ClipBar:Default
 
 
 GetSampleInfo(){ ;on the lms main menu
-	global Coated, Customer
+	global Coated, Customer, Iteration
 	ParsedSample:=[]
 	clipped_coated:=
 	clipped_customer:=
@@ -358,18 +360,26 @@ GetSampleInfo(){ ;on the lms main menu
 	if clipped_Customer
 	{
 		customer:=Clipped_Customer
-		Iteration:=GetIniValue("Customers.ini",Customer)
-		ControlsetText, Edit6,%Customer%,ClipBar
+		DetectedIteration:=GetIniValue("Customers.ini",Customer)
+		tt(customer,4000)
+		if DetectedIteration {
+			ControlsetText, Edit5,%DetectedIteration%,ClipBar
+			Iteration:=DetectedIteration
+		}
+		; GuiControl,ClipBar:Text, Iteration, %Iteration%
+		; ControlsetText, Edit6,%Customer%,ClipBar
 		; Clipbar.FlashIteration()
 	}
 	; else
 		; GuiControl,ClipBar:Text, GeneralBox,
 
 
-	if clipped_Coated
+	if (clipped_Coated) && (strlen(clipped_coated) < 9)
 	{
+
 		Coated:=Clipped_Coated
 		GuiControl,ClipBar:Text, Coated, %Coated%
+
 	}
 	else
 		GuiControl,ClipBar:Text, Coated,
@@ -403,7 +413,7 @@ GetSampleInfo(){ ;on the lms main menu
 			ControlsetText, Edit6,%Clipped_Ingredients%,ClipBar
 			ControlsetText, Edit7,%Clipped_LabelName%,ClipBar
 			gui, Clipbar:Submit,Nohide
-      tt(Clipped_ingredients 1000,10,20,2)
+      tt(Clipped_ingredients 5000,10,20,2)
       return
 		}
   ParseSpecsTable(EnterData:=""){
@@ -431,7 +441,7 @@ GetSampleInfo(){ ;on the lms main menu
 			MaxLimit_Units:=Trim(ParsedSpecs[HasValue(ParsedSpecs, "Upper Limit") + TotalColumns],"`r`n")
 			Percision:=Trim(ParsedSpecs[HasValue(ParsedSpecs, "Precision") + TotalColumns],"`r`n")
 			Clipped_Requirement:=Trim(ParsedSpecs[HasValue(ParsedSpecs, "Requirement") + TotalColumns], "`r`n")
-      Clipped_ParsedSpecs:=Trim([HasValue(ParsedSpecs, "Requirement") + TotalColumns],"`r`n")
+      Clipped_ParsedSpecs:=Trim(ParsedSpecs[HasValue(ParsedSpecs, "Requirement") + TotalColumns],"`r`n")
 			FullRequirements:=Trim(ParsedSpecs[HasValue(ParsedSpecs, "Requirement") + TotalColumns],"`r`n")
 			Units:=Trim(ParsedSpecs[HasValue(ParsedSpecs, "Unit") + TotalColumns],"`r`n")
 			AllowPrefixes:=Trim(ParsedSpecs[HasValue(ParsedSpecs, "Allow Prefixes") + TotalColumns],"`r`n")
@@ -446,9 +456,12 @@ GetSampleInfo(){ ;on the lms main menu
 			; 	UsedLimits:=
 			; If !AllowPrefixes
 			; 	AllowPrefixes:=
-      tt(Clipped_Specs,3000,100,300)
+      tt(Clipped_Specs "`n`n" FullRequirement,3000,100,300)
+      ; tt(,3000,100,300)
 			ControlsetText, Edit6,%Clipped_Specs%,ClipBar
+
 			ControlsetText, Edit7,%FullRequirements%,ClipBar
+			; msgbox, Pasre spec table
         ; tooltip, %Clipped_specs%, 200,0
       If (EnterData){
         sleep 300
@@ -530,6 +543,7 @@ GetSampleInfo(){ ;on the lms main menu
       sleep 100
       Clipped_Specs:= Clipped_TestID "`t" DESCRIPTION "`n MinMax: " MinLimit " - " MaxLimit "`n Sample Template: " Clipped_SampleTemplate "`n Department: " Clipped_Department
       TT(%Clippsed_Specs%,4000)
+			; msgbox, parse main spec table
 			ControlsetText, Edit6,%Clipped_Specs%,ClipBar
 			ControlsetText, Edit7,%FullRequirement%,ClipBar
         ; tooltip, %Clipped_specs%, 200,0
@@ -703,7 +717,7 @@ Regex(Category:=""){
       Haystack:=Category
     sleep 100
       Gui ClipBar:Default
-      RegExMatch(HayStack, RegexProduct,r)  ;"i)[abdefghijkl]\d{3}", rProduct)
+      RegExMatch(HayStack, RegexProduct,r)  ;"i)[abdefghijklmn]\d{3}", rProduct)
         If rProduct {
           GuiControl,ClipBar:Text, Product, %rProduct%
           stringUpper, rProduct, rProduct
@@ -758,8 +772,9 @@ Regex(Category:=""){
 
 
 Department(DepartmentInput:=""){
-  global Department
+  global Department, organolepticTemplate
       Department:=
+			OrganolepticTemplate:=
      if !DepartmentInput
       DepartmentHaystack:=Clipboard
     else
@@ -778,7 +793,11 @@ Department(DepartmentInput:=""){
       else If ctRetain
         Department:="ctRetain"
       else If Physical
+			{
+				Regexmatch(DepartmentHaystack, "Organoleptic", OrganolepticTemplate)
         Department:="Physical"
+				OrganolepticTemplate:="Organoleptic"
+			}
       else If ctPhysical
         Department:="ctPhysical"
       else If Analytical
@@ -810,8 +829,12 @@ NumberMenu(n:=0, runCorrectTestResults:=""){
 	try Menu, NumberMenu, DeleteAll
 	Menu, NumberMenu, Add, &0, NumberMenubutton
 	loop %n%,
+	{
 		Menu, NumberMenu, Add, &%A_index%, NumberMenubutton
+	}
+	sleep 200
 		Try Menu,NumberMenu,show
+
 		return
 NumberMenubutton:
 	if A_ThisMenuItemPos
@@ -935,12 +958,25 @@ return
 
 AllproductsMenuButton:
 		product := A_ThisMenuItem
+		Menu, AllProductsMenu, Check, %A_ThisMenuItem%
 		ControlsetText, Edit1,%product%,ClipBar
+		; Batch:=
+		; lot:=
+		; coated:=
+		; ControlsetText, Edit2,%batch%,ClipBar
+		; ControlsetText, Edit3,%lot%,ClipBar
+		; ControlsetText, Edit4,%Coated%,ClipBar
 		return
 
 AllBatchesMenuButton:
 		batch := A_ThisMenuItem
+		; ControlsetText, Edit1,%product%,ClipBar
+		; lot:=
+		; coated:=
+		Menu, AllBatchesMenu, Check, %A_ThisMenuItem%
 		ControlsetText, Edit2,%Batch%,ClipBar
+		; ControlsetText, Edit3,%lot%,ClipBar
+		; ControlsetText, Edit4,%Coated%,ClipBar
 		return
 
 
@@ -1052,8 +1088,8 @@ GetAllProducts(Delimiter:=" ",msg:=""){
 	FileDelete, AllProducts.txt
 	sleep 200
 	if (StrLen(AllProducts) < 5){
-		ControlsetText, Edit6,,ClipBar
-		Allproducts:=
+		; ControlsetText, Edit6,,ClipBar
+		; Allproducts:=
 		return
 	}
 	FileAppend, %AllProducts%, AllProducts.txt
@@ -1096,8 +1132,8 @@ GetAllBatches(Delimiter:=" ",msg:=""){
 	FileDelete, AllBatches.txt
 	sleep 200
 	if (StrLen(AllBatches) < 10){
-		ControlsetText, Edit7,,ClipBar
-		AllBatches:=
+		; ControlsetText, Edit7,,ClipBar
+		; AllBatches:=
 		return
 	}
 		FileAppend, %AllBatches%, AllBatches.txt
@@ -1121,8 +1157,51 @@ WholeBatchesSave(Input,Overwrite:=""){
 		return
 }
 
+GetAllWholeBatches(Delimiter:=" ",msg:=""){
+	global
+	regWholeBatches:=[]
+	pos=0
+	Haystack:=Clipboard
+	If Getkeystate("LControl","P")
+		Delimiter:="`;"
+	If Getkeystate("ROption","P")
+		Delimiter:="`;"
+	sleep 50
+	while pos := RegexMatch(Haystack, RegexCombined, aWholeBatch, pos+1) ; {
+		regWholeBatches.insert(aWholeBatch)
+	; }
+	AllWholeBatches:=[], oTemp := {}
+	for vKey, vValue in regWholeBatches
+	{
+		if (ObjGetCapacity([vValue], 1) = "") ;is numeric
+		{
+			if !ObjHasKey(oTemp, vValue+0)
+				AllWholeBatches.Push(vValue+0), oTemp[vValue+0] := ""
+		}
+		else
+		{
+			if !ObjHasKey(oTemp, "" vValue)
+				AllWholeBatches.Push("" vValue), oTemp["" vValue] := ""
+		}
+	}
+	AllWholeBatches:=Listarray(AllWholeBatches,Delimiter)
+	AllWholeBatches:= Trim(StrReplace(AllWholeBatches, Delimiter Delimiter, Delimiter),Delimiter)
+	FileDelete, WholeBatches.txt
+	sleep 200
+	if (StrLen(AllWholeBatches) < 10){
+		ControlsetText, Edit7,,ClipBar
+		AllWholeBatches:=
+		return
+	}
+		FileAppend, %AllWholeBatches%, WholeBatches.txt
+		ControlsetText, Edit7,%AllWholeBatches%,ClipBar
+	if (msg && trim(AllWholeBatches)!="")
+		clip.editbox(AllWholeBatches)
+	Else
+			Return AllWholeBatches
+}
 
-GetAllWholeBatches(Delimiter:="`n",msg:=""){
+GetAllWholeBatches2(Delimiter:="`n",msg:=""){
 	global
 	aWholeBatches:=[]
 	; pos=0
@@ -1177,31 +1256,34 @@ Class ClipBar{
 		MidScreen:=A_ScreenWidth//2
 		wingetpos, Nugenesis_X, Nugenesis_y, Nugenesis_w, Nugenesis_h, NuGenesis LMS
 		wingetpos, Win_X, Win_y, Win_w, Win_h, A
-		ClipBar_H=32
+		ClipBar_H=35
 		ClipBar_H_max=56
-		ClipBar_T:=230
-		ClipBar_W=505
-		ClipBar_x:=Nugenesis_X+(Nugenesis_W/6)
-		; ClipBar_x:=1
-		IF (ClipbarLocation= "Bottom")
-			ClipBar_Y:=Nugenesis_h + Nugenesis_y - 39
+		ClipBar_T:=255
+		ClipBar_W=540
+		IF (ClipbarLocation= "BottomR") || (ClipbarLocation= "Right") || (ClipbarLocation= "TopR")
+			ClipBar_x:=Nugenesis_W-(Nugenesis_W//6)
 		else
-			ClipBar_Y:=Nugenesis_y
+			ClipBar_x:=Nugenesis_X+(Nugenesis_W//6)
+		; ClipBar_x:=1
+		IF (ClipbarLocation= "Bottom") || (ClipbarLocation= "BottomR") || (ClipbarLocation= "Right")
+			ClipBar_Y:=Nugenesis_h + Nugenesis_y - 44
+		else
+			ClipBar_Y:=Nugenesis_y -3
 		Gui ClipBar: +AlwaysOnTop -Caption +Toolwindow +owner +HwndGUIID
 		Gui ClipBar:Default
 		; Gui, ClipBar:+Delimiter`n
 		; winSet, Transparent, 80, %GUIID%
-		GUI, ClipBar:color,DC734F,97BA7F
-			GUI,ClipBar:Font,			 s17 Bold , consolas
-			; GUI,ClipBar:Add,edit,		vProduct +wrap -multi	gClipBarHandler left h33 x7 y-1 w65,	%Product%
-		GUI,ClipBar:Add,edit,		vProduct +wrap	gClipBarHandler left h33 x0 y-1 w65,	%Product%
-		this.AddEdit("Batch",	 "left h33 x+0 y-1 w92 center", 			"13,Consolas")
-		this.AddEdit("Lot",		 "left h18 x+0 y-2 w77", 			"9, Consolas")
-		this.AddEdit("Coated",	 "left h16 y+0 w77",		"8, Arial Narrow")
-		GUI, ClipBar:font, cBlack s9 Norm w500 , Consolas
-		This.AddEdit("Iteration", "x+0 h33 left y-1 w62",			 "16 Bold 107C41, Consolas")	; Text1
-		this.AddEdit("GeneralBox",	 "x+0 h17 left y-1 w188",		"7, Arial")
-		this.AddEdit("GeneralBox2",	 "h17 left y+0 w188",		"7, Arial")
+		GUI, ClipBar:color,ff6d56,ffffff
+			GUI,ClipBar:Font,		ce66000	 s18 Bold , consolas
+			; GUI,ClipBar:Add,edit,		vProduct +wrap -multi	gclipbarhandler left h33 x7 y-1 w65,	%Product%
+		GUI,ClipBar:Add,edit,		vProduct +wrap	gClipBarHandler left h33 x20 y1 w65,	%Product%
+		this.AddEdit("Batch",	 "left h33 x+0 y1 w110", 			"16 c0800ff,")
+		this.AddEdit("Lot",		 "left h17 x+0 y1 w77", 			"10 c028b10, ")
+		this.AddEdit("Coated",	 "left h16 y+0 w77",		"8 c909B00, Arial Narrow")
+		GUI, ClipBar:font, cffffff s9 Norm w500 , Consolas
+		This.AddEdit("Iteration", "x+0 h33 left y1 w62 Center",			 "17 Bold 107C41, Consolas")	; Text1
+		this.AddEdit("GeneralBox",	 "x+0 h17 left y1 w188",		"8, Arial")
+		this.AddEdit("GeneralBox2",	 "h16 left y+0 w188",		"8, Arial")
 		this.AddBoxes()
 		CoordMode, mouse, screen
 		try GUI, ClipBar:Show, x%ClipBar_X% y%ClipBar_y% w%ClipBar_w% h%ClipBar_H% Noactivate, ClipBar
@@ -1247,25 +1329,25 @@ Class ClipBar{
 		Gui ClipBar:Default
 		Loop 1
 		{
-			GUI, ClipBar:color,FFFFFF,FFFFFF
+			GUI, ClipBar:color,ff0000,ff0000
 			winSet, Transparent, 255, AHK_id %GUIID%
 			sleep 100
-			GUI, ClipBar:color,DC734F,97BA7F
-			winSet, Transparent, 230, AHK_id %GUIID%
+			GUI, ClipBar:color,DC734F,ffffff
+			winSet, Transparent, 255, AHK_id %GUIID%
 			sleep 50
 		}
 	}
 		FlashIteration(){
 			Global
 		Gui ClipBar:Default
-			Gui, Font, cYellow s16  ; This just tells what color to change to
+			Gui, Font, cff0000 s16  ; This just tells what color to change to
 			GuiControl, Font, Edit5
 			sleep 200
 			Gui, Font, cBlack s16  ; This just tells what color to change to
 			GuiControl, Font, Edit5
 			; GUI, ClipBar:color,DC734F,97BA7F
-			; winSet, Transparent, 230, AHK_id %GUIID%
-			; GUI, ClipBar:Show, x%ClipBar_X% y%ClipBar_y+30 w%ClipBar_w% h%ClipBar_H% Noactivate, ClipBar
+			; winSet, Transparent, 250, AHK_id %GUIID%
+			; GUI, ClipBar:Show, x%ClipBar_X% y%ClipBar_y%+30 w%ClipBar_w% h%ClipBar_H% Noactivate, ClipBar
 	}
 	AddEdit(Variable,Dimensions:="",Font:=""){
 		global
@@ -1292,12 +1374,13 @@ Class ClipBar{
 		Menu, ClipBarMenu, add, Show Scan Label Copy, ShowScanLabelCopy
 		Menu, ClipBarMenu, add, Show Total CoAs, ShowFINAL_C_O_A
 		Menu, ClipBarMenu, add, &Total CoAs, ShowFINAL_C_O_A
+		Menu, ClipBarMenu, add, C_O_A, ShowC_O_A
 		Menu, ClipbarMenu, add, Manual &COAs folder, ShowManualCOA
 		Menu, ClipbarMenu, add, &mfg folder, Showmfg
 		Menu, ClipbarMenu, add, &GLOBAL VISION folder, ShowGlobalVision
 
 		Menu, ClipBarMenu, add, Update List via Clipboard, SaveClipboardToList
-		Menu, ClipBarMenu, add, Add Data From Clipboard, #+!F10
+		Menu, ClipBarMenu, add, Add Data From Clipboard, +!F10
 		Menu, ClipBarMenu, Add, Stop Timer, StopTimer
 		Menu, ClipbarMenu, add, Add Sample Log, Add15SampleLog
 		Menu, ClipBarMenu, Add, Detect Clipboard, clipChange

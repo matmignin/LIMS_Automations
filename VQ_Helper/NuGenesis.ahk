@@ -21,8 +21,8 @@ copyLabelCopyDocRegex(SaveText:="",showToolTip:=""){
 	RegexPillSize:="i)(?P<PillType>(Capsule|Tablet)(?: size( & weight)?:)) (?P<PillSize>[½/¼# \w""].*).*"
 	PillSize:=
 	regingredient:=[]
-
-FilePattern := "\\netapp\Label Copy Final\L000-L999\*" product "*.docx"
+	FirstLetter:=SubStr(Product, 1,1)
+FilePattern := "\\netapp\Label Copy Final\" FirstLetter "000-" FirstLetter "999\*" product "*.docx"
 Loop, %FilePattern%, 1, 0
 		oW:=ComObjGet(A_LoopFileLongPath)
 		sleep 2000
@@ -86,21 +86,27 @@ Class LMS {
 			SpecTab.ShowSpecMenu()
 			return
 		}
-		If AltMode
-			Menu, Menu, add, &Products from clipboard  (';), PasteAllProductsAlt
-				else
-			Menu, Menu, add, &Products from clipboard, PasteAllProducts
+		; If AltMode
+			; Menu, Menu, add, &Products from clipboard  (';), PasteAllProductsAlt
+				; else
+			; Menu, Menu, add, &Products from clipboard, PasteAllProducts
 
 		If AltMode
-		Menu, Menu, add, &Batches from clipboard (';), PasteAllBatchesAlt
+		{
+			Menu, Menu, add, &Products from clipboard (';), PasteAllProductsAlt
+			Menu, Menu, add, &Batches from clipboard (';), PasteAllBatchesAlt
+		}
 		else
+		Menu, Menu, add, &Products from clipboard, PasteAllProducts
 		Menu, Menu, add, &Batches from clipboard, PasteAllBatches
+		Menu, Menu, add, &Paste Spec from Clipboard, PasteSpec
 		Menu, Menu, add,
 		Menu, Menu, add, &Final Label Copy`t[%Product%], ShowFinalLabelCopy
 		Menu, Menu, add, &Scan Label Copy,  ShowScanLabelCopy
 		Menu, Menu, add, &GLOBAL VISION folder, ShowGlobalVision
 		Menu, Menu, add, &mfg folder, Showmfg
 		Menu, Menu, add, &Total CoAs, ShowFINAL_C_O_A
+		Menu, Menu, add, C_O_A, ShowC_O_A
 		; Menu, Menu, add, Manual &COAs folder, ShowManualCOA
 		Menu, Menu, add,
 		Menu, Menu, add, mmignin, mmigninFolder
@@ -108,9 +114,20 @@ Class LMS {
 		; Menu, Menu, add, TestCode, :TestSubMenu
 			; Menu, Menu, Add, Get Requirements,GetRequirements
 		; Menu, Menu, add, Marker, :MarkerSubMenu
-
-		Menu, Menu, add, Restart, Reloadsub
-		if GetKeyState("Shift","P"){
+			; Try Menu,menu,show
+if MouseIsOver("ClipBar"){
+		try Menu,Menu, deleteAll
+		Menu, Menu, add, &Batches from clipboard (';), PasteAllBatchesAlt
+		Menu, Menu, Add, mmignin, mmigninFolder
+		Menu, Menu, Add, Settings, SettingsFile
+		Menu, Menu, Add, Copy GUID, CopyGUID
+		Menu, Menu, Add, &Reload, ReloadSub
+		Menu, Menu, Add, Exitsub, exitsub
+		Try Menu,menu,show
+		return
+}
+		; Menu, Menu, add, Restart, Reloadsub
+			if GetKeyState("Shift","P"){
 			Try Menu,menu,show
 			return
 		}
@@ -123,6 +140,9 @@ Class LMS {
 
 			; This.add("&Spec Table","Tests")
 			try menu, menu, deleteAll
+					Menu, Menu, add, &Paste Spec from Clipboard, PasteSpec
+			Menu, Menu, Add, Copy Spec, Autofill
+			Menu, Menu, Add, Paste Spec, Autofill
 			Menu, Menu, Add, 100k TPC, Autofill
 			Menu, Menu, Add, 3k TPC, Autofill
 			Menu, Menu, Add, P. aeruginosa, Autofill
@@ -262,21 +282,27 @@ Class LMS {
 	AddSampleLog(count)
 	{
 		global
+		; MouseGetPos, saved_x, Saved_Y,
 		; clk(mX,mY)
-		;SetWinDelay, %NormalWinDelay%
+		; SetWinDelay, %NormalWinDelay%
+			MouseGetPos, saved_x, Saved_y
 		loop, %count%
 		{
-			click 46, 842
 			Breaking.Point()
-			if !winactive("Edit test (Field Configuration: ")
-				winactivate
+			click 66, 843 ; click edit test
+			winwaitactive, Edit test,,2
+				if errorlevel
+				winactivate, Edit test
+			; if !winactive("Edit test (Field Configuration")
 			Breaking.Point()
-			Sendinput,{Click, 402, 284}{end}{down 2}{shiftdown}{9}{shiftup}on sample log{shiftdown}{0}{shiftup}{click, 334, 618}
+			Sendinput,{Click 402 284}{end}{down 2}{shiftdown}{9}{shiftup}on sample log{shiftdown}{0}{shiftup}{click 334 618}
 			winwaitactive, NuGenesis LMS,,2
 			winactivate, NuGenesis LMS
 			Breaking.Point()
-			Sendinput,{click, 1290, 703}{down %A_index%}
+			Saved_Y:=Saved_Y+26
+			; Sendinput,{click 1290 703}{down %A_index%}
 			Breaking.Point()
+			MouseClick, Left , Saved_X, Saved_Y,1, 0,
 		}
 		return
 	}
@@ -649,17 +675,27 @@ sleep 20
 			Menu,Menu, deleteAll
 	return
 	PasteAllBatchesAlt:
-		Clk(getx,getY)
-			sendinput % Trim(GetAllBatches("`;"))
+		; Clk(getx,getY)
+		simpleclip:=1
+			Clipboard:=Trim(GetAllBatches("`;"))
+		simpleclip:=
+		TT(clipboard)
 			return
-	PasteAllBatches:
+				PasteAllProductsAlt:
+		; Clk(getx,getY)
+		simpleclip:=1
+			Clipboard:=Trim(GetAllProducts("`;"))
+		simpleclip:=
+		TT(clipboard)
+		return
+	PasteSpec:
 		Clk(getx,getY)
+		SpecTab.PasteClipboardIntoSpec()
+	RETURN
+	PasteAllBatches:
+	;	Clk(getx,getY)
 		sendinput % Trim(GetAllBatches())
 	return
-	PasteAllProductsAlt:
-		Clk(getx,getY)
-			sendinput % Trim(GetAllProducts("`;"))
-		return
 	PasteAllProducts:
 		sendinput % Trim(GetAllProducts())
 	return
@@ -668,11 +704,11 @@ sleep 20
 		sleep 200
 		if A_thismenuitem contains &Analytical
 			SpecTab.Edit_Analytical()
-		else if A_thismenuitem contains Copy &Specs
+		else if A_thismenuitem contains Copy Spec
 			SpecTab.CopySpecs()
-		else if A_thismenuitem contains Paste &Specs
+		else if A_thismenuitem contains Paste Spec
 			SpecTab.PasteSpecs()
-		else if A_thismenuitem contains Copy &Template
+		else if A_thismenuitem contains Copy Template
 			SpecTab.CopySpecTemplate()
 		else if A_thismenuitem contains Toggle Spec Limits
 			spectab.toggleUseLimitsFromTheTest()
@@ -790,10 +826,11 @@ SheetInfo:=[]
 		ProductInfo:=ProductName " : " Customer
 		ServingInfo:=ServingSize " " Color
 		ControlsetText, Edit6,%ProductInfo% ,ClipBar
-		ControlsetText, Edit7,%ServingInfo% ,ClipBar
+		; ControlsetText, Edit7,%AllBatches% ,ClipBar
 		; ControlsetText, Static1,%CustomerPosition%,ClipBar
 		; GuiControl,ClipBar:Text, Iteration, %Iteration%
 		; }
+		AllBatches:=GetAllBatches(" ")
 		if CustomerPosition {
 			Iteration:=StrReplace(strReplace(CustomerPosition,"[[",""),"]]","")
 			ControlsetText, Edi5,%Iteration%,ClipBar
@@ -806,121 +843,7 @@ SheetInfo:=[]
 		return
 	}
 
-
-	SaveIngredientList(){
-		Clipboard:=Trim(strReplace(StrReplace(Clipboard, "`r`n","`n"),"`t","")) ; Normalize line endings
-		lines := StrSplit(Clipboard, "`n") ; Split the string into lines
-		totalLines := lines.Length()-1
-		half := FLOOR(totalLines/2)
-		halfAmount:=-(Half)
-		Try FileDelete, Ingredients.ini
-		IngredientsString:=
-		Loop, % totalLines
-		{
-			if (A_Index=1){
-				IngredientsString:="[Ingredients]"
-				continue
-			}
-			line := lines[A_Index]
-			if (A_Index <= half)
-				lineNumber := A_Index - 2
-			else
-			{
-				HalfAmount+=1
-				If (HalfAmount=0)
-					Linenumber:="-0"
-				else
-					Linenumber:=halfAmount
-			}
-			IngredientsString.="`n"Line "=" lineNumber
-			; IngredientName:= StrReplace(Line, "Allergen","")
-		}
-		sleep 300
-		FileAppend, % Trim(strReplace(IngredientsString," Allergen","")), Ingredients.ini
-		return IngredientsString
-	}
-
-
-	AddNewIngredient(Ingredient_Name,Ingredient_Claim,Ingredient_Position,Ingredient_Id,Dont_Hit_Okay:=""){
-		Global
-		ifwinnotexist, Edit Ingredient
-		{
-			if winactive("Composition"){
-				winactivate, Composition
-				click 57, 65
-			}
-		}
-		if Dont_Hit_Okay
-			click, 150, 73
-		else
-			ProductTab.Dropdown_IngredientSelect(Ingredient_Id)
-		Send,{tab 6}^{a}
-		sendinput % TRIM(Ingredient_position," `r`n")
-		Sendinput,{tab}^a%Ingredient_Name%
-		if Strlen(Ingredient_Name) > 250
-			sleep 500
-		If Ingredient_Claim contains Heavy Metal,Allergens,Other
-			Send,{tab}
-		Send,{tab 2}^a
-		Send,%Ingredient_Claim%
-		; If InStr(Ingredient_Name, "Heavy Metals results are based on a daily dose of"){
-			;  Send, +{tab 3}
-			; if ServingSize
-			;  ServingSizeMenu(ServingSize)
-			; else
-				; ServingSizeMenu()
-			; Return
-		; }
-		Breaking.Point()
-		If !Dont_Hit_Okay
-			Sendinput,{enter}
-		Breaking.Point()
-		ifwinexist, Duplicate ingredient ID
-			exit
-		winwaitclose, Edit Ingredient,,3
-		if errorlevel
-			exit
-		return
-	}
-
-	Dropdown_IngredientSelect(A_DropdownCount){
-		global
-		; SetKeyDelay,-1,-1
-		ifWinNotActive, Edit Ingredient
-			winactivate, Edit Ingredient
-		click, 150, 73 ;click dropdown box
-		; if HitTab
-		; 	Send, {tab}««
-		sleep 110
-		AbsSelection:=Abs(A_DropdownCount)
-		if (A_DropdownCount > 0){
-			Sendinput, {tab}{home}{right %A_DropdownCount%}
-		}
-		if (A_DropdownCount < 0){
-			Sendinput, {tab}{end}{left %AbsSelection%}
-		}
-		if (A_DropdownCount = "-0")
-			Sendinput, {tab}{end}
-		if (A_DropdownCount = "i"){
-			if !(IngredientNoteCount) || (IngredientNoteCount >8)
-				IngredientNoteCount:=1
-			this.Dropdown_GenericIngredient(IngredientNoteCount,1)
-			IngredientNoteCount+=1
-		}
-		if (A_DropdownCount = ""){
-			if Iteration > 25
-				Iteration:=1
-			this.Dropdown_GenericIngredient(Iteration)
-
-			ClipBar.AddIteration(0,0,"True")
-		}
-		return
-	}
-
-
-
-
-	AddNewProduct(){ ;for naming Product code and customer,
+AddNewProduct(){ ;for naming Product code and customer,
 		global Product, ProductName, Customer, ShapeAndSize, color, Iteration
 
 		click 120,80 ;click product box
@@ -935,9 +858,12 @@ SheetInfo:=[]
 		sleep 200
 		Sendraw,%ProductName%
 		sendinput, {tab 8}
+		sleep 800
 		Breaking.Point()
-		mousemove, 287, 578,  ;click save
-		winwaitactive, NuGenesis LMS,,8
+		; mousemove, 287, 578  ;move to save
+		Breaking.Point()
+		CLK(287, 578)  ;click save
+		winwaitactive, NuGenesis LMS,,5
 		if errorlevel
 			Exit
 		; tt(you broke it,2000)
@@ -957,8 +883,7 @@ SheetInfo:=[]
 		if !winactive("Edit Formulation") && winexist("Edit Formulation")
 			winactivate, Edit Formulation,
 		Sendinput, {tab}%product%
-		Sendinput, {Tab 23}^a ;{click 268, 578}
-		; sendinput, {tab}^a
+		Sendinput, {Tab 23}^a
 
 
 		 If InStr(ServingSize,"1 t",False) || InStr(ServingSize,"1t",False) || InStr(ServingSize,"1 Chewable",False)
@@ -1082,10 +1007,136 @@ SheetInfo:=[]
 		ShapeSize:=
 		Breaking.Point()
 		sleep 900
-		; clk(287, 578) ;click save
+		Breaking.Point()
+		clk(287, 588) 	;click save
+		winwaitactive, NuGenesis LMS,,5
+			if errorlevel
+				Exit
+		Breaking.Point()
+		LMSClick.Edit_Composition()
+		; clk(287, 588) ;click save
+
 		return
 
 	}
+
+
+
+
+	SaveIngredientList(){
+		Clipboard:=Trim(strReplace(StrReplace(Clipboard, "`r`n","`n"),"`t","")) ; Normalize line endings
+		lines := StrSplit(Clipboard, "`n") ; Split the string into lines
+		totalLines := lines.Length()-1
+		half := FLOOR(totalLines/2)
+		halfAmount:=-(Half)
+		Try FileDelete, Ingredients.ini
+		IngredientsString:=
+		Loop, % totalLines
+		{
+			if (A_Index=1){
+				IngredientsString:="[Ingredients]"
+				continue
+			}
+			line := lines[A_Index]
+			if (A_Index <= half)
+				lineNumber := A_Index - 2
+			else
+			{
+				HalfAmount+=1
+				If (HalfAmount=0)
+					Linenumber:="-0"
+				else
+					Linenumber:=halfAmount
+			}
+			IngredientsString.="`n"Line "=" lineNumber
+			; IngredientName:= StrReplace(Line, "Allergen","")
+		}
+		sleep 300
+		FileAppend, % Trim(strReplace(IngredientsString," Allergen","")), Ingredients.ini
+		return IngredientsString
+	}
+
+
+	AddNewIngredient(Ingredient_Name,Ingredient_Claim,Ingredient_Position,Ingredient_Id,Dont_Hit_Okay:=""){
+		Global
+		ifwinnotexist, Edit Ingredient
+		{
+			if winactive("Composition"){
+				winactivate, Composition
+				click 57, 65
+			}
+		}
+		if Dont_Hit_Okay
+			click, 150, 73
+		else
+			ProductTab.Dropdown_IngredientSelect(Ingredient_Id)
+		Send,{tab 6}^{a}
+		sendinput % TRIM(Ingredient_position," `r`n")
+		Sendinput,{tab}^a%Ingredient_Name%
+		if Strlen(Ingredient_Name) > 250
+			sleep 500
+		If Ingredient_Claim contains Heavy Metal,Allergens,Other
+			Send,{tab}
+		Send,{tab 2}^a
+		Send,%Ingredient_Claim%
+		; If InStr(Ingredient_Name, "Heavy Metals results are based on a daily dose of"){
+			;  Send, +{tab 3}
+			; if ServingSize
+			;  ServingSizeMenu(ServingSize)
+			; else
+				; ServingSizeMenu()
+			; Return
+		; }
+		Breaking.Point()
+		If !Dont_Hit_Okay
+			Sendinput,{enter}
+		Breaking.Point()
+		ifwinexist, Duplicate ingredient ID
+			exit
+		winwaitclose, Edit Ingredient,,3
+		if errorlevel
+			exit
+		return
+	}
+
+	Dropdown_IngredientSelect(A_DropdownCount){
+		global
+		; SetKeyDelay,-1,-1
+		ifWinNotActive, Edit Ingredient
+			winactivate, Edit Ingredient
+		click, 150, 73 ;click dropdown box
+		; if HitTab
+		; 	Send, {tab}««
+		sleep 110
+		AbsSelection:=Abs(A_DropdownCount)
+		if (A_DropdownCount > 0){
+			Sendinput, {tab}{home}{right %A_DropdownCount%}
+		}
+		if (A_DropdownCount < 0){
+			Sendinput, {tab}{end}{left %AbsSelection%}
+		}
+		if (A_DropdownCount = "-0")
+			Sendinput, {tab}{end}
+		if (A_DropdownCount = "i"){
+			if !(IngredientNoteCount) || (IngredientNoteCount >8)
+				IngredientNoteCount:=1
+			this.Dropdown_GenericIngredient(IngredientNoteCount,1)
+			IngredientNoteCount+=1
+		}
+		if (A_DropdownCount = ""){
+			if Iteration > 25
+				Iteration:=1
+			this.Dropdown_GenericIngredient(Iteration)
+
+			ClipBar.AddIteration(0,0,"True")
+		}
+		return
+	}
+
+
+
+
+
 
 	HM_ReportOnly(){
 
@@ -1273,7 +1324,7 @@ class SpecTab {
 			ScreenEdge_Y:=A_Screenheight-380
 			SpecTable_X:=LMS_X + 10
 			; SpecTable_Y:=LMS_Y+ShiftTable_Y+300
-			SpecTable_Y:=A_Screenheight-500
+			; SpecTable_Y:=A_Screenheight-500
 			; SpecTable_X:=A_ScreenWidth-50
 			; SpecTable_Y:=A_Screenheight-380
 		}
@@ -1309,7 +1360,7 @@ class SpecTab {
 		;SpecArray:=[]
 		Try GUI, Spec_Table:destroy
 		GUI, Spec_Table:Default
-		try Menu, SpecMenu, DeleteAll
+		; try Menu, SpecMenu, DeleteAll
 		i:=1
 		if Table_height > 12
 			Table_height :=16
@@ -1329,9 +1380,11 @@ class SpecTab {
 			if !(Requirement[A_index])
 				continue
 			LV_add(,""Name[A_index], Requirement[A_index], MinLimit[A_index],MaxLimit[A_index],Units[A_index],Percision[A_index],Description[A_index],Method[A_index])
-			Menu, SpecMenu, Add, % "&" Name[A_Index] "`t " Requirement[A_Index], SpecMenuButton
+			; Menu, SpecMenu, Add, % "&" Name[A_Index] "`t " Requirement[A_Index], SpecMenuButton
 			Test:= Name[A_index]
 		}
+			; Menu, SpecMenu, Add,
+			; Menu, SpecMenu, Add, Close, SpecMenuButtonESC
 		return
 
 		AutoAddSpecs:
@@ -1380,7 +1433,14 @@ class SpecTab {
 		return
 
 		SpecMenuButton:
-		if A_ThisMenuItemPos
+		if A_ThisMenuItem contains Close
+			{
+				Critical, on
+				Thread, Priority, 1
+				Breaking.Point("break")
+				exit
+			}
+		else if A_ThisMenuItemPos
 		{
 			GUI, Spec_Table:Default
 			; LV_ModifyCol(1, "Checkbox")
@@ -1394,6 +1454,16 @@ class SpecTab {
 		}
 		return
 		; CoordMode, mouse, screen
+
+		SpecMenuButtonESC:
+			if A_ThisMenuItem contains Close
+			{
+				Critical, on
+				Thread, Priority, 1
+				Breaking.Point("break")
+				exit
+			}
+			return
 	}
 
 	FindRowNumber(InputTestName:=""){
@@ -1405,7 +1475,7 @@ class SpecTab {
 				LV_GetText(rowText,A_Index,1)
 				if (rowText = InputTestName)
 				{
-					Try Menu, SpecMenu, Check, %A_ThisMenuItem%
+					; Try Menu, SpecMenu, Check, %A_ThisMenuItem%
 					LV_Modify(A_Index, "Check")
 					return A_Index
 				}
@@ -1433,9 +1503,11 @@ class SpecTab {
 	AddAllSpecTableMethods(){
 		Global
 	winactivate, Select methods tests
+	MethodListItem:=
 		click, 235, 72
 		Send, ^a
 		sleep 200
+		try menu, ChooseMethodMenu, DeleteAll
 		Breaking.Point()
 		Loop, Parse, MethodList, `n ; loop through each selected method
 		{
@@ -1600,7 +1672,7 @@ ClickEmptyRequirements(){
 		sleep 300
 		Loop, Parse, listbox, | ; loop through each selected method
 		{
-			Break.Point()
+			Breaking.Point()
 			winactivate, Select methods tests
 			click, 235, 72
 			Send, ^a
@@ -1610,10 +1682,10 @@ ClickEmptyRequirements(){
 			Sendinput, %vOutput%{enter} ; enter method to search
 			sleep 500
 			click 506, 341 ;move over
-			break.point()
+			breaking.point()
 			; sleep 500
 		}
-		break.point()
+		breaking.point()
 		return
 
 		GuiEscape:
@@ -1630,6 +1702,7 @@ ClickEmptyRequirements(){
 
 	MethodsDropdown() {
 		global
+		try Menu, MethodMenu, deleteAll
 		if WinExist("Select methods tests")
 			winactivate, Select methods tests
 		click, 235, 72
@@ -1676,6 +1749,7 @@ ClickEmptyRequirements(){
 		global
 		MouseGetPos, premx, premy
 		simpleclip:=1
+		OrganolepticTemplate:=
 		; Critical, On
 		if winactive("NuGenesis LMS") && (DepartmentInput = "") {
 			clipboard:=
@@ -1708,12 +1782,16 @@ ClickEmptyRequirements(){
 			SpecTab.Edit_Retain()
 		; WinActivate, NuGenesis LMS
 		Breaking.Point()
-		premy:=PremY + 26
+		if (OrganolepticTemplate) && (Department = "Physical")
+			premy:=PremY + 52
+		else
+			premy:=PremY + 26
+
 		WinActivate, NuGenesis LMS
 		winwaitactive, NuGenesis LMS,,3
 		if !errorlevel
 			MouseMove, %Premx%, %Premy%,1
-simpleclip:=
+		simpleclip:=
 		; Critical, Off
 		return
 	}
@@ -1812,7 +1890,10 @@ simpleclip:=
 		global
 		winactivate, Edit sample template
 		Breaking.Point()
-		Sendinput,{click 377, 82}{home}%Product%`,{space}{Shift down}I{Shift up}n{space}{Shift down}P{Shift up}rocess`,{space}{Shift down}A{Shift up}nalytical{tab 2}{Right 6}{tab}{right 6}{tab}{right}{enter}
+		Sendinput,{click 377, 82}{home}%Product%`,{space}{Shift down}I{Shift up}n{space}{Shift down}P{Shift up}rocess`,{space}{Shift down}A{Shift up}nalytical{tab 2}{Right 6}{tab}{right 6}{tab}{right}
+		sleep 400
+		Breaking.Point()
+		sendinput, {enter}
 		winWaitactive, NuGenesis LMS,,5
 		Breaking.Point()
 		if !errorlevel
@@ -1827,6 +1908,7 @@ simpleclip:=
 		Sendinput, %Product%`,{space}{Shift down}I{Shift up}n{space}{Shift down}P{Shift up}rocess`,{space}{Shift down}A{Shift up}nalytical{tab 4}^a%Product%{tab}{enter}{tab}{space}{enter 2}{Tab}{right}{tab}{right 4}{tab}
 		Breaking.Point()
 		Sendinput,{right 6}{Tab 2}{Space}{tab 2}{right}{tab}{right}
+		sleep 400
 		Breaking.Point()
 		click, 340, 622 ;click okay
 		Breaking.Point()
@@ -1834,14 +1916,16 @@ simpleclip:=
 		if !ErrorLevel
 			click, 88, 327 ; click add sample template
 		Breaking.Point()
-		winwaitactive, Edit sample template,, 8
-		if !errorlevel
+		winwaitactive, Edit sample template,, 10
+		if errorlevel
+			exit
+		else
 			SpecTab.Edit_Sample_Template_A()
 		return
 	}
 
 	AutoInputSpecResults(){
-
+Global
 			click
 			click, 57, 719 ;click Edit Test on main screen
 			SelectedTestName:=
@@ -1856,14 +1940,24 @@ simpleclip:=
 			SpecTab.GetRowText(MatchingRow)
 			if !MatchingRow
 			{
-				winactivate, Test Definition Editor
+				winactivate, Test Definition Edito
+				Breaking.Point()r
 				MouseClick, left, 464, 532,2,0
-				SpecTab.ShowSpecMenu()
-				winactivate, Test Definition Editor
+				send, {esc}
+				mby:=Mby+26
+				winwaitactive, NuGenesis LMS,,3
+				sleep 200
+				clk2(mbx,mby)
+				sleep 200
+				; send, {down}
+				; SpecTab.ShowSpecMenu()
+				this.AutoInputSpecResults()
+				Breaking.Point()
+				; winactivate, Test Definition Editor
+				return
 		}
 			spectab.Autofill()
-			preY+=26
-			WinWaitActive, NuGenesis LMS,, 10
+			WinWaitActive, NuGenesis LMS,, 15
 			if !errorlevel
 				MouseMove, %preX%, %preY%, 1,
 			return
@@ -1897,18 +1991,29 @@ simpleclip:=
 			if !MatchingRow
 			{
 				winactivate, Test Definition Editor
-				MouseClick, left, 464, 532,2,0
-				SpecTab.ShowSpecMenu()
-				winactivate, Test Definition Editor
+				Breaking.Point()
+				send, {esc}
+				mby:=Mby+26
+				winwaitactive, NuGenesis LMS,,3
+				sleep 200
+				clk2(mbx,mby)
+				sleep 200
+				; send, {down}
+				; MouseClick, left, 464, 532,2,0
+				; SpecTab.ShowSpecMenu()
+				; winactivate, Test Definition Editor
+				this.AutoInputTestDefinitionEditor()
+				Breaking.Point()
+				return
 			}
 
 			sleep 200
 			spectab.Autofill()
 			preY+=26
 					Breaking.Point()
-			WinWaitActive, NuGenesis LMS,, 10
+			WinWaitActive, NuGenesis LMS,, 5
 			if !errorlevel
-				MouseMove, %preX%, %preY%, 1,
+				; MouseMove, %preX%, %preY%, 1,
 			return
 		}
 	AutoInputResultEditor(){
@@ -1918,7 +2023,7 @@ simpleclip:=
 		SelectedTestName:=
 		MatchingRow:=
 		ParsedSpecs:=[]
-			If winactive("Results"){
+			If winactive("Results") {
 			click
 			send, ^c
 			clipwait,1
@@ -1928,6 +2033,7 @@ simpleclip:=
 						TotalColumns:=ParsedSpecs.maxindex()//2
 						AllowPrefixes:=Trim(ParsedSpecs[HasValue(ParsedSpecs, "Allow Prefixes") + TotalColumns],"`r`n")
 						UseTheLimits:=Trim(ParsedSpecs[HasValue(ParsedSpecs, "Use the limits from the test") + TotalColumns],"`r`n")
+						; ClippedRequirement:=Trim(ParsedSpecs[HasValue(ParsedSpecs, "Requirement") + TotalColumns],"`r`n")
 						Clipped_ResultID:=Trim(ParsedSpecs[HasValue(ParsedSpecs, "Result Id") + TotalColumns],"`r`n")
 						SelectedTestName:=Clipped_ResultID
 						; msgbox, allowPrefixes
@@ -1956,16 +2062,31 @@ simpleclip:=
 			if !MatchingRow
 			{
 				winactivate, Result Editor
-				MouseClick, left, 464, 532,2,0
+				Breaking.Point()
+				mby:=Mby+26
+				; winwaitactive, NuGenesis LMS,,3
+				sleep 200
+				clk2(mbx,mby)
+				; sleep 200
+				; send, {down}
+				Breaking.Point()
+				; This.AutoInputResultEditor()
+				; Breaking.Point()
+				; MouseClick, left, 464, 532,2,0
 				; Spectab.PasteClipboardIntoSpec()
-				SpecTab.ShowSpecMenu()
-				winactivate, Result Editor
+				; SpecTab.ShowSpecMenu()
+				return
 		}
 		if !Minlimit || !MaxLimit
+		{
 			msgbox,, got no data
-			tooltipText:= Name " `t " MinLimit " - " MaxLimit " " Units "`t" Method
+			; return
+		}
+			tooltipText:= Name " `t " MinLimit " - " MaxLimit " " Units
 			TT(tooltiptext,5000,0,0,1,200,"W")
+			Breaking.Point()
 			SpecTab.ResultEditor(MinLimit,MaxLimit,Units,Percision,1,1)
+			; SpecTab.ResultEditor(MinLimit,MaxLimit,Units,Percision,1,FullRequirements)
 			; spectab.Autofill()
 			; preY+=26
 			Breaking.Point()
@@ -2018,7 +2139,7 @@ simpleclip:=
 			}
 			Sendinput,{click 80, 66} ;click edit
 			Breaking.Point()
-			winwaitactive, Result Editor,,4
+			winwaitactive, Result Editor,,3
 			SpecTab.ResultEditor(MinLimit,MaxLimit,Units,Percision,1,1)
 			; tooltip
 			; if SpecTableMouseX
@@ -2031,7 +2152,8 @@ simpleclip:=
 		If winactive("Result Editor") ;the editing window
 		{
 			Breaking.Point()
-			SpecTab.ResultEditor(MinLimit,MaxLimit,Units,Percision,,1)
+			SpecTab.ResultEditor(MinLimit,MaxLimit,Units,Percision,0,1)
+			; Msgbox, the no use limits box ln. 2055
 			return
 		}
 		; else
@@ -2041,8 +2163,23 @@ simpleclip:=
 		return
 	}
 PasteClipboardIntoSpec(){ 	;;//	for pasting clipboards into specs}}
+Global
 					winactivate, Results
 					tooltip,
+If winactive("Results Definition") {
+			; click
+			simpleclip:=1
+			send, ^c
+			clipwait,1
+			ParsedSpecsManualSpecs:=[]
+			ParseDataManualSpecs:=Clipboard
+					Loop, parse, ParseDataManualSpecs, `t
+						ParsedSpecsManualSpecs.insert(A_LoopField)
+						TotalColumns:=ParsedSpecsManualSpecs.maxindex()//2
+						UnitsManualSpecs:=Trim(ParsedSpecsManualSpecs[HasValue(ParsedSpecsManualSpecs, "Unit") + TotalColumns],"`r`n")
+			}
+
+
 					Send,{click 80, 66} ;click edit
 					sleep 200
 					Breaking.Point()
@@ -2059,8 +2196,8 @@ PasteClipboardIntoSpec(){ 	;;//	for pasting clipboards into specs}}
 					else If (!MinLimit && !MaxLimit)
 		{
 						; SpecTab.AutoInputResultEditor()
-						inputbox, InputBoxString, inputstring, Min Limit,Max Limit,Units,Requirement
-						ParsedString:=StrSplit(InputBoxString,",")
+						inputbox, InputBoxString, inputstring, min max units ;% "Min Limit,Max Limit,Units,Requirement"
+						ParsedString:=StrSplit(InputBoxString," ")
 						MinLimit:=ParsedString[1]
 						MaxLimit:=ParsedString[2]
 						If ParsedString[3]
@@ -2070,7 +2207,7 @@ PasteClipboardIntoSpec(){ 	;;//	for pasting clipboards into specs}}
 						If ParsedString[4]
 							Units:=ParsedString[4]
 						Else
-							Units:=""
+							Units:=UnitsManualSpecs
 						; inputbox, Units, Units, Units
 						sleep 200
 						Breaking.Point()
@@ -2086,16 +2223,11 @@ PasteClipboardIntoSpec(){ 	;;//	for pasting clipboards into specs}}
 
 
 	;;-------Fill In Test Specs
-	ResultEditor(Min_Limit,Max_Limit,The_Units,The_Percision,UseLimitsBox:=1,CreateRequirements:=1){ ; 3rd window
+	ResultEditor(Min_Limit,Max_Limit,The_Units,The_Percision,CheckUseLimitsBox:=1,CreateRequirements:=1){ ; 3rd window
 		Global
-		If (Clipped_specs){
-			clipped_Specs:=
-			sleep 100
-		}
-		if (!Max_Limit || !Min_limit)
-				SpecTab.ShowSpecMenu()
 
 		simpleclip:=1
+		Breaking.Point()
 		winactivate, Result Editor
 		click, 250, 140 ; click id box to orient
 		if !SelectedTestName
@@ -2104,16 +2236,24 @@ PasteClipboardIntoSpec(){ 	;;//	for pasting clipboards into specs}}
 			SpecTab.GetRowText(MatchingRow)
 			if !MatchingRow
 			{
-				SpecTab.ShowSpecMenu()
-				winactivate, Result Editor
-				click, 250, 140
-			}
+
 			; spectab.Autofill()
+				; send, {esc}
+				; msgbox, ResultEditor_ no Matching Row
+				SpecTab.ShowSpecMenu()
+		; If (Clipped_specs){
+		; 	clipped_Specs:=
+		; 	sleep 100
+		; }
+				; winactivate, Result Editor
+				; click, 250, 140
+				; return
+			}
 			}
 		Breaking.Point()
 		; Sendinput,{tab 2}%The_units%{tab}^{a}%The_Percision% ;{tab 5}
 
-		Sendinput,{tab 2}%The_units%{tab}^{a}%The_Percision% ;{tab 5}
+		Sendinput % "{tab 2}" trim(The_units) "{tab}^{a}" trim(The_Percision) ;{tab 5}
 		; if (AllowPrefixesBox) || (AllowPrefixes=True)
 		; TabAmount=3 ;{space}{tab 2}^{a}%Min_Limit%{tab}^a%Max_Limit%{tab 5}^a
 		; else
@@ -2121,48 +2261,63 @@ PasteClipboardIntoSpec(){ 	;;//	for pasting clipboards into specs}}
 		; AllowPrefixes = False
 		; return
 		; Sendinput, {tab 2}^{a}%Min_Limit%{tab}^a%Max_Limit%{tab 5}^a ;normal
-		If (UseLimitsBox=1) || (UseLimitsBox=True)
-			click 100,406 ; click box
-		; else if (CheckUseLimitsBox=0) || (CheckUseLimitsBox=False)
-			; click 252,464 ; click min limit boxbox
-		; UseLimitBox:="{space}"
-		; else
-		; 	UseLimitBox:=
+		If (CheckUseLimitsBox=1) ;&& !(ToggleUseLimitsBox)
+			clk(36,410)  ; click limit box
+		else If (CheckUseLimitsBox=0) ;&& !(ToggleUseLimitsBox)
+		{
+			Mouseclick, left, 36, 410,2,0 ; click limit box
+				return
+			; Mouseclick, left, 378, 667,1,0 ; click okay
+			; return
+		}
+
+		Breaking.Point()
 		Send, {tab 2}{space}
-		sleep 200
+		sleep 150
 		if !winexist("Result Editor"){
 			Sendinput,{click 80, 66} ;click edit
 		Breaking.Point()
 			winwaitactive, Result Editor,,4
+			Mouseclick, left, 36, 410,2,0 ; click okay
+		Send, {tab 2}
 			if Clipped_Requirement
+			{
 				SpecTab.ResultEditor(MinLimit,MaxLimit,Units,Percision,1,Clipped_Requirement)
-			else
-				SpecTab.ResultEditor(MinLimit,MaxLimit,Units,Percision,1,1)
-			return
+			; 	SpecTab.ResultEditor(MinLimit,MaxLimit,Units,Percision,0,1)
+				; return
+			}
 		Breaking.Point()
 		}
 		; IF ((Max_limit = "") && (Min_limit = "")){
 		; 	TT("No Limits stored")
 		; 	return
-		Breaking.Point()
+		; Breaking.Point()
 		; }
 ; else
 		Sendinput, ^a%Min_Limit%{tab}^a%Max_Limit%{tab 5}^a ;normal
 		if (Max_limit = "")&&(CreateRequirements=1){
-			Sendinput, NLT %Min_Limit% %The_Units%
+			Sendinput %  "NLT " Trim(Min_Limit) " " Trim(The_Units)
+		Breaking.Point()
 			; return
 		}
 		else if (Min_limit = "<")&&(CreateRequirements=1){
-			Sendinput, %min_limit%%Max_Limit% %The_Units%
+			Sendinput % trim(min_limit) Trim(Max_Limit) " " Trim(The_Units)
+		Breaking.Point()
 		}
 		else if (Min_limit = "")&&(CreateRequirements=1){
-			Sendinput, NMT %Max_Limit% %The_Units%
+			Sendinput %  "NMT " Trim(Max_Limit) " " Trim(The_Units)
+		Breaking.Point()
 		}
 		Else If (CreateRequirements!=1){
-			Sendinput, %CreateRequirements%
+			Sendinput % Trim(CreateRequirements)
+		Breaking.Point()
 		}
 		else
-			Sendinput, %Min_Limit% - %Max_Limit% %The_Units%
+			Sendinput % Trim(Min_Limit) " - " Trim(Max_Limit) " " Trim(The_Units)
+			; Sendinput, %Min_Limit%- %Max_Limit%%The_Units%
+		Breaking.Point()
+		IF (Min_Limit = "MinLimit")||(Max_Limit = "Max_Limit")|| (The_Units = "The_Units")
+			exit
 		if (The_Units)
 			Mouseclick, left, 378, 667,1,0 ; click okay
 		Breaking.Point()
@@ -2170,7 +2325,7 @@ PasteClipboardIntoSpec(){ 	;;//	for pasting clipboards into specs}}
 		{
 			; WinActivate, Spec Table ahk_exe VQ_Helper.exe
 			; sleep 200
-			MouseMove, 378, 667, 0
+			; MouseMove, 378, 667, 0
 			return
 		}
 		winwaitactive, Results,, 5
@@ -2188,16 +2343,16 @@ PasteClipboardIntoSpec(){ 	;;//	for pasting clipboards into specs}}
 		if ContinueToRun
 			click 342, 614
 		else
-			sleep 400
+			sleep 200
 			; WinWaitActive, Test Definition Editor
 		wingetpos, Test_X, Test_y, Test_w, Test_h, A
 		Save_x:=test_W - 170
 		Save_y:=test_H - 45
 		Breaking.Point()
 		mousemove, %Save_x%, %Save_y% ;Move mouse to Save/Okay
-		sleep 300
+		sleep 200
 		if ContinueToRun
-			winwaitactive, NuGenesis LMS,,15
+			winwaitactive, NuGenesis LMS,,5
 		sleep 300
 		return
 	}
@@ -2248,6 +2403,8 @@ PasteClipboardIntoSpec(){ 	;;//	for pasting clipboards into specs}}
 			else
 				Send, ^{a}
 			sleep 100
+			if (Trimmed_Description = "Description")
+				exit
 			sendinput, %Trimmed_Description%
 			if strLen(Trimmed_Description) > 100
 				sleep 300
@@ -3368,7 +3525,7 @@ Class WorkTab {
 			else
 				Department:="Analytical"
 			sleep 200
-			tt(Department,3000)
+			; tt(Department,3000)
 			sendinput, %Department%{enter} ; send department
 			Breaking.Point()
 			sleep 300
@@ -3376,11 +3533,13 @@ Class WorkTab {
 
 			Breaking.Point()
 			send {click 467, 71} ;Click Filter button
-			;sendinput, {click, 849, 661} ;click okay
+			sleep 500
+			sendinput, {click, 849, 661} ;click okay
 			; sendinput, {click, 849, 661, 0} ;move okay
 			winwaitactive, Select tests for request,,8
 			sleep 200
-			mousemove, mx, my+26,0
+			; mousemove, mx, my+26,0
+			mousemove, 855,657,0 ; move to okay
 			; blockinput off
 
 			return
@@ -3444,7 +3603,7 @@ Class WorkTab {
 				return
 			}
 			else If winactive("Result Editor")
-			clk2(370,660)
+			Clk2(391,815)
 			else if winactive("Edit Ingredient")
 			clk2(265, 561)
 			else if winactive("View specification")
@@ -3478,6 +3637,8 @@ Class WorkTab {
 			Clk2(283, 582)
 			else If winactive("Test Definition Editor ")
 			Clk2(341, 618)
+			else if winactive("Reason for Change ahk_exe eln.exe ahk_pid 27396")
+			clk2(70,366)
 			else if winactive("Reason for Change")
 			clk2(170, 331)
 			else if winexist("Error") {
@@ -3571,6 +3732,7 @@ Class WorkTab {
 			return
 		}
 		Edit_Composition(){
+				winactivate, NuGenesis LMS
 			clk(90, 440,,,"NuGenesis LMS")
 			return
 		}

@@ -9,9 +9,9 @@ try:
 except:
 	clear_code = None
 
-# pattern_product = re.compile(r'(?P<product>[abcdefghijkl]\d{3}).(?P<batch>\b\d{3}-\d{4}).(?P<lot>\b\d{4}\w\d\w?|\bBulk\b|G\d{7}\w?\b|VC\d{6}[ABCDEFGH]?|V[A-Z]\d{5}[A-Z]\d?|\d{5}\[A-Z]{3}\d)?.*?(?:ct\#)(?P<coated>\d{3}-\d{4})?',re.IGNORECASE)
+# pattern_product = re.compile(r'(?P<product>[abcdefghijklmn]\d{3}).(?P<batch>\b\d{3}-\d{4}).(?P<lot>\b\d{4}\w\d\w?|\bBulk\b|G\d{7}\w?\b|VC\d{6}[ABCDEFGH]?|V[A-Z]\d{5}[A-Z]\d?|\d{5}\[A-Z]{3}\d)?.*?(?:ct\#)(?P<coated>\d{3}-\d{4})?',re.IGNORECASE)
 if a_code == "product":
-	pattern = re.compile(r'(?P<product>[abcdefghijkl]\d{3})',re.IGNORECASE)
+	pattern = re.compile(r'(?P<product>[abcdefghijklmn]\d{3})',re.IGNORECASE)
 if a_code == "batch":
 	pattern = re.compile(r'(?<!ct#)(?P<batch>\d{3}-\d{4})',re.IGNORECASE)
 if a_code == "lot":
