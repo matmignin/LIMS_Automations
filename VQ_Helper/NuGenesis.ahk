@@ -3163,7 +3163,7 @@ Return
 Spec_TableGuiClose:
 	GUI, Spec_Table:destroy
 	; coordmode, mouse, window
-return
+return 
 
 ;;----------------------------------------------------------
 ;;{{                        MY WORK                       }}
