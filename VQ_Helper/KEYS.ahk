@@ -618,10 +618,11 @@ F7::WinMove, ahk_class XLMAIN ahk_exe EXCEL.EXE,, %NuX%, %NuY%, 1250, 1200
 			F7::numbermenu(6,"toggle") ;WorkTab.CorrectTestResults("toggle", "Loop")
 			F6::numbermenu(6,0) ;WorkTab.CorrectTestResults("toggle", "Loop")
 			; F6::WorkTab.CorrectTestResults(0,5)
-			F9::WorkTab.CorrectTestResults(0,"","Test")
-			F10::
-			^LButton::
+
 			Mbutton::WorkTab.CorrectTestResults("Toggle")
+			F9::LMS.Menu()
+			F10::
+			+Mbutton::WorkTab.CorrectTestResults(0,"","Test")
 			F8::numbermenu(6)
 
 ;;\\  									    Results Definition																	_
