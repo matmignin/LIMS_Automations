@@ -1788,7 +1788,7 @@ ClickEmptyRequirements(){
 			premy:=PremY + 26
 
 		WinActivate, NuGenesis LMS
-		winwaitactive, NuGenesis LMS,,3
+		winwaitactive, NuGenesis LMS,,5
 		if !errorlevel
 			MouseMove, %Premx%, %Premy%,1
 		simpleclip:=
@@ -2386,7 +2386,7 @@ If winactive("Results Definition") {
 
 		; TT(Selectedtestname,1000,1,-100,1)
 		; SimpleClip:=
-		if !(The_description) ; && !(Department)
+		if !(The_description) && !(Name contains Protein) ; && !(Department)
 		{
 			MouseClick, left, 464, 532,2,0 	;click scrollbar
 			click 239, 246 					;click results link
@@ -2400,6 +2400,8 @@ If winactive("Results Definition") {
 			Click, 187, 200  ;click description box
 			if Name contains Vitamin C
 				Sendinput,{Home}{Delete 12}
+			else if Name contains Protein
+				inputbox,Trimmed_Description,enter protein factor,,,,,,,,, 6.
 			else
 				Send, ^{a}
 			sleep 100
@@ -2513,7 +2515,7 @@ If winactive("Results Definition") {
 		ifwinexist, Warning
 			Exit
 		Breaking.Point()
-		winwaitactive, NuGenesis LMS, ,5
+		winwaitactive, NuGenesis LMS, ,7
 		if errorlevel
 			exit
 		sleep 300
@@ -2550,7 +2552,7 @@ If winactive("Results Definition") {
 		; click, 340, 622 ;click okay
 		ifwinactive, Warning,
 			exit
-		winwaitactive, NuGenesis LMS, ,4
+		winwaitactive, NuGenesis LMS, ,7
 		if !errorlevel
 			LMSclick.Edit_Sample_Template()
 		Breaking.Point()
@@ -2582,7 +2584,7 @@ If winactive("Results Definition") {
 		; click, 340, 622 ;click okay
 		ifwinactive, Warning,
 			exit
-		winwaitactive, NuGenesis LMS,,4
+		winwaitactive, NuGenesis LMS,,7
 		if !errorlevel
 			LMSclick.Edit_Sample_Template()
 		Breaking.Point()
@@ -2613,7 +2615,7 @@ If winactive("Results Definition") {
 		; if !errorlevel
 		; click, 340, 622 ;click okay
 		Breaking.Point()
-		winwaitactive, NuGenesis LMS, ,5
+		winwaitactive, NuGenesis LMS, ,7
 		; if !errorlevel
 		Breaking.Point()
 		LMSclick.Edit_Sample_Template()
@@ -2655,7 +2657,7 @@ If winactive("Results Definition") {
 		Breaking.Point()
 		Sendinput,{right}{tab}  ; to select finish --> {left 2}
 		send, {enter}
-		winwaitactive, NuGenesis LMS,,5
+		winwaitactive, NuGenesis LMS,,7
 		; if !errorlevel
 		Breaking.Point()
 		LMSclick.Edit_Sample_Template()
