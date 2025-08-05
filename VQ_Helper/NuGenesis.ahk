@@ -395,7 +395,7 @@ OrientSearchbar(){
 		Ifwinactive, Register new samples
 			{
 			Clk(180, 103, 2)
-			Send, {click 180, 103,2}%Product%{enter}
+			Sendinput, {click 180, 103,2}%Product%{enter}
 			}
 		ifwinactive, NuGenesis LMS
 		{
@@ -404,15 +404,15 @@ OrientSearchbar(){
 				clk2(483, 90,2,2) ; click for Full Bar
 				Send, {backspace}
 				If Overwrite=true
-					Send, ^{x}
+					Sendinput, ^{x}
 				If Code
 					Sendinput, %Product%^{a}
 				If Overwrite=true
-					send, {right}{space}^{v}^{a}^{c}
+					sendinput, {right}{space}^{v}^{a}^{c}
 				if PostCmd!=""
 					{
 					sleep 300
-					send % PostCmd
+					sendinput % PostCmd
 				}
 					return
 			}
@@ -989,7 +989,7 @@ AddNewProduct(){ ;for naming Product code and customer,
 		else if InStr(ServingSize,"3 s",False)
 			Sendinput % "Each three (3) scoops (" ShapeAndSize " g) contains{Tab}Blend" "{tab}" color
 		else if InStr(ServingSize,"4 s",False)
-			Sendinput % "Each four (4) scoosp ("  ShapeAndSize " g)  contains{Tab}Blend" "{tab}" color
+			Sendinput % "Each four (4) scoops ("  ShapeAndSize " g)  contains{Tab}Blend" "{tab}" color
 		else if InStr(ServingSize,"5 s",False)
 			Sendinput % "Each five (5) scoops (" ShapeAndSize " g)  contains{Tab}Blend" "{tab}" color
 		else if InStr(ServingSize,"",False)
@@ -2524,10 +2524,10 @@ If winactive("Results Definition") {
 		winwaitactive, Edit sample template,,6
 		; if !errorlevel
 		Breaking.Point()
-		Send,{tab}^{a}
+		Sendinput,{tab}^{a}
 		sendinput, % Product ",{space}{shift down}I{shift up}n{shift down}{space}P{shift up}rocess`,{space}{shift down}P{shift up}hysical"
 		; sendinput, {enter}
-		sleep 300
+		sleep 400
 		Breaking.Point()
 		send, {enter}
 		winwaitactive, NuGenesis LMS,,5
@@ -2556,7 +2556,7 @@ If winactive("Results Definition") {
 		if !errorlevel
 			LMSclick.Edit_Sample_Template()
 		Breaking.Point()
-		Send,{tab}^{a}
+		Sendinput,{tab}^{a}
 		sendinput, % Product ",{space}{Shift down}C{shift up}oated`,{space}{shift down}R{shift up}etain"
 		sleep 400
 		Breaking.Point()
@@ -2927,6 +2927,7 @@ If winactive("Results Definition") {
 		VersionStatus:=
 		ifwinactive, NuGenesis LMS
 			Clip.ParseMainSpecsTopTable()
+			Breaking.Point()
 		sleep 200
 		{
 			while (VersionStatus="Done" || VersionType = "Modifiable" ) { ;|| VersionStatus = "Removed") {
@@ -2993,6 +2994,7 @@ If winactive("Results Definition") {
 			winwaitactive, NuGenesis LMS,,4
 			if errorlevel
 				return
+			Breaking.Point()
 			; M_y+=26
 			; click %m_x% %m_Y% 1
 		}
@@ -3588,7 +3590,7 @@ Class WorkTab {
 			; WinGetPos, LMSWinX, LMSWinY, LMSWinWidth, LMSWinHeight, A
 			sleep %Sleeptime%
 			If GetKeyState("Shift","P"){
-				Send, {enter}
+				Sendinput, {enter}
 				return
 			}
 			else if winactive("NuGenesis LMS"){

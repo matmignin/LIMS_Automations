@@ -101,6 +101,6 @@
     "code-runner.clearPreviousOutput": true,
     "explorerExclude.backup": null,
     "search.useIgnoreFiles": false,
-    "diffEditor.ignoreTrimWhitespace": false,
+    "diffEditor.ignoreTrimWhitespace": true,
 
 }

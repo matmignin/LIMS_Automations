@@ -24,6 +24,7 @@
 	CoordMode, Tooltip, screen
 	; CoordMode, Tooltip, Screen
 	SetWorkingDir, %A_ScriptDir%
+
 	SetscrolllockState, alwaysoff
 	AutoTrim, On
 	IdleThreshold := 24 * 60 * 60 * 1000 ;4 hours
@@ -125,7 +126,6 @@ prefix:=
 	sleep 200
 try Menu, Tray, Icon, %AppIconPath%
 GUI, ClipBar:default
-
 	return
 
 SaveClipboardToList:
@@ -356,7 +356,7 @@ else If winactive("Reason For Change") && !WindowMoved{
 else If winactive("Select methods tests") && !WindowMoved{
 	sleep 600
 	; clk2(233, 67,1,2)
-	Click, 233, 67, 2
+	Click, 233, 67, 2 ; select search bar
 	WindowMoved:=1
 	; WinWaitClose
 	; WindowMoved:=

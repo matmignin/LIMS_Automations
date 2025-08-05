@@ -1,5 +1,6 @@
 #ifwinactive,
 return
+Mbutton::Mbutton
 ~RWin::Send {Blind}{vkFF}
 ~LWin::Send {Blind}{vkFF}
 ; +F4::ExitApp
@@ -324,7 +325,7 @@ F7::WinMove, ahk_class XLMAIN ahk_exe EXCEL.EXE,, %NuX%, %NuY%, 1250, 1200
 	;;[[*** WINDOWS KEYBINDINGS                                               ]]
 	;-----------------------------------------------------------------------------
 
-;;\\  									  Edit sample template																	_
+;;\\  		  Edit sample template																	_
 		#ifwinactive, Edit sample template
 			Mbutton::Sendinput,{Click 256,85}{Home}%Product%
 			F6::Sendinput,{Click 256,85}%Product%, `In Process, Analytical{tab 3}{right 6}{tab}{right}
@@ -345,7 +346,7 @@ F7::WinMove, ahk_class XLMAIN ahk_exe EXCEL.EXE,, %NuX%, %NuY%, 1250, 1200
 
 
 
-;;\\  									    Edit specification																	_
+;;\\  		    Edit specification																	_
 		#ifwinactive, Edit specification
 			mbutton::SpecTab.Edit_Analytical()
 			Enter::LMSClick.OK()
@@ -357,11 +358,11 @@ F7::WinMove, ahk_class XLMAIN ahk_exe EXCEL.EXE,, %NuX%, %NuY%, 1250, 1200
 		#Ifwinactive, Edit Formulation
 
 
-		#IFwinexist, Release: Rotational Testing Schedule ;
-			mbutton::
-				winactivate,Release: Rotational Testing Schedule
-				clk(128, 140)
-			return
+		; #IFwinexist, Release: Rotational Testing Schedule ;
+		; 	mbutton::
+		; 		winactivate,Release: Rotational Testing Schedule
+		; 		clk(128, 140)
+		; 	return
 		#ifwinexist, Release:
 			mbutton::
 				winactivate, Release:
@@ -371,7 +372,7 @@ F7::WinMove, ahk_class XLMAIN ahk_exe EXCEL.EXE,, %NuX%, %NuY%, 1250, 1200
 			mbutton::LMSClick.password()
 
 
-;;\\  									    Select methods tests																	_
+;;\\  		    Select methods tests																	_
 		#ifwinactive, Select methods tests
 			+enter::clk2(854, 658) ;select okay
 			#enter::clk2(854, 658) ;select okay
@@ -388,7 +389,7 @@ F7::WinMove, ahk_class XLMAIN ahk_exe EXCEL.EXE,, %NuX%, %NuY%, 1250, 1200
 					; click 511, 336 ; click move over
 					; return
 
-;;\\  									    Select samples for test																	_
+;;\\  		    Select samples for test																	_
 		#Ifwinactive, Select samples for test:
 			Mbutton::sendinput, {click 248, 68}{up} ;click dropdown then
 			F10::
@@ -401,7 +402,7 @@ F7::WinMove, ahk_class XLMAIN ahk_exe EXCEL.EXE,, %NuX%, %NuY%, 1250, 1200
 			+F6::SpecTab.Methods()
 			F6::SpecTab.MethodsDropdown()
 
-;;\\  									    Select tests for request:																	_
+;;\\  		    Select tests for request:																	_
 		#ifwinactive, Select tests for request
 			+F10:: ;Select all tests and move over
 					click, 31, 102 ; click Select All Box
@@ -423,17 +424,137 @@ F7::WinMove, ahk_class XLMAIN ahk_exe EXCEL.EXE,, %NuX%, %NuY%, 1250, 1200
 					clk(123,68,"Left",2)
 					Spectab.MethodsDropdown()
 					return
-				; Mbutton::SpecTab.MethodsDropdown()
+				Mbutton::
+				AddAppearanceTest:  ; to a smple
+					winactivate, Select tests for request
+					click 312, 72 ;click dropdown
+					; mousemove, 312, 72, 0
+					sleep 200
+					; sleep 100
+					click 312, 72 ;click dropdown again
+					; clk(312,72) ;click dropdown
+					sleep 200
+					send, {down}{enter}
+					; click 250, 135 ;click methods
+					; clk(250,140) ;click methods
+					; click 123, 70, 2 ;click x
+					sleep 200
+					click 513, 340 ;click move over
+					; clk(123,70)
+					; SpecTab.MethodsDropdown()
+					Breaking.Point()
+					sleep 200
+					Breaking.Point()
+					mousemove, 854, 659, 0 ; move to okay
+					Breaking.Point()
+					sleep 500
+					Breaking.Point()
+					click
+					Breaking.Point()
+					winwaitactive,Edit request,,5
+						if ErrorLevel
+							return
+					mousemove, 337, 618, 0 ;move to save
+					Breaking.Point()
+					sleep 400
+					Breaking.Point()
+					click
+					Breaking.Point()
+					return
+					RemoveAppearanceTestFromSpec:  ; to a smple
+					winactivate, NuGenesis LMS
+					click 60, 737 ;click dropdown
+					Breaking.Point()
+					winwaitactive, Delete Test,,3
+						if ErrorLevel
+							return
+						else
+							sendinput, {enter}
+					sleep 100
+						Breaking.Point()
+					return
+				AddAppearanceTestToSpec:  ; to a smple
+					winactivate, Select tests for request
+					click 312, 72 ;click dropdown
+					; mousemove, 312, 72, 0
+					sleep 200
+					; sleep 100
+					click 312, 72 ;click dropdown again
+					; clk(312,72) ;click dropdown
+					sleep 200
+					send, {down}{enter}
+					; click 250, 135 ;click methods
+					; clk(250,140) ;click methods
+					; click 123, 70, 2 ;click x
+					sleep 200
+					click 513, 340 ;click move over
+					; clk(123,70)
+					; SpecTab.MethodsDropdown()
+					Breaking.Point()
+					sleep 200
+					Breaking.Point()
+					mousemove, 854, 659, 0 ; move to okay
+					Breaking.Point()
+					sleep 500
+					Breaking.Point()
+					click
+					Breaking.Point()
+					winwaitactive,Edit request,,5
+						if ErrorLevel
+							return
+					mousemove, 337, 618, 0 ;move to save
+					Breaking.Point()
+					sleep 400
+					Breaking.Point()
+					click
+					Breaking.Point()
+					return
+				CreateNewSpecVer:  ; to a smple
+					winactivate, Select tests for request
+					click 312, 72 ;click dropdown
+					; mousemove, 312, 72, 0
+					sleep 200
+					; sleep 100
+					click 312, 72 ;click dropdown again
+					; clk(312,72) ;click dropdown
+					sleep 200
+					send, {down}{enter}
+					; click 250, 135 ;click methods
+					; clk(250,140) ;click methods
+					; click 123, 70, 2 ;click x
+					sleep 200
+					click 513, 340 ;click move over
+					; clk(123,70)
+					; SpecTab.MethodsDropdown()
+					Breaking.Point()
+					sleep 200
+					Breaking.Point()
+					mousemove, 854, 659, 0 ; move to okay
+					Breaking.Point()
+					sleep 500
+					Breaking.Point()
+					click
+					Breaking.Point()
+					winwaitactive,Edit request,,5
+						if ErrorLevel
+							return
+					mousemove, 337, 618, 0 ;move to save
+					Breaking.Point()
+					sleep 400
+					Breaking.Point()
+					click
+					Breaking.Point()
+					return
 				+mbutton::SpecTab.Methods()
 				F7::WorkTab.SelectTestSample()
-				mbutton::
-					sendinput, {click}
-					sleep 20
-					click 511, 336 ; click move over
-					return
+				; mbutton::
+					; sendinput, {click}
+					; sleep 20
+					; click 511, 336 ; click move over
+					; return
 				F6::mouseclick, Left, 638, 70 ;click assign Sample
 
-;;\\  									    Select Product																	_
+;;\\  		    Select Product																	_
 		#ifwinactive, Select Product ahk_exe eln.exe
 			mbutton::send % clk(107, 66) Product "{enter}{enter}"
 
@@ -441,14 +562,14 @@ F7::WinMove, ahk_class XLMAIN ahk_exe EXCEL.EXE,, %NuX%, %NuY%, 1250, 1200
 
 
 
-;;\\  									    Edit Product																	_
+;;\\  		    Edit Product																	_
 		#ifwinactive, Edit Product
 			mbutton::ProductTab.AddNewProduct()
 			Enter::clk2(285, 574, 1)
 			+Enter::sendinput, {enter}
 
 
-;;\\  									    Edit Formulation																	_
+;;\\  		    Edit Formulation																	_
 		#Ifwinactive, Edit Formulation
 			mbutton::ProductTab.AddNewFormulation()
 			wheeldown::
@@ -519,7 +640,7 @@ F7::WinMove, ahk_class XLMAIN ahk_exe EXCEL.EXE,, %NuX%, %NuY%, 1250, 1200
 					return
 
 
-;;\\  									    Composition																	_
+;;\\  		    Composition																	_
 		#ifwinactive, Composition
 			Mbutton::
 			^v::
@@ -530,7 +651,7 @@ F7::WinMove, ahk_class XLMAIN ahk_exe EXCEL.EXE,, %NuX%, %NuY%, 1250, 1200
 
 
 
-;;\\  									    Edit Ingredient																	_
+;;\\  		    Edit Ingredient																	_
 		#Ifwinactive,Edit Ingredient
 			Mbutton::
 			Paste_Clipped_Ingredient:
@@ -574,7 +695,7 @@ F7::WinMove, ahk_class XLMAIN ahk_exe EXCEL.EXE,, %NuX%, %NuY%, 1250, 1200
 
 
 
-;;\\  									    Edit request																	_
+;;\\  		    Edit request																	_
 		#ifwinactive, Edit request
 			mbutton::WorkTab.EditRequest()
 			F10::
@@ -582,13 +703,13 @@ F7::WinMove, ahk_class XLMAIN ahk_exe EXCEL.EXE,, %NuX%, %NuY%, 1250, 1200
 			click 239, 617
 			return
 
-;;\\  									    Edit sample																	_
+;;\\  		    Edit sample																	_
 		#ifwinactive, Edit sample (
 		F9::worktab.CustomerMenu()
 		Mbutton::Worktab.Dropdown_CustomerSelect(Iteration)
 
 
-;;\\  									    Edit test (Field Configuration																	_
+;;\\  		    Edit test (Field Configuration																	_
 		#ifwinactive, Edit test (Field Configuration
 		; lctrl::
 		printscreen::
@@ -612,7 +733,7 @@ F7::WinMove, ahk_class XLMAIN ahk_exe EXCEL.EXE,, %NuX%, %NuY%, 1250, 1200
 
 
 
-;;\\  									    Result Entry																	_
+;;\\  		    Result Entry																	_
 		#Ifwinactive, Result Entry
 			Enter::LMSClick.OK()
 			F7::numbermenu(6,"toggle") ;WorkTab.CorrectTestResults("toggle", "Loop")
@@ -620,12 +741,14 @@ F7::WinMove, ahk_class XLMAIN ahk_exe EXCEL.EXE,, %NuX%, %NuY%, 1250, 1200
 			; F6::WorkTab.CorrectTestResults(0,5)
 
 			Mbutton::WorkTab.CorrectTestResults("Toggle")
+			Mbutton & Wheeldown::LMS.menu()
 			F9::LMS.Menu()
-			F10::
-			+Mbutton::WorkTab.CorrectTestResults(0,"","Test")
+			F10::WorkTab.CorrectTestResults(0,"","Test")
+			lctrl::WorkTab.CorrectTestResults(0,"","Test")
+			^Mbutton::WorkTab.CorrectTestResults(0,"","Test")
 			F8::numbermenu(6)
 
-;;\\  									    Results Definition																	_
+;;\\  		    Results Definition																	_
 		#Ifwinactive, Results Definition
 			+mbutton::SpecTab.Autofill()
 			Mbutton::
@@ -644,7 +767,7 @@ F7::WinMove, ahk_class XLMAIN ahk_exe EXCEL.EXE,, %NuX%, %NuY%, 1250, 1200
 			Backspace::LMSClick.Remove()
 		;Backspace::sendinput, {Click %RemoveButton%}
 
-;;\\  									    Results																	_
+;;\\  		    Results																	_
 		#ifwinactive, Results
 			F7::lmsclick.edit()
 			F9::lms.menu()
@@ -652,7 +775,7 @@ F7::WinMove, ahk_class XLMAIN ahk_exe EXCEL.EXE,, %NuX%, %NuY%, 1250, 1200
 			+mbutton::SpecTab.ResultEditor(MinLimit,MaxLimit,Units,Percision,1,FullRequirements)
 		F6::spectab.toggleUseLimitsFromTheTest()
 
-;;\\  									    Result Editor																	_
+;;\\  		    Result Editor																	_
 		#ifwinactive, Result Editor
 		+Enter::send, {enter}
 		Enter::LMSclick.OK()
@@ -686,7 +809,7 @@ F7::WinMove, ahk_class XLMAIN ahk_exe EXCEL.EXE,, %NuX%, %NuY%, 1250, 1200
 		return
 
 
-;;\\  									    Test Definition Editor																	_
+;;\\  		    Test Definition Editor																	_
 		#Ifwinactive,Test Definition Editor
 			mbutton::
 				sleep 200
@@ -729,7 +852,7 @@ F7::WinMove, ahk_class XLMAIN ahk_exe EXCEL.EXE,, %NuX%, %NuY%, 1250, 1200
 
 
 
-;;\\  									    Register new samples																	_
+;;\\  		    Register new samples																	_
 		#ifwinactive, Register new samples
 		F7::sendinput,{Click 505, 356}{Click 860, 661}
 		F6::
@@ -759,7 +882,7 @@ F7::WinMove, ahk_class XLMAIN ahk_exe EXCEL.EXE,, %NuX%, %NuY%, 1250, 1200
 			mbutton::WorkTab.registerNewSamples()
 
 
-;;\\  									REASON  Change                                .																	_
+;;\\  		REASON  Change                                .																	_
 		#ifwinactive, Reason For Change ahk_exe eln.exe ahk_pid 27396)
 			F7::sendinput, {enter}
 			F10::
@@ -781,10 +904,213 @@ F7::WinMove, ahk_class XLMAIN ahk_exe EXCEL.EXE,, %NuX%, %NuY%, 1250, 1200
 
 ;;\\____ NuGenesis MAIN                                     .
 #Ifwinactive, NuGenesis LMS
+
++^F10:: ;add new spec ver and method
+	MouseGetPos, m_x, m_Y
+	CoordMode, ToolTip, Relative
+	loopcount:=
+	inputbox,loopcount,Remove Appearance test,How many loops ,,,,,,,, 3
+	if errorlevel
+		return
+	else
+	Loop, % loopcount
+	{
+		m_XT:=m_x-250
+		m_YT:=m_Y-10
+		breaking.point()
+		Count:=LoopCount - A_Index +1
+			tooltip,-%Count% --->,%M_XT%,%M_YT%,1
+		; WindowMoved:=1
+		click, %m_x% %m_Y%
+			; winactivate, NuGenesis LMS
+			click 60, 737 ;click delete
+			sleep 400
+				Breaking.Point()
+				winwaitactive, Delete Test,,1
+						; if ErrorLevel
+							; return
+						; else
+							sendinput, {enter}
+			sleep 200
+						Breaking.Point()
+			M_y+=26
+		click %m_x% %m_Y% 0
+					sleep 200
+		breaking.point()
+	}
+		; WindowMoved:=0
+		return
+		; click, 69, 249 ; new version
+
++!F10:: ;add new spec ver and method
+	MouseGetPos, m_x, m_Y
+	WindowMoved:=1
+	click, 69, 249 ; new version
+	WinWait, Edit specification,, 2
+			if ErrorLevel
+				return
+				sleep 250
+			click, 393, 177 ; click description
+			Breaking.Point()
+			send, ^{a}
+			sleep 100
+			Breaking.Point()
+			sendinput, %NewSpecVersionDescriptionText%
+			sleep 300
+			Breaking.Point()
+			click, 331, 617 ;click Save
+			Breaking.Point()
+			; sleep 800
+	winwaitactive, NuGenesis LMS ahk_exe eln.exe,,5
+				; sleep 400
+			click, 67,561,1 ; click add method
+			sleep 500
+			winwaitactive, Select methods tests ahk_exe eln.exe,,5
+					if errorlevel
+					click, 67,561,1 ; click add method
+			; Breaking.Point()
+			sleep 800
+			Click, 233, 67, 2; select search bar
+			sleep 500
+			; Click, 234, 68, 1; select search bar
+			sendinput, {click 233, 67, 2}Visu{enter}
+			sleep 400
+			Breaking.Point()
+			Click, 516,341,1 ; move over select search bar
+			sleep 250
+			Breaking.Point()
+			click, 850,654, 1 ;click okay
+			winwaitactive, NuGenesis LMS ahk_exe eln.exe,,5
+			if !errorlevel
+				M_y+=52
+			click %m_x% %m_Y% 0
+			WindowMoved:=0
+return
+
+^F10::   ; add new version
+	MouseGetPos, m_x, m_Y
+	CoordMode, ToolTip, Relative
+	loopcount:=
+	inputbox,loopcount,Create new version,How many loops ,,,,,,,, 3
+	if errorlevel
+		return
+	else
+	Loop, % loopcount
+	{
+		m_XT:=m_x-250
+		m_YT:=m_Y-10
+		Count:=LoopCount - A_Index +1
+			tooltip,-%Count% --->,%M_XT%,%M_YT%,1
+		WindowMoved:=1
+		click, 69, 249 ; new version
+		WinWait, Edit specification,, 2
+				if ErrorLevel
+					exit
+				sleep 250
+				click, 393, 177 ; click description
+				Breaking.Point()
+				send, ^{a}
+				sleep 100
+				Breaking.Point()
+				sendinput, %NewSpecVersionDescriptionText%
+				sleep 300
+				Breaking.Point()
+				if GetKeyState("Lbutton","P"){
+					blockinput, off
+					exit
+					}
+				click, 331, 617 ;click Save
+				sleep 300
+				Breaking.Point()
+				if winexist("Warning ahk_exe eln.exe")
+					exit
+				winwaitactive, NuGenesis LMS ahk_exe eln.exe,,5
+				if errorlevel
+					exit
+				sleep 200
+				M_y+=29
+				click %m_x% %m_Y% 1
+				if GetKeyState("Lbutton","P"){
+				blockinput, off
+				exit
+				}
+	}
+
+				WindowMoved:=0
+	return
+
+
+
+
+
+
++F10:: ; add  appearance method
+		WindowMoved:=1
+	CoordMode, ToolTip, Relative
+	MouseGetPos, m_x, m_Y
+	; loopcount:=
+	inputbox,loopcount,Add Appearance Test,How many Loops,,,,,,,, %loopCount%
+		if errorlevel
+			return
+		else
+	Loop, % loopcount
+		{
+			m_XT:=m_x-250
+			m_YT:=m_Y-10
+			Count:=LoopCount - A_Index + 1
+			tooltip,-%Count% --->,%M_XT%,%M_YT%,1
+					; Breaking.Point()
+				click,67,561,1 ; click add method
+				winwaitactive, Select methods tests ahk_exe eln.exe,,3
+				if errorlevel
+					click, 67,561,1 ; click add method
+				sleep 800
+					Click, 233, 67, 2; select search bar
+					sleep 400
+					; Click, 234, 68, 1; select search bar
+					sendinput, {click 233, 67, 2}Visu{enter}
+					sleep 200
+					Breaking.Point()
+				click, 516,341,1 ;move over
+				sleep 250
+					Breaking.Point()
+			if GetKeyState("Lbutton","P"){
+					blockinput, off
+					exit
+					}
+				click, 850,660, 1 ;click okay
+				sleep 400
+				if winexist("Information ahk_exe eln.exe")
+				{
+					send, {enter}
+					sleep 200
+					tooltip,--Fix-->,%M_XT%,%M_YT%,2
+				}
+				winwaitactive, NuGenesis LMS ahk_exe eln.exe,,3
+				if errorlevel
+					exit
+					sleep 400
+					M_y+=29
+					click %m_x% %m_Y% 1
+			if GetKeyState("Lbutton","P"){
+					blockinput, off
+					exit
+					}
+				sleep 400
+		}
+		WindowMoved:=0
+		return
+
+
+
+
+
+return
+
 Enter::
 	LMS.SaveCode()
 	sleep 200
-	send, {Enter}
+	sendinput, {Enter}
 	return
 +Enter::LMS.SaveCode()
 +^F11::LMS.OrientSearchbar()
@@ -852,18 +1178,24 @@ mbutton::
 			; Sendinput, {ctrl down}{click}{ctrl up}
 	}
 	else if (Tab = "Samples"){    ; assign all non-retain tests to new requFsamests
+		mouseGetPos, clkmxs, clkmys, clkmws
 		clk2(75,298) ; click assign to new reuest
 		WinWaitActive, Edit request,,3
 		; winactivate, Edit request
 		click 239, 617 ; click pick sample
 		WinWaitActive, Select tests for request,,3
-		click, 473,66 ; click filter toggle
-		sleep 200
-		click 78, 127 ; click filter box
-		sendinput, ^{a}cal{enter} ;type "cal" to filter out retains
-		click, 41, 108 ;click select all
-		click, 511,336 ; click move arrow
-	}
+		gosub, AddAppearanceTest
+		;---- add all tests to new request
+		; 		click, 473,66 ; click filter toggle
+		; 		sleep 200
+		; 		click 78, 127 ; click filter box
+		; 		sendinput, ^{a}cal{enter} ;type "cal" to filter out retains
+		; 		click, 41, 108 ;click select all
+		; 		click, 511,336 ; click move arrow
+		winwaitactive, NuGenesis LMS,,5
+		if !errorlevel
+			mouseclick,Left, clkmxs, clkmys+26,1, 0
+		}
 	else
 		Sendinput, {ctrl down}{click}{ctrl up}
 	; Else

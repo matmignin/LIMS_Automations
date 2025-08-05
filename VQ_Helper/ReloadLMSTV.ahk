@@ -19,7 +19,7 @@ SetTimer, ClickReloadOrPosition, 300000
 	Menu, Tray, Add, Pause, Pausesub
 	Menu, Tray, Add, Reload, ReloadSub
 	Menu, Tray, Add, Exit, Exitsub
-    Menu, Tray, tip, %A_TimeIdlePhysical% 
+    Menu, Tray, tip, %A_TimeIdlePhysical%
 	Menu, Tray, Default, Pause
 
 ClickReloadOrPosition:
@@ -47,8 +47,12 @@ if (A_TimeIdlePhysical > IdleThreshold)
 return
 
 
+#Ifwinactive, Login
+Mbutton::Sendinput, ldisplay{tab}labfc1{enter}
 
 
+
+#ifwinactive,
 
 
 Reloadsub(){
