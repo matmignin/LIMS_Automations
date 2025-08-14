@@ -65,7 +65,7 @@ F8::
 Lbutton::send, {ctrldown}{Lbutton}{ctrlup}
 
 #If MouseIsOver("ClipBar ahk_exe VQ_Helper.exe")
-+Mbutton::
+^Mbutton::
 		ControlGetFocus,winControl,ClipBar
 		if (winControl="Edit2"){
 			GetAllWholeBatches()
@@ -545,7 +545,7 @@ F7::WinMove, ahk_class XLMAIN ahk_exe EXCEL.EXE,, %NuX%, %NuY%, 1250, 1200
 					click
 					Breaking.Point()
 					return
-				+mbutton::SpecTab.Methods()
+				^mbutton::SpecTab.Methods()
 				F7::WorkTab.SelectTestSample()
 				; mbutton::
 					; sendinput, {click}

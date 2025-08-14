@@ -1996,6 +1996,7 @@ Global
 				mby:=Mby+26
 				winwaitactive, NuGenesis LMS,,3
 				sleep 200
+
 				clk2(mbx,mby)
 				sleep 200
 				; send, {down}
@@ -2011,8 +2012,9 @@ Global
 			spectab.Autofill()
 			preY+=26
 					Breaking.Point()
-			WinWaitActive, NuGenesis LMS,, 5
-			if !errorlevel
+			WinWaitActive, NuGenesis LMS,, 3
+			; msgbox, This point A
+			; if !errorlevel
 				; MouseMove, %preX%, %preY%, 1,
 			return
 		}
@@ -2345,14 +2347,19 @@ If winactive("Results Definition") {
 		else
 			sleep 200
 			; WinWaitActive, Test Definition Editor
-		wingetpos, Test_X, Test_y, Test_w, Test_h, A
+			; msgbox, This point C
+		wingetpos, Test_X, Test_y, Test_w, Test_h, Test Definition Editor
 		Save_x:=test_W - 170
 		Save_y:=test_H - 45
 		Breaking.Point()
 		mousemove, %Save_x%, %Save_y% ;Move mouse to Save/Okay
 		sleep 200
 		if ContinueToRun
+		{
 			winwaitactive, NuGenesis LMS,,5
+			if errorlevel
+			msgbox, This Point D
+		}
 		sleep 300
 		return
 	}
@@ -3435,7 +3442,7 @@ Class WorkTab {
 					blockinput, on
 					Breaking.Point()
 					click
-					click 843, 202, 2
+					click 825, 202, 2 ;---Clicking the Final box
 					if Checkbox_Toggle ;Contains Toggle
 					Send,{tab}{Space}{tab}{Space}
 					else
@@ -3463,7 +3470,7 @@ Class WorkTab {
 				Exit
 			}
 			click
-			click 843, 202, 2
+			click 825, 202, 2  ;---Clicking the Final box
 			if Checkbox_Toggle { ;Contains Toggle
 				Sendinput,{tab}{Space}{tab}{Space}
 				mousemove, xpos, ypos+26,0
