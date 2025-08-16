@@ -27,33 +27,35 @@
 
 	SetscrolllockState, alwaysoff
 	AutoTrim, On
-	IdleThreshold := 24 * 60 * 60 * 1000 ;4 hours
+	IdleThreshold := 12 * 60 * 60 * 1000 ;4 hours
 	Fileread, AllBatches, AllBatches.txt
 	Fileread, AllProducts, AllProducts.txt
 	iniRead, CompileTime, Settings.ini, Config, CompileTime
+
 	ReadIniFiles()
 	tooltipNumber=6
 	HotkeysTip := CompileTime "
 	(
+	v
 	`n
 F5    :: copyLabelCopy
-!F10 :: AddsampleLog x5
-!+F10  :: AddDataFromClipboard
-^+w   :: get_window_info
-^+e   :: get_mouse_info
 ^+v   :: Paste(`;)
-^F7	  :: Copy Clipped excel
-+F5   :: copyLabelCopyIng
-+F6/7 :: Copy All Products/Batches
-
-!F<n> :: ChangePxercision( n )
-!+v   :: Paste(A_Space)
-+F1   ::  GetAllProducts( )
-+F2   ::  GetAllBatches( )
-+^1  ::  GetAllProducts(`;)
-+!1  ::  GetAllProducts(``n)
-+^2  ::  GetAllBatches(`;)
 	)"
+; !F10 :: AddsampleLog x5
+; !+F10  :: AddDataFromClipboard
+; ^+w   :: get_window_info
+; ^+e   :: get_mouse_info
+; ^F7	  :: Copy Clipped excel
+; +F5   :: copyLabelCopyIng
+; +F6/7 :: Copy All Products/Batches
+
+; !F<n> :: ChangePxercision( n )
+; !+v   :: Paste(A_Space)
+; +F1   ::  GetAllProducts( )
+; +F2   ::  GetAllBatches( )
+; +^1  ::  GetAllProducts(`;)
+; +!1  ::  GetAllProducts(``n)
+; +^2  ::  GetAllBatches(`;)
 
 VariableFilePath := "\\10.1.2.118\users\vitaquest\mmignin\VQ_Helper\ClippedExcelData.txt"
 
@@ -68,21 +70,21 @@ prefix:=
 	Menu, Tray, add, &Global Vision, ShowGlobalVision
 	; Menu, Tray, Add, Whole Batches, ShowWholeBatches
 	; Menu, Tray, add, Show EditBox, ShowEditBox
-	 Menu, Tray, add, Add Sample Log, Add15SampleLog
+	;  Menu, Tray, add, Add Sample Log, Add15SampleLog
 	;Menu, Tray, add, Delete Prior Codes, DeletePriorCodes
 	; Menu, Tray, add, Delete Whole Batches, DeleteWholeBatches
 	Menu, Tray, Add,
 	Menu, Tray, Add, Save List via Clipboard, SaveClipboardToList
-	Menu, Tray, Add, Get Requirements, GetRequirements
-	Menu, TestSubMenu, Add, run Script, TestCode
-	Menu, TestSubMenu, Add, Test1, TestCode1
-	Menu, TestSubMenu, Add, Test2, TestCode2
-	Menu, TestSubMenu, Add, Test3, TestCode3
+	; Menu, Tray, Add, Get Requirements, GetRequirements
+	; Menu, TestSubMenu, Add, run Script, TestCode
+	; Menu, TestSubMenu, Add, Test1, TestCode1
+	; Menu, TestSubMenu, Add, Test2, TestCode2
+	; Menu, TestSubMenu, Add, Test3, TestCode3
 	; Menu, MarkerSubMenu, Add, PasteMarker, SetPasteMarker
 	; Menu, MarkerSubMenu, Add, MouseMarker, SetMouseMarker
 	; Menu, MarkerSubMenu, Add, TriggerMarker, TriggerMarker
 	Menu, Tray, Add, windowSpy, windowSpy
-	Menu, TestSubMenu, Add, run Script, TestCode
+	; Menu, TestSubMenu, Add, run Script, TestCode
 	; Menu, Tray, add, TestCode, :TestSubMenu ;testCode
 	; Menu, Tray, add, Marker, :MarkerSubMenu
 	;Menu, Tray, Add, Show Variables, ShowVariables
@@ -90,10 +92,20 @@ prefix:=
 	Menu, Tray, Add, Settings, SettingsFile
 	Menu, Tray, Add, mmignin, mmigninFolder
 	; Menu, Tray, Add, Copy GUID, CopyGUID
+	if (DisableAutoScroll != "YES")
+			DisableAutoScroll := "NO"
+
+; --- Build tray menu ---
+		Menu, Tray, Add, Disable AutoScroll, Toggle_DisableAutoScroll
+; Reflect current state with a checkmark
+		if (DisableAutoScroll := "YES")
+    Menu, Tray, Check, Disable AutoScroll
+else
+    Menu, Tray, Uncheck, Disable AutoScroll
 	Menu, Tray, Add, Hotkeys, ShowHotkeys
 	Menu, Tray, Add, &Reload, ReloadSub
 	Menu, Tray, Add, Exitsub, Exitsub
-	Menu, Tray, tip, %HotkeysTip% %HotkeysTip2%
+	Menu, Tray, tip, %HotkeysTip% %HotkeysTip%
 	Menu, Tray, Default, &Reload
 
 
@@ -128,6 +140,23 @@ try Menu, Tray, Icon, %AppIconPath%
 GUI, ClipBar:default
 	return
 
+
+Toggle_DisableAutoScroll:
+{
+    ; flip YES/NO
+    DisableAutoScroll := (DisableAutoScroll := "YES") ? "NO" : "YES"
+
+    ; update checkmark
+    Menu, Tray, ToggleCheck, Disable AutoScroll
+
+    ; save back to INI
+    IniWrite, %DisableAutoScroll%, %A_ScriptDir%\Settings.ini, Config, DisableAutoScroll
+
+    ; optional quick feedback
+    TrayTip, Settings saved, DisableAutoScroll = %DisableAutoScroll%, 2
+}
+return
+
 SaveClipboardToList:
 
 		if instr(Clipboard, "111Skin Limited",true,1,1)
@@ -158,14 +187,14 @@ ListLines, OFF
 if (A_TimeIdlePhysical > IdleThreshold)
 	ExitApp
 
-	If winexist("Delete Attribute ahk_exe eln.exe"){
+	If winexist("Delete Attribute ahk_exe eln.exe") && !(DisableAutoScroll="YES"){
 		winactivate,
 		sleep 200
 		sendinput, {enter}
 		; mousemove, 245, 137
 		sleep 1000
 	}
-	else if winexist("Delete specification ahk_exe eln.exe"){
+	else if winexist("Delete specification ahk_exe eln.exe") && !(DisableAutoScroll="YES"){
 		MsgBox, 4, , Do you want to continue? (Press YES or NO),5
 		IfMsgBox No
 			exit
@@ -180,63 +209,67 @@ if (A_TimeIdlePhysical > IdleThreshold)
 }
 
 else if MouseIsOver("ClipBar"){
-	ClipBar_x1:=Clipbar_x-310
-	ClipBar_x2:=Clipbar_x-150
+	ClipBar_x1:=Clipbar_x+310
+	ClipBar_x2:=Clipbar_x+50
 	ClipBar_x6:=Clipbar_x+265
 	; CoordMode, mouse, Screen
-	mousegetpos,MouseClipbarx, MouseClipbarY
+	mousegetpos,MouseClipbarx, MouseClipbarY,,winControl
 	; CoordMode, mouse, Window
-	ControlGetFocus,winControl,ClipBar
-	if (winControl="Edit1"){
-		try menu, AllProductsMenu, DeleteAll
-		loop, parse, AllProducts, " "
-		{
-			Menu, AllProductsMenu, Add, %a_LoopField%, allproductsmenubutton
-			if (A_LoopField = product)
-				try Menu, AllProductsMenu, Check, %a_LoopField%,
-		}
-		try Menu,AllProductsMenu,show
-	}
-	else if (winControl="Edit2"){
-		try menu, AllBatchesMenu, DeleteAll
-		loop, parse, AllBatches, " "
-		{
-			Menu, AllBatchesMenu, Add, %a_LoopField%, allbatchesmenubutton
-			if (A_LoopField = batch)
-				try Menu, AllBatchesMenu, Check, %a_LoopField%,
-		}
-		try Menu,AllBatchesMenu,show
-		; GetAllBatches(" ")
-		; sleep 1000
-	}
+	; ControlGetFocus,winControl,ClipBar
+		TT("Double Click To Copy",3000,80,MouseClipbarY,2,200,"M")
+	; if (winControl="Edit1"){
+	; 	; try menu, AllProductsMenu, DeleteAll
+	; 	; loop, parse, AllProducts, " "
+	; 	; {
+	; 		; Menu, AllProductsMenu, Add, %a_LoopField%, allproductsmenubutton
+	; 		; if (A_LoopField = product)
+	; 			; try Menu, AllProductsMenu, Check, %a_LoopField%,
+	; 	; }
+	; 	; try Menu,AllProductsMenu,show
+	; }
+	; else if (winControl="Edit2"){
+	; 	TT("Double Click To Copy",1000,1,0,2,250,"M")
+	; 	; try menu, AllBatchesMenu, DeleteAll
+	; 	; loop, parse, AllBatches, " "
+	; 	; {
+	; 		; Menu, AllBatchesMenu, Add, %a_LoopField%, allbatchesmenubutton
+	; 		; if (A_LoopField = batch)
+	; 			; try Menu, AllBatchesMenu, Check, %a_LoopField%,
+	; 	; }
+	; 	; try Menu,AllBatchesMenu,show
+	; 	; GetAllBatches(" ")
+	; 	; sleep 1000
+	; }
 
-	else if (winControl="Edit3"){
-		return
-		; TT("Whole Batches")
-		;  GetAllWholeBatches("`n")
-	}
-	else if (winControl="Edit4"){
-		; sleep 1000
-		; tt(sampleguid,7000,100,20,7,220,"M")
-		; Clipboard:=SAMPLEGUID
-		; ControlsetText, Edit4,%SAMPLEGUID%,ClipBar
-		return
-	}
-	; else if (winControl="Edit5")
-		; return
+	; else if (winControl="Edit3"){
+	; 	TT("Double Click To Copy",1000,1,0,2,250,"M")
+	; 	return
+	; 	; TT("Whole Batches")
+	; 	;  GetAllWholeBatches("`n")
+	; }
+	; else if (winControl="Edit4"){
+	; 	TT("Double Click To Copy",1000,1,0,2,250,"M")
+	; 	; sleep 1000
+	; 	; tt(sampleguid,7000,100,20,7,220,"M")
+	; 	; Clipboard:=SAMPLEGUID
+	; 	; ControlsetText, Edit4,%SAMPLEGUID%,ClipBar
+	; 	return
+	; }
+	; ; else if (winControl="Edit5")
+	; 	; return
 	; else if (winControl="Edit6") {
-		; TT(AllProducts,4000,ClipBar_x1,35,2,250)
-		; BothGeneralBoxes:= "`n" GeneralBox2
-		; tt(BothGeneralBoxes,7000,100,2,6,220,"M")
+	; 	TT("Double Click To Copy",1000,1,0,2,250,"M")
+	; 	; BothGeneralBoxes:= "`n" GeneralBox2
+	; 	; tt(BothGeneralBoxes,7000,100,2,6,220,"M")
 	; }
 	; else if (winControl="Edit7"){
-		; TT(AllBatches,4000,ClipBar_x2,35,2,250)
-		; tt(sampleguid,7000,100,20,7,220,"M")
+	; 	TT("Double Click to Copy",1000,1,0,2,250,"M")
+	; 	; tt(sampleguid,7000,100,20,7,220,"M")
 
 	; }
 	return
 }
-else if winactive("Error ahk_exe eln.exe") {
+else if winactive("Error ahk_exe eln.exe") && !(DisableAutoScroll="YES"){
 	ControlSend,, {enter}, Error
 	sleep 200
 	if winExist("Register new samples") && Product{
@@ -247,7 +280,7 @@ else if winactive("Error ahk_exe eln.exe") {
 	; RNSW:=
 	return
 }
-else if winactive("Register new samples"){
+else if winactive("Register new samples") && !(DisableAutoScroll="YES"){
 	; if RNSW
 		; return
 	WinGetPos, RNSX, RNSY, RNSW, RNSH, Register new samples
@@ -271,21 +304,21 @@ else if winactive("Register new samples"){
 		return
 	return
 }
-else If winexist("Release: ahk_exe eln.exe"){
+else If winexist("Release: ahk_exe eln.exe")  && !(DisableAutoScroll="YES"){
 	winactivate
 	click 128,146
 	return
 }
-else if winactive("Book ahk_class XLMAIN ahk_exe EXCEL.exe"){
-	WinGetPos, bWinX, bWinY, bWinW, bWinH
-	screenwidth:=A_ScreenWidth - 50
-	screenHeight:=A_ScreenHeight - 40
-	if (bwinw > Screenwidth)
-		WinRestore, ahk_class XLMAIN ahk_exe EXCEL.EXE
-		WinMove, ahk_class XLMAIN ahk_exe EXCEL.EXE,, 0, 40,,%screenHeight%
-	return
-}
-else if (winactive("Result Editor ahk_exe eln.exe") && !SimpleClip && !WindowMoved){
+; else if winactive("Book ahk_class XLMAIN ahk_exe EXCEL.exe"){
+; 	WinGetPos, bWinX, bWinY, bWinW, bWinH
+; 	screenwidth:=A_ScreenWidth - 50
+; 	screenHeight:=A_ScreenHeight - 40
+; 	if (bwinw > Screenwidth)
+; 		WinRestore, ahk_class XLMAIN ahk_exe EXCEL.EXE
+; 		WinMove, ahk_class XLMAIN ahk_exe EXCEL.EXE,, 0, 40,,%screenHeight%
+; 	return
+; }
+else if (winactive("Result Editor ahk_exe eln.exe") && !SimpleClip && !WindowMoved  && !(DisableAutoScroll="YES")){
 	WindowMoved:=1
 	WinGetPos, bWinX, bWinY, bWinW, bWinH
 	if (bWinH < 800) {
@@ -297,22 +330,23 @@ else if (winactive("Result Editor ahk_exe eln.exe") && !SimpleClip && !WindowMov
 	WindowMoved:=
 	return
 }
-else if (winexist("ahk_class XLMAIN ahk_exe EXCEL.EXE") && !ExcelConnected){
-	try XL := ComObjActive("Excel.Application") ;handle to running application
-Catch {
-					MsgBox % "no existing Excl ojbect:  Need to create one"
-			XL := ComObjCreate("Excel.Application")
-			XL.Visible := 1 ;1=Visible/Default 0=hidden
-			}
-			; XL.Visible := 1 ;1=Visible/Default 0=hidden
-			ExcelConnected:=1
-	Return
-}
+;;-----EXCEL Handles
+; else if (winexist("ahk_class XLMAIN ahk_exe EXCEL.EXE") && !ExcelConnected){
+; 	try XL := ComObjActive("Excel.Application") ;handle to running application
+; Catch {
+; 					MsgBox % "no existing Excl ojbect:  Need to create one"
+; 			XL := ComObjCreate("Excel.Application")
+; 			XL.Visible := 1 ;1=Visible/Default 0=hidden
+; 			}
+; 			; XL.Visible := 1 ;1=Visible/Default 0=hidden
+; 			ExcelConnected:=1
+; 	Return
+; }
 
 
 
 
-else If winactive("Edit Formulation ahk_exe eln.exe") && !WindowMoved{
+else If winactive("Edit Formulation ahk_exe eln.exe") && !WindowMoved && !(DisableAutoScroll="YES"){
 	clk(458,477,,2)
 	sleep 400
 	WindowMoved:=1
@@ -320,7 +354,7 @@ else If winactive("Edit Formulation ahk_exe eln.exe") && !WindowMoved{
 	WindowMoved:=
 	return
 }
-else If winactive("Edit Formulation ahk_exe eln.exe") && !WindowMoved{
+else If winactive("Edit Formulation ahk_exe eln.exe") && !WindowMoved && !(DisableAutoScroll="YES"){
 	; sleep 200
 	; ifwinactive,
 	; clk2(469,533,0,2)
@@ -333,7 +367,7 @@ else If winactive("Edit Formulation ahk_exe eln.exe") && !WindowMoved{
 	WindowMoved:=
 	return
 }
-else If winactive("Test Definition Editor ahk_exe eln.exe") && !WindowMoved{
+else If winactive("Test Definition Editor ahk_exe eln.exe") && !WindowMoved && !(DisableAutoScroll="YES"){
 	; sleep 200
 	clk(469,530,,1)
 	; ifwinactive,
@@ -345,7 +379,7 @@ else If winactive("Test Definition Editor ahk_exe eln.exe") && !WindowMoved{
 	; WindowMoved:=
 	return
 }
-else If winactive("Reason For Change") && !WindowMoved{
+else If winactive("Reason For Change") && !WindowMoved && !(DisableAutoScroll="YES"){
 	send, {tab 2}
 	sleep 400
 	WindowMoved:=1
@@ -353,7 +387,7 @@ else If winactive("Reason For Change") && !WindowMoved{
 	WindowMoved:=
 	return
 }
-else If winactive("Select methods tests") && !WindowMoved{
+else If winactive("Select methods tests") && !WindowMoved && !(DisableAutoScroll="YES"){
 	sleep 600
 	; clk2(233, 67,1,2)
 	Click, 233, 67, 2 ; select search bar
@@ -372,7 +406,7 @@ else If winactive("Select methods tests") && !WindowMoved{
 ; 	WindowMoved:=
 ; 	return
 ; }
-else If winactive("Delete Test ahk_exe eln.exe"){
+else If winactive("Delete Test ahk_exe eln.exe") && !(DisableAutoScroll="YES"){
 	winactivate,
 	sleep 100
 
@@ -382,7 +416,7 @@ else If winactive("Delete Test ahk_exe eln.exe"){
 	; sleep 1000
 	return
 }
-else If winactive("Delete results ahk_exe eln.exe"){
+else If winactive("Delete results ahk_exe eln.exe") && !(DisableAutoScroll="YES"){
 	winactivate,
 	sleep 100
 	sendinput, {enter}
@@ -391,7 +425,7 @@ else If winactive("Delete results ahk_exe eln.exe"){
 	sleep 1000
 	return
 }
-else If winactive("Delete ingredients ahk_exe eln.exe"){
+else If winactive("Delete ingredients ahk_exe eln.exe") && !(DisableAutoScroll="YES"){
 	winactivate,
 	sleep 200
 	sendinput, {enter}
@@ -399,13 +433,13 @@ else If winactive("Delete ingredients ahk_exe eln.exe"){
 	sleep 1000
 	return
 }
-else if winactive("Lock specification ahk_exe eln.exe")
+else if winactive("Lock specification ahk_exe eln.exe") && !(DisableAutoScroll="YES")
 {
 	sendinput, {n}
 	sleep 9000
 	return
 }
-else if winActive("Information ahk_exe eln.exe"){
+else if winActive("Information ahk_exe eln.exe") && !(DisableAutoScroll="YES"){
 	winactivate,
 	send, {enter}
 }

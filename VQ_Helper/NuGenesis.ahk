@@ -91,15 +91,24 @@ Class LMS {
 				; else
 			; Menu, Menu, add, &Products from clipboard, PasteAllProducts
 
-		If AltMode
+		If (AltMode :="SHIFT")
 		{
-			Menu, Menu, add, &Products from clipboard (';), PasteAllProductsAlt
-			Menu, Menu, add, &Batches from clipboard (';), PasteAllBatchesAlt
+			Menu, Menu, add, Copy All &Products from clipboard (New Line), PasteAllProductsShift
+			Menu, Menu, add, Copy All &Batches from clipboard (New Line), PasteAllBatchesShift
+			; Menu, Menu, Add, Copy GUID, CopyGUID
+		}
+		If (AltMode :="ALT")
+		{
+			Menu, Menu, add, Copy All &Products from clipboard (';), PasteAllProductsAlt
+			Menu, Menu, add, Copy All &Batches from clipboard (';), PasteAllBatchesAlt
+			; Menu, Menu, Add, Copy GUID, CopyGUID
 		}
 		else
-		Menu, Menu, add, &Products from clipboard, PasteAllProducts
-		Menu, Menu, add, &Batches from clipboard, PasteAllBatches
-		Menu, Menu, add, &Paste Spec from Clipboard, PasteSpec
+		{
+		Menu, Menu, add, Copy All &Products from clipboard, PasteAllProducts
+		Menu, Menu, add, Copy All &Batches from clipboard, PasteAllBatches
+		}
+		; Menu, Menu, add, &Paste Spec from Clipboard, PasteSpec
 		Menu, Menu, add,
 		Menu, Menu, add, &Final Label Copy`t[%Product%], ShowFinalLabelCopy
 		Menu, Menu, add, &Scan Label Copy,  ShowScanLabelCopy
@@ -109,7 +118,9 @@ Class LMS {
 		Menu, Menu, add, C_O_A, ShowC_O_A
 		; Menu, Menu, add, Manual &COAs folder, ShowManualCOA
 		Menu, Menu, add,
-		Menu, Menu, add, mmignin, mmigninFolder
+		If AltMode
+			Menu, Menu, add, mmignin, mmigninFolder
+
 		Menu, Menu, add,
 		; Menu, Menu, add, TestCode, :TestSubMenu
 			; Menu, Menu, Add, Get Requirements,GetRequirements
@@ -117,7 +128,7 @@ Class LMS {
 			; Try Menu,menu,show
 if MouseIsOver("ClipBar"){
 		try Menu,Menu, deleteAll
-		Menu, Menu, add, &Batches from clipboard (';), PasteAllBatchesAlt
+		; Menu, Menu, add, &Batches from clipboard (';), PasteAllBatchesAlt
 		Menu, Menu, Add, mmignin, mmigninFolder
 		Menu, Menu, Add, Settings, SettingsFile
 		Menu, Menu, Add, Copy GUID, CopyGUID
@@ -682,9 +693,21 @@ sleep 20
 		TT(clipboard)
 			return
 				PasteAllProductsAlt:
-		; Clk(getx,getY)
 		simpleclip:=1
 			Clipboard:=Trim(GetAllProducts("`;"))
+		simpleclip:=
+		TT(clipboard)
+		return
+	PasteAllBatchesShift:
+		simpleclip:=1
+			Clipboard:=Trim(GetAllBatches("`r`n"))
+		simpleclip:=
+		TT(clipboard)
+			return
+				PasteAllProductsShift:
+		; Clk(getx,getY)
+		simpleclip:=1
+			Clipboard:=Trim(GetAllProducts("`r`n"))
 		simpleclip:=
 		TT(clipboard)
 		return
@@ -693,11 +716,20 @@ sleep 20
 		SpecTab.PasteClipboardIntoSpec()
 	RETURN
 	PasteAllBatches:
+	simpleclip:=1
 	;	Clk(getx,getY)
-		sendinput % Trim(GetAllBatches())
+		Clipboard:=Trim(AllBatches)
+		TT(AllBatches,1000,,,2,200)
+		sleep 200
+	simpleclip:=
 	return
 	PasteAllProducts:
-		sendinput % Trim(GetAllProducts())
+	simpleclip:=1
+		Clipboard:=Trim(AllProducts)
+		TT(AllProducts,1000,0,0,3,150)
+
+		sleep 200
+	simpleclip:=
 	return
 	Autofill:
 		winactivate, ahk_exe eln.exe
@@ -873,6 +905,7 @@ AddNewProduct(){ ;for naming Product code and customer,
 		Breaking.Point()
 		This.AddNewFormulation()
 		Iteration:=1
+		Breaking.Point()
 		; Clipbar.FlashIteration()
 		return
 

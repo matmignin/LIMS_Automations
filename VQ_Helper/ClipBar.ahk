@@ -315,18 +315,19 @@ Gui ClipBar:Default
 					codeString:=trim(Product " " Batch " " Lot " ct#" Coated)
 				else
 					codeString:=trim(Product " " Batch " " Lot)
-				if (PriorCodestring!=Codestring)
-				{
-					FileAppend, %CodeString%`n, WholeBatches.txt
-					FileDelete, %CodeFile%
-					sleep 200
-					FileAppend, %CodeString%, %CodeFile%
-				}
+				; if (PriorCodestring!=Codestring)
+				; {
+				; 	FileAppend, %CodeString%`n, WholeBatches.txt
+				; 	FileDelete, %CodeFile%
+				; 	sleep 200
+				; 	FileAppend, %CodeString%, %CodeFile%
+				; }
 				; if rproduct & rBatch & rlot & (PriorCodestring!=Codestring){
 				; ControlsetText, Edit6,%CodeString%,ClipBar ahk_exe VQ_Helper
 				; }
 		If (SampleGUID){
-			tt(SAMPLEGUID,4000,100,100,4)
+			iniwrite, %SampleGUID%, Settings.ini, SavedVariables, SampleGUID
+			;tt(SAMPLEGUID,4000,100,100,4)
 				; ControlsetText, Edit7,%SampleGUID%,ClipBar ahk_exe VQ_Helper
 				; FileRead, oPreviousSampleGUIDs, % PreviousSampleIGUDsFile
 				  ; {
@@ -1085,15 +1086,16 @@ GetAllProducts(Delimiter:=" ",msg:=""){
 	}
 	AllProducts:=Listarray(AllProducts,Delimiter)
 	AllProducts:= Trim(StrReplace(AllProducts, Delimiter Delimiter, Delimiter),Delimiter)
-	FileDelete, AllProducts.txt
 	sleep 200
-	if (StrLen(AllProducts) < 5){
+	StringUpper, AllProducts, AllProducts
+	if (StrLen(AllProducts) > 5){
+	FileDelete, AllProducts.txt
 		; ControlsetText, Edit6,,ClipBar
-		; Allproducts:=
-		return
-	}
 	FileAppend, %AllProducts%, AllProducts.txt
 	ControlsetText, Edit6,%AllProducts%,ClipBar
+		; Allproducts:=
+		; return
+	}
 	if (msg && AllProducts!="")
 		clip.editbox(AllProducts)
 	Else
@@ -1129,15 +1131,15 @@ GetAllBatches(Delimiter:=" ",msg:=""){
 	}
 	AllBatches:=Listarray(AllBatches,Delimiter)
 	AllBatches:= Trim(StrReplace(AllBatches, Delimiter Delimiter, Delimiter),Delimiter)
-	FileDelete, AllBatches.txt
 	sleep 200
-	if (StrLen(AllBatches) < 10){
-		; ControlsetText, Edit7,,ClipBar
-		; AllBatches:=
-		return
-	}
+	if (StrLen(AllBatches) > 10){
+	FileDelete, AllBatches.txt
 		FileAppend, %AllBatches%, AllBatches.txt
 		ControlsetText, Edit7,%AllBatches%,ClipBar
+		; ControlsetText, Edit7,,ClipBar
+		; AllBatches:=
+		; return
+	}
 	if (msg && trim(AllBatches)!="")
 		clip.editbox(AllBatches)
 	Else
@@ -1256,34 +1258,34 @@ Class ClipBar{
 		MidScreen:=A_ScreenWidth//2
 		wingetpos, Nugenesis_X, Nugenesis_y, Nugenesis_w, Nugenesis_h, NuGenesis LMS
 		wingetpos, Win_X, Win_y, Win_w, Win_h, A
-		ClipBar_H=35
+		ClipBar_H=33
 		ClipBar_H_max=56
-		ClipBar_T:=255
-		ClipBar_W=540
-		IF (ClipbarLocation= "BottomR") || (ClipbarLocation= "Right") || (ClipbarLocation= "TopR")
+		ClipBar_T:=235
+		ClipBar_W=640
+		IF (ClipbarLocation= "BOTTOMR") || (ClipbarLocation= "RIGHT") || (ClipbarLocation= "TOPR")
 			ClipBar_x:=Nugenesis_W-(Nugenesis_W//6)
 		else
 			ClipBar_x:=Nugenesis_X+(Nugenesis_W//6)
 		; ClipBar_x:=1
-		IF (ClipbarLocation= "Bottom") || (ClipbarLocation= "BottomR") || (ClipbarLocation= "Right")
+		IF (ClipbarLocation= "BOTTOM") || (ClipbarLocation= "BOTTOMR") || (ClipbarLocation= "RIGHT")
 			ClipBar_Y:=Nugenesis_h + Nugenesis_y - 44
 		else
-			ClipBar_Y:=Nugenesis_y -3
+			ClipBar_Y:=Nugenesis_y -0
 		Gui ClipBar: +AlwaysOnTop -Caption +Toolwindow +owner +HwndGUIID
 		Gui ClipBar:Default
 		; Gui, ClipBar:+Delimiter`n
 		; winSet, Transparent, 80, %GUIID%
-		GUI, ClipBar:color,ff6d56,ffffff
+		GUI, ClipBar:color,ff6c56,ffffff
 			GUI,ClipBar:Font,		ce66000	 s18 Bold , consolas
 			; GUI,ClipBar:Add,edit,		vProduct +wrap -multi	gclipbarhandler left h33 x7 y-1 w65,	%Product%
-		GUI,ClipBar:Add,edit,		vProduct +wrap	gClipBarHandler left h33 x20 y1 w65,	%Product%
-		this.AddEdit("Batch",	 "left h33 x+0 y1 w110", 			"16 c0800ff,")
-		this.AddEdit("Lot",		 "left h17 x+0 y1 w77", 			"10 c028b10, ")
+		GUI,ClipBar:Add,edit,		vProduct +wrap	gClipBarHandler left h33 x20 y0 w65,	%Product%
+		this.AddEdit("Batch",	 "left h33 x+0 y0 w110", 			"16 c0800ff,")
+		this.AddEdit("Lot",		 "left h17 x+0 y0 w77", 			"10 c01750d, ")
 		this.AddEdit("Coated",	 "left h16 y+0 w77",		"8 c909B00, Arial Narrow")
 		GUI, ClipBar:font, cffffff s9 Norm w500 , Consolas
-		This.AddEdit("Iteration", "x+0 h33 left y1 w62 Center",			 "17 Bold 107C41, Consolas")	; Text1
-		this.AddEdit("GeneralBox",	 "x+0 h17 left y1 w188",		"8, Arial")
-		this.AddEdit("GeneralBox2",	 "h16 left y+0 w188",		"8, Arial")
+		This.AddEdit("Iteration", "x+0 h33 left y0 w62 Center",			 "17 Bold 107C41, Consolas")	; Text1
+		this.AddEdit("GeneralBox",	 "x+0 h17 left y0 w288",		"8, Arial")
+		this.AddEdit("GeneralBox2",	 "h16 left y+0 w288",		"8, Arial")
 		this.AddBoxes()
 		CoordMode, mouse, screen
 		try GUI, ClipBar:Show, x%ClipBar_X% y%ClipBar_y% w%ClipBar_w% h%ClipBar_H% Noactivate, ClipBar
@@ -1308,13 +1310,11 @@ Class ClipBar{
 			Ct:=Coated ? " ct#" : ""
 			; CodeString:=clip.CodesRegex(clipboard)
 			CodeString:=trim(Product " " Batch " " Lot Ct Coated)
-				if (PriorCodestring!=Codestring){
-					FileDelete, %CodeFile%
-					sleep 200
-					FileAppend, %CodeString%, %CodeFile%
-				}
-
-
+				; if (PriorCodestring!=Codestring){
+					; FileDelete, %CodeFile%
+					; sleep 200
+					; FileAppend, %CodeString%, %CodeFile%
+				; }
 		return
 		ClipBarGuiClose:
 		ClipBarButtonOK:
@@ -1382,7 +1382,7 @@ Class ClipBar{
 		Menu, ClipBarMenu, add, Update List via Clipboard, SaveClipboardToList
 		Menu, ClipBarMenu, add, Add Data From Clipboard, +!F10
 		Menu, ClipBarMenu, Add, Stop Timer, StopTimer
-		Menu, ClipbarMenu, add, Add Sample Log, Add15SampleLog
+		; Menu, ClipbarMenu, add, Add Sample Log, Add15SampleLog
 		Menu, ClipBarMenu, Add, Detect Clipboard, clipChange
 		if winactive("Results Definition") || winactive("Composition") || winactive("Results"){
 			Menu, ClipBarMenu, Add, USP Heavy Metal, Heavy_metals, +Break
@@ -1484,6 +1484,7 @@ Class ClipBar{
 		ControlGetText, Coated, Edit4, ClipBar
 		ControlGetText, Iteration, Edit5, ClipBar
 		ControlGetText, GeneralBox, Edit6, ClipBar
+		ControlGetText, GeneralBox2, Edit7, ClipBar
 		Null:=""
 		sleep 100
 		if Product
@@ -1496,19 +1497,24 @@ Class ClipBar{
 			iniwrite, %Null%, Settings.ini, SavedVariables, Batch
 		if lot
 			iniwrite, %Lot%, Settings.ini, SavedVariables, Lot
-		else
+		else455
 			iniwrite, %Null%, Settings.ini, SavedVariables, Lot
 		if Coated
 			iniwrite, %Coated%, Settings.ini, SavedVariables, Coated
 		else
 			iniwrite, %Null%, Settings.ini, SavedVariables, Coated
-		if GeneralBox
+		if AllProducts
 		{
-			GeneralboxTrimmed:=Trim(strreplace(Generalbox,"`n","||"))
-			iniwrite, %GeneralBoxTrimmed%, Settings.ini, SavedVariables, GeneralBox
+			AllProductsTrimmed:=Trim(strreplace(strreplace(StrReplace(strreplace(AllProducts,"`n"," ")"`r"," "),"`t"," "),"`;"," "))
+			iniwrite, %AllProductsTrimmed%, Settings.ini, SavedVariables, GeneralBox
 		}
-		else
-			iniwrite, %Null%, Settings.ini, SavedVariables, GeneralBox
+		if AllBatches
+		{
+			AllBatchesTrimmed:=Trim(strreplace(strreplace(strreplace(strreplace(AllBatches,"`n"," ")"`r"," "),"`t"," "),"`;"," "))
+			iniwrite, %AllBatchesTrimmed%, Settings.ini, SavedVariables, GeneralBox2
+		}
+		; else
+			; iniwrite, %Null%, Settings.ini, SavedVariables, GeneralBox
 		if SampleGUID
 			iniwrite, %SampleGUID%, Settings.ini, SavedVariables, SampleGUID
 		; if Iteration
@@ -1517,6 +1523,7 @@ Class ClipBar{
 		; else
 			; iniwrite, %Null%, Settings.ini, SavedVariables, SampleGUID
 		; if CustomerPosition
+	return
 	}
 	loadSavedVariables(){ ;;___________________________LOADING VARIABLES_________________________
 		global
@@ -1526,7 +1533,10 @@ Class ClipBar{
 			iniRead, Batch, Settings.ini, SavedVariables, Batch
 			iniRead, Lot, Settings.ini, SavedVariables, Lot
 			iniRead, Coated, Settings.ini, SavedVariables, Coated
-			iniRead, GeneralBox, Settings.ini, SavedVariables, GeneralBox
+			iniRead, AllProducts, Settings.ini, SavedVariables, ALLProducts
+			iniRead, AllBatches, Settings.ini, SavedVariables, AllBatches
+
+			iniRead, SampleGUID, Settings.ini, SavedVariables, SampleGUID
 		}
 	}
 			return
@@ -1543,6 +1553,37 @@ Class ClipBar{
 					MouseGetPos,,,,winControl
 					return
 		}
+		WM_LBUTTONDBLCLK(wParam, lParam){
+			If !MouseIsOver("ClipBar")
+			return
+			; PostMessage, 0xA1, 2
+					X := lParam & 0xFFFF
+					Y := lParam >> 16
+					if A_GuiControl
+						ctrl := "`n(in control " . A_GuiControl . ")"
+					; PostMessage, 0xA1, 2
+					MouseGetPos,,,,winControl
+					; return
+					ControlGetFocus,winControl,ClipBar
+				if (winControl = "Edit2") {
+					ControlGetText, clipboard, Edit2, ClipBar
+				} else if (winControl = "Edit1") {
+					ControlGetText, clipboard, Edit1, ClipBar
+				} else if (winControl = "Edit3") {
+					ControlGetText, clipboard, Edit3, ClipBar
+				} else if (winControl = "Edit4") {
+					ControlGetText, clipboard, Edit4, ClipBar
+				} else if (winControl = "Edit6") {
+					ControlGetText, clipboard, Edit6, ClipBar
+				} else if (winControl = "Edit7") {
+					ControlGetText, clipboard, Edit7, ClipBar
+				}
+				TT(Clipboard)
+				return
+		}
+
+
+
 
 
 

@@ -26,7 +26,9 @@ RegexBatch := "i)(?<!Ct#)(?P<Batch>\d{3}-\d{4}\b)"
 QuickPaste := "20230801000000000"
 EnterEachLine := "\\10.1.2.118\users\vitaquest\mmignin\VQ_Helper\RawFiles\EnterEachLine.ahk"
 ; SettingsFile := "\\10.1.2.118\users\vitaquest\mmignin\VQ_Helper\RawFiles\Settings.ini"
-iniRead, ResizeExcel, Settings.ini, Config, ResizeExcel
+	iniRead, ResizeExcel, Settings.ini, Config, ResizeExcel
+	stringupper,ResizeExcel,ResizeExcel
+	
 full_command_line := DllCall("GetCommandLine", "str")
 
 Menu, Tray, add, EnterEachLine, ShowEnterEachLine
@@ -104,9 +106,7 @@ activeCheck:
 		; sleep 1000
 		return
 	}
-	else if winactive("Book ahk_class XLMAIN ahk_exe EXCEL.exe") {
-		If (ResizeExcel = "No")
-			return
+	else if winactive("Book ahk_class XLMAIN ahk_exe EXCEL.exe") && !(ResizeExcel = "NO"){
 		WinGetPos, bWinX, bWinY, bWinW, bWinH
 		screenwidth := A_ScreenWidth - 10
 		screenHeight := A_ScreenHeight - 40
@@ -156,8 +156,8 @@ clipChange(type) {
 
 
 
-~RWin::Send {Blind}{vkFF}
-~LWin::Send {Blind}{vkFF}
+; ~RWin::Send {Blind}{vkFF}
+; ~LWin::Send {Blind}{vkFF}
 
 
 
@@ -281,47 +281,47 @@ Return
 ; F10::F5
 ; 		return
 
-#ifwinactive, ahk_exe EXCEL.EXE
-;	F2::Sendinput, %SampleGUID%{enter}
-;F3::Sendinput, %SampleGUID%{enter}
-;F3::Sendinput, %SampleGUID%{enter}
-F10::
-	if !winactive("Microsoft Visual Basic for Applications")
-		winactivate, Microsoft Visual Basic for Applications
-	sendinput, {F5}
-	winactivate, ahk_class XLMAIN
-return
-F7::
-	WinGetPos, WinX, WinY, WinW, WinH
-	targetWidth := A_ScreenWidth / 3 ; Calculate one third of the screen width
-	targetX := A_ScreenWidth - targetWidth ; Calculate the X position to start the window
-	WinRestore, ahk_class XLMAIN ahk_exe EXCEL.EXE  ; Restore the window to normal state if it is maximized
-	WinMove, ahk_class XLMAIN ahk_exe EXCEL.EXE,, targetX, WinY, targetWidth, WinH
-return
-F6::
-	WinGetPos, WinX, WinY, WinW, WinH
-	targetWidth := A_ScreenWidth / 2 ; Calculate one half of the screen width
-	;targetX := A_ScreenWidth - targetWidth  ; Calculate the X position to start the window
-	WinRestore, ahk_class XLMAIN ahk_exe EXCEL.EXE  ; Restore the window to normal state if it is maximized
-	WinMove, ahk_class XLMAIN ahk_exe EXCEL.EXE,, 0, WinY, targetWidth, WinH
-return
-F8::
-	CoordMode, Mouse, Screen
-	WinGetPos, WinX, WinY, WinW, WinH
-	MouseGetPos, rmx, rmY,
-	if rmx < 400
-		rmx := 400
-	if rmy< 600
-		rmy := 600
-	WinMove, ahk_class XLMAIN ahk_exe EXCEL.EXE,, %Winx%, %winY%, %rMx%, %rmy%
-	sleep 400
-	CoordMode, Mouse, Window
-return
+; #ifwinactive, ahk_exe EXCEL.EXE
+; ;	F2::Sendinput, %SampleGUID%{enter}
+; ;F3::Sendinput, %SampleGUID%{enter}
+; ;F3::Sendinput, %SampleGUID%{enter}
+; F10::
+; 	if !winactive("Microsoft Visual Basic for Applications")
+; 		winactivate, Microsoft Visual Basic for Applications
+; 	sendinput, {F5}
+; 	winactivate, ahk_class XLMAIN
+; return
+; F7::
+; 	WinGetPos, WinX, WinY, WinW, WinH
+; 	targetWidth := A_ScreenWidth / 3 ; Calculate one third of the screen width
+; 	targetX := A_ScreenWidth - targetWidth ; Calculate the X position to start the window
+; 	WinRestore, ahk_class XLMAIN ahk_exe EXCEL.EXE  ; Restore the window to normal state if it is maximized
+; 	WinMove, ahk_class XLMAIN ahk_exe EXCEL.EXE,, targetX, WinY, targetWidth, WinH
+; return
+; F6::
+; 	WinGetPos, WinX, WinY, WinW, WinH
+; 	targetWidth := A_ScreenWidth / 2 ; Calculate one half of the screen width
+; 	;targetX := A_ScreenWidth - targetWidth  ; Calculate the X position to start the window
+; 	WinRestore, ahk_class XLMAIN ahk_exe EXCEL.EXE  ; Restore the window to normal state if it is maximized
+; 	WinMove, ahk_class XLMAIN ahk_exe EXCEL.EXE,, 0, WinY, targetWidth, WinH
+; return
+; F8::
+; 	CoordMode, Mouse, Screen
+; 	WinGetPos, WinX, WinY, WinW, WinH
+; 	MouseGetPos, rmx, rmY,
+; 	if rmx < 400
+; 		rmx := 400
+; 	if rmy< 600
+; 		rmy := 600
+; 	WinMove, ahk_class XLMAIN ahk_exe EXCEL.EXE,, %Winx%, %winY%, %rMx%, %rmy%
+; 	sleep 400
+; 	CoordMode, Mouse, Window
+; return
 
-#ifwinactive
+; #ifwinactive
 
-#v::Send, ^{v}
-!v::Send, ^v
+; #v::Send, ^{v}
+; !v::Send, ^v
 ; F1::Sendinput, %Batch%
 ; F2::Sendinput, %SampleGUID%
 ; F3::Sendinput, %SampleGUID%
