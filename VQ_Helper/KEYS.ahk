@@ -1,8 +1,8 @@
 #ifwinactive,
 return
 Mbutton::Mbutton
-~RWin::Send {Blind}{vkFF}
-~LWin::Send {Blind}{vkFF}
+; ~RWin::Send {Blind}{vkFF}
+; ~LWin::Send {Blind}{vkFF}
 ; +F4::ExitApp
 ^+esc::ExitApp
 ^esc::
@@ -65,75 +65,112 @@ F8::
 Lbutton::send, {ctrldown}{Lbutton}{ctrlup}
 
 #If MouseIsOver("ClipBar ahk_exe VQ_Helper.exe")
-^Mbutton::
-		ControlGetFocus,winControl,ClipBar
-		if (winControl="Edit2"){
-			GetAllWholeBatches()
-		}
-		if (winControl="Edit3"){
-			MenuCodeSelect()
-		}
-; 		else
-; send, {ctrldown}{Lbutton}{ctrlup}
-; return
+; ^Mbutton::
+; 		ControlGetFocus,winControl,ClipBar
+; 		if (winControl="Edit2"){
+; 			GetAllWholeBatches()
+; 		}
+; 		if (winControl="Edit3"){
+; 			MenuCodeSelect()
+; 		}
+; ; 		else
+; ; send, {ctrldown}{Lbutton}{ctrlup}
+; ; return
 
 RBUTTON::
-ControlGetFocus,winControl,ClipBar
-		if (winControl="Edit6"){
-			SimpleClip:=1
-			Clipboard:= GetAllProducts(" ")
-			Clipbar.Flash()
-			SimpleClip:=
-			return
+; sendinput,{Lbutton}
+; ControlGet,winControlR,ClipBar
+MouseGetPos,,,,winControl
+if (winControl="Edit1") ||  (winControl="Edit6") {
+try menu, AllProductsMenu, DeleteAll
+	FileRead,AllProducts,AllProducts.txt
+		; iniwrite, %AllProducts%, Settings.ini, SavedVariables, AllProducts
+		loop, parse, AllProducts, " "
+		{
+			Menu, AllProductsMenu, Add, %a_LoopField%, allproductsmenubutton
+			if (A_LoopField = product)
+				try Menu, AllProductsMenu, Check, %a_LoopField%,
 		}
-		if (winControl="Edit7"){
-			SimpleClip:=1
-			Clipboard:=GetAllBatches(" ")
-			SimpleClip:=
-			Clipbar.Flash()
-			 return
+		try Menu,AllProductsMenu,show
+
+} Else if (winControl="Edit2") ||  (winControl="Edit7"){
+
+		FileRead,AllBatches,AllBatches.txt
+		; iniwrite, %AllBatches%, Settings.ini, SavedVariables, AllBatches
+	try menu, AllBatchesMenu, DeleteAll
+		loop, parse, AllBatches, " "
+		{
+			Menu, AllBatchesMenu, Add, %a_LoopField%, allbatchesmenubutton
+			if (A_LoopField = batch)
+				try Menu, AllBatchesMenu, Check, %a_LoopField%,
 		}
+		try Menu,AllBatchesMenu,show
+		GetAllBatches(" ")
+		sleep 1000
+		}
+
+	else if (winControl="Edit5")
+		WorkTab.CustomerMenu()
 		else
 			LMS.Menu()
+		; sendinput, Rbutton
 		return
-+RBUTTON::
-ControlGetFocus,winControl,ClipBar
-		if (winControl="Edit6"){
-			SimpleClip:=1
-			Clipboard:= GetAllProducts(";")
-			SimpleClip:=
-			Clipbar.Flash()
-			return
-		}
-		if (winControl="Edit7"){
-			SimpleClip:=1
-			Clipboard:=GetAllBatches(";")
-			SimpleClip:=
-			Clipbar.Flash()
-			 return
-		}
-		else
-			LMS.Menu()
-		return
-!RBUTTON::
-ControlGetFocus,winControl,ClipBar
-		if (winControl="Edit6"){
-			SimpleClip:=1
-			Clipboard:= GetAllProducts("`r`n")
-			SimpleClip:=
-			Clipbar.Flash()
-			return
-		}
-		if (winControl="Edit7"){
-			SimpleClip:=1
-			Clipboard:=GetAllBatches("`r`n")
-			SimpleClip:=
-			Clipbar.Flash()
-			return
-		}
-		else
-			LMS.Menu()
-		return
+; 		if (winControl="Edit6"){
+; 			SimpleClip:=1
+; 			Clipboard:= GetAllProducts(" ")
+; 			Clipbar.Flash()
+; 			TT(AllProducts,1000,,,3)
+; 			SimpleClip:=
+; 			return
+; 		if (winControl="Edit7"){
+; 			SimpleClip:=1
+; 			Clipboard:=GetAllBatches(" ")
+; 			TT(AllBatches,1000,,,4)
+; 			SimpleClip:=
+; 			Clipbar.Flash()
+; 			 return
+; 		}
+		; else
+; 		; WM_LBUTTONDOWN(wParam, lParam)
+; 		return
+; !LBUTTON::
+; ControlGetFocus,winControl,ClipBar
+; 		if (winControl="Edit6"){
+; 			SimpleClip:=1
+; 			Clipboard:= GetAllProducts(";")
+; 			SimpleClip:=
+; 			Clipbar.Flash()
+; 			return
+; 		}
+; 		if (winControl="Edit7"){
+; 			SimpleClip:=1
+; 			Clipboard:=GetAllBatches(";")
+; 			SimpleClip:=
+; 			Clipbar.Flash()
+; 			 return
+; 		}
+; 		else
+; 			LMS.Menu()
+; 		return
+; +LBUTTON::
+; ControlGetFocus,winControl,ClipBar
+; 		if (winControl="Edit6"){
+; 			SimpleClip:=1
+; 			Clipboard:= GetAllProducts("`r`n")
+; 			SimpleClip:=
+; 			Clipbar.Flash()
+; 			return
+; 		}
+; 		if (winControl="Edit7"){
+; 			SimpleClip:=1
+; 			Clipboard:=GetAllBatches("`r`n")
+; 			SimpleClip:=
+; 			Clipbar.Flash()
+; 			return
+; 		}
+; 		else
+; 			LMS.Menu()
+; 		return
 
 	; F7::copyLabelCopyDoc()
 ; 	; wheelup::
@@ -227,22 +264,27 @@ ControlGetFocus,winControl,ClipBar
 
 Mbutton::
 	ControlGetFocus,winControl,ClipBar
-		if (wincontrol="Edit5")
-			worktab.CustomerMenu()
+			; worktab.CustomerMenu()
 		; else if (winControl="Edit1")
 			; LMS.SearchBar(Product,"{enter}",0)
 		; else if (winControl="Edit2")
 			; LMS.SearchBar(Batch,"{enter}",0)
+		if (wincontrol="Edit1")
+			ControlgetText, clipboard, Edit1,ClipBar
 		else if (winControl="Edit3")
-			ControlsetText, Edit3,,ClipBar
-		else if (winControl="Edit4")
-			ControlgetText, clipboard,Edit6,ClipBar
-		else if (winControl="Edit7"){
+			ControlgetText, clipboard, Edit3,ClipBar
+		else if (winControl="Edit2")
+			ControlgetText, clipboard, Edit2,ClipBar
+		else if (winControl="Edit5")
+			ControlgetText, clipboard, Edit5,ClipBar
+		else if (winControl="Edit6")
+			ControlgetText, clipboard, Edit6,ClipBar
+		else if (winControl="Edit7")
 			ControlgetText, clipboard, Edit7,ClipBar
-		}
 			; clipboard:=Sampleguid
 		else
 			MenuCodeSelect()
+		tt(Clipboard)
 	return
 
 
@@ -287,7 +329,6 @@ Mbutton::
 	; }
 
 #ifwinactive, Edit test `(Field Configuration: I`, Analytical`)
-	mbutton::MsgBox, % "yo"
 	F10::Send,{Click, 402, 284}{end}{down 2}{shiftdown}{9}{shiftup}on sample log{shiftdown}{0}{shiftup}{click, 334, 618}
 
 #ifWinExist, Select Product ahk_exe EXCEL.EXE
@@ -586,7 +627,6 @@ F7::WinMove, ahk_class XLMAIN ahk_exe EXCEL.EXE,, %NuX%, %NuY%, 1250, 1200
 					return
 
 				:*R:00e`;::#00 elongated capsule / 0.995" x 0.336"
-				:*R:00e`;::#00 elongated capsule / 0.995" x 0.336"
 				:*R:00`;::#00 capsule / 0.917" x 0.336"
 				:*R:3`;::#3 capsule / 0.626" x 0.229"
 				:*R:2`;::#2 capsule / 0.709" x 0.250"
@@ -597,7 +637,7 @@ F7::WinMove, ahk_class XLMAIN ahk_exe EXCEL.EXE,, %NuX%, %NuY%, 1250, 1200
 				:*R:5.5o`;::Oblong / 0.750" x 0.313"
 				:*R:5.5ov`;::Oval / 0.625" x 0.344"
 				:*R:5o`;::Oblong / 0.750" x 0.250"
-				:*R:1c;::Each (1) capsule contains
+				:*R:1c';::Each (1) capsule contains
 				:*R:2c`;::Each two (2) capsules contains
 				:*R:3c`;::Each three (3) capsules contains
 				:*R:4c`;::Each four (4) capsules contains
@@ -1044,7 +1084,9 @@ return
 
 
 
-+F10:: ; add  appearance method
+;;;;--- add  appearance method
+; +F10::
+AddAppearanceMethods:
 		WindowMoved:=1
 	CoordMode, ToolTip, Relative
 	MouseGetPos, m_x, m_Y
@@ -1107,45 +1149,45 @@ return
 
 return
 
-Enter::
-	LMS.SaveCode()
-	sleep 200
-	sendinput, {Enter}
-	return
+; Enter::
+	; LMS.SaveCode()
+	; sleep 200
+	; sendinput, {Enter}
+	; return
 +Enter::LMS.SaveCode()
 +^F11::LMS.OrientSearchbar()
 !F4::Return
-^F9::
-	send, ^c
-	sleep 500
-		If (SampleguID){
-				; FileRead, PreviousSampleguIDs, % PreviousSampleguIDsFile
-				  ; {
-				; NewPreviousSampleguIDs:=Trim(RemoveDuplicates(PreviousSampleguIDs)"`n"SampleguID)
-					FileDelete, %PreviousSampleguIDsFile%
-					sleep 200
-					FileAppend, %NewPreviousSampleguIDs%, %PreviousSampleguIDsFile%
-						; return
-			; }
-		}
-		clipboard:=sampleguid
-		TT(Sampleguid)
-	return
-	!F10::LMS.AddsampleLog(5)
-	!F9::
-		If (LMS.DetectTab() != "Requests"){
-			send, {click 40 40}
-			sleep 50
-			send,{click 50 75 0}
-			sleep 50
-			send,{click 280 75 0}
-			sleep 100
-			send,{click 280 220}
-		}
-		else
-			return
-	return
-^F7::FileRead, Clipboard, U:\VQ_Helper\ClippedExcelData.txt
+; ^F9::
+; 	send, ^c
+; 	sleep 500
+; 		If (SampleguID){
+; 				; FileRead, PreviousSampleguIDs, % PreviousSampleguIDsFile
+; 				  ; {
+; 				; NewPreviousSampleguIDs:=Trim(RemoveDuplicates(PreviousSampleguIDs)"`n"SampleguID)
+; 					FileDelete, %PreviousSampleguIDsFile%
+; 					sleep 200
+; 					FileAppend, %NewPreviousSampleguIDs%, %PreviousSampleguIDsFile%
+; 						; return
+; 			; }
+; 		}
+; 		clipboard:=sampleguid
+; 		TT(Sampleguid)
+; 	return
+	; !F10::LMS.AddsampleLog(5)
+	; !F9::
+	; 	If (LMS.DetectTab() != "Requests"){
+	; 		send, {click 40 40}
+	; 		sleep 50
+	; 		send,{click 50 75 0}
+	; 		sleep 50
+	; 		send,{click 280 75 0}
+	; 		sleep 100
+	; 		send,{click 280 220}
+	; 	}
+	; 	else
+	; 		return
+	; return
+; ^F7::FileRead, Clipboard, U:\VQ_Helper\ClippedExcelData.txt
 	; SpecTab.Table()
 	;^F10::LMS.AddSampleLog(15)
 	; F10::
@@ -1241,7 +1283,7 @@ return
 
 	+F8::LMS.SearchBar("",,"False")
 
-	+#v::LMS.Searchbarpaste(";")
+	; +#v::LMS.Searchbarpaste(";")
 	+^v::LMS.Searchbarpaste(";")
 	^v::LMS.Searchbarpaste(A_space)
 	+!v::LMS.Searchbarpaste(A_space)
@@ -1250,21 +1292,21 @@ return
 
 ;;\\____eln.EXE ____________                                                       .
 #Ifwinactive, ahk_exe eln.exe
-	F1::Sendinput, %Product%
-	+F1::sendinput % GetAllProducts(" ")
-	+^F1::sendinput % GetAllProducts("`;")
-	F2::Sendinput, %Batch%
-	+F2::sendinput % GetAllBatches(" ")
-	+^F2::sendinput % GetAllBatches("`;")
-	F3::Sendinput, %lot%
-	F4::Sendinput, %Coated%
+	; F1::Sendinput, %Product%
+	; +F1::sendinput % GetAllProducts(" ")
+	; +^F1::sendinput % GetAllProducts("`;")
+	; F2::Sendinput, %Batch%
+	; +F2::sendinput % GetAllBatches(" ")
+	; +^F2::sendinput % GetAllBatches("`;")
+	; F3::Sendinput, %lot%
+	; F4::Sendinput, %Coated%
 	!1::Sendinput, %Product%
 	!2::Sendinput, %Batch%
 	!3::Sendinput, %lot%
 	!4::Sendinput, %Coated%
-	+^1::sendinput % GetAllProducts("`;")
-	+!1::sendinput % GetAllProducts("`n")
-	+^2::sendinput % GetAllBatches("`;")
+	; +^1::sendinput % GetAllProducts("`;")
+	; +!1::sendinput % GetAllProducts("`n")
+	; +^2::sendinput % GetAllBatches("`;")
 
 
 
@@ -1301,13 +1343,13 @@ return
 	+F9::lms.Menu("Shift")
 	F9::lms.Menu()
 
-	<!left::GetAllProducts()
-	<!right::GetAllBatches()
+	; <!left::GetAllProducts()
+	; <!right::GetAllBatches()
 	F13::breaking.point(1)
-	+!F5::LMS.Menu()
-	^Space::LMS.SearchBar("",,"False")
-	!^Space::LMS.SearchBar("","{delete}","False")
-	+!F10::LMS.AddDataFromClipboard()
+	; +!F5::LMS.Menu()
+	; ^Space::LMS.SearchBar("",,"False")
+	; !^Space::LMS.SearchBar("","{delete}","False")
+	; +!F10::LMS.AddDataFromClipboard()
 
 	pause::						Suspend, Toggle
 	#h::return
@@ -1326,7 +1368,6 @@ return
 	:*:pm`;::
 		Sendinput, %product%`, Finished, Micro{tab 3}{right 5}{tab}{right 2}
 	Return
-	Return
 	:*:paa`;::
 		Sendinput, %product%`, In Process, Analytical (Annual){tab 3}{right 6}{tab}{right}
 	Return
@@ -1344,7 +1385,7 @@ return
 	:*:cr`;::`Coated, Retain
 	:*:ca`;::`Coated, Analytical
 	:*:cp`;::`Coated, Physical
-	:*:in`;::`ingredient
+	; :*:in`;::`ingredient
 	; :*:Pa`;::`P. aeruginosa
 	:*:uc`;::`Update Total Coliforms Method
 
@@ -1470,21 +1511,24 @@ get_window_info:
 	if !getTitle
 		WingetTitle getTitle, A
 	simpleclip:=1
-	Clipboard:=getTitle
+	; Clipboard:=getTitle
 	Clipwait,1
 	sleep 500
 	simpleclip:=
 	tt(getTitle,1000,100,100)
+	ControlsetText, Edit6,%GetTitle%,ClipBar
+
 return
 
 get_mouse_info:
 	MouseGetPos, getX, getY, getWin
 	simpleclip:=1
-	Clipboard:=getX ", " GetY
+	GetMouse:=getX ", " GetY
 	clipwait,1
 	sleep 300
 	simpleclip:=
-	tt(getX ", " GetY,2000,100,50,,,"M")
+	tt(GetMouse,2000,100,50,,,"M")
+	ControlsetText, Edit7,%GetMouse%,ClipBar
 	return
 
 return
@@ -1637,15 +1681,27 @@ ReadIniFiles(){
 	iniRead, SampleGUID, Settings.ini, SavedVariables, SampleGUID
 	iniRead, Iteration, Settings.ini, SavedVariables, Iteration
 	iniRead, ClipbarLocation, Settings.ini, Config, ClipbarLocation
+	StringUpper,ClipbarLocation,ClipbarLocation
 	iniRead, CompileTime, Settings.ini, Config, CompileTime
+
 	; iniRead, Version, Settings.ini, Config, Version
-	; iniRead, GeneralBox, Settings.ini, SavedVariables, GeneralBox
+	; iniRead, ResizeExcel, Settings.ini, Config, ResizeExcel
+	; stringupper,ResizeExcel,ResizeExcel
+	iniRead, GeneralBox, Settings.ini, SavedVariables, AllProducts
+	iniRead, GeneralBox2, Settings.ini, SavedVariables, AllBatches
 	; iniRead, SampleGUIDMode, Settings.ini, SavedVariables, SampleGUIDMode
 	; iniread, PriorCodeString, Settings.ini, SavedVariables, PriorCodeString
+		ControlSetText, Edit6, GeneralBox, ClipBar
+		ControlSetText, Edit7, GeneralBox2, ClipBar
+		FileRead,AllProducts,AllProducts.txt
+		FileRead,AllBatches,AllBatches.txt
+				; AllProducts:=GetAllProducts(" ")
+		; AllBatches:=GetAllBatches(" ")
 	iniread, CodeString, Settings.ini, SavedVariables, CodeString
 	iniRead, Ingredient_List_Adjustment, Settings.ini, Config, Ingredient_List_Adjustment
 	; iniread, Ften, Settings.ini, Config, Ften
-
+	iniRead, DisableAutoScroll, Settings.ini, Config, DisableAutoScroll
+	StringUpper, DisableAutoScroll, DisableAutoScroll
 	; iniread, NormalWinDelay, Settings.ini, Config, NormalWinDelay
 	iniread, ActiveTimerCheck, Settings.ini, Config, ActiveTimerCheck
 	iniRead, IngredientNoteDropDownCount, Settings.ini, Config, IngredientNoteDropDownCount
@@ -1706,20 +1762,25 @@ TT(msg:="yo", time=1500, X:="",Y:="",N:="", Transparent:=240,Position:="S") {
 	global simpleclip
 	ttMx:=100
 	ttmy:=1
-	if Position= M
+	if (Position= "M")
 	{
 	; 	; CoordMode, tooltip, screen
-		CoordMode, tooltip, mouse
+		CoordMode, tooltip, screen
 		CoordMode, Mouse, screen
 	}
 	winGetPos, ttwinx,ttwiny, ttwinw, ttwinh, A
 	MouseGetPos, mX, mY
-	; if Position="W"
 	; else
-	; {
-		CoordMode, tooltip, window
-		CoordMode, Mouse, window
-	; }
+	if (Position="W")
+	{
+		CoordMode, tooltip, Window
+		CoordMode, Mouse, Window
+	}
+	else
+	{
+		CoordMode, tooltip, Screen
+		CoordMode, Mouse, Screen
+	}
 	if Simpleclip
 		return
 	ttwinx:=Floor(ttwinx+X)
@@ -1729,9 +1790,9 @@ TT(msg:="yo", time=1500, X:="",Y:="",N:="", Transparent:=240,Position:="S") {
 	; CoordMode, ToolTip, Window
 	sleep 20
 	; CoordMode, mouse, window
-	if Position = M
+	if (Position = "M")
 		tooltip, %msg%, %ttx%, %tty%,%N%
-	else if Position = W
+	else if (Position = "W")
 		tooltip, %msg%, %ttwinx%, %ttwiny%,%N%
 	else
 		tooltip, %msg%, %ttMX%, %ttmY%,%N%
