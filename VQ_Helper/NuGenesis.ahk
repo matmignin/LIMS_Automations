@@ -52,19 +52,19 @@ Loop, %FilePattern%, 1, 0
 	 	 listofIngredients.=Trim(strReplace(listofIngredientsPreTrim2, "`r",""))
 		;  regingredient.insert(listofIngredientsPreTrim2)
 			}
-		; FileDelete, U:\VQ_Helper\LabelCopyText.txt
+		; FileDelete, %A_ScriptDir%  \LabelCopyText.txt
 			; sleep 400
-	; FileAppend,  %listofIngredients%, U:\VQ_Helper\LabelCopyText.txt
+	; FileAppend,  %listofIngredients%, %A_ScriptDir%  \LabelCopyText.txt
 	; sleep 500
 	Clipboard:=listofIngredients
 	If showTooltip
 		tt(listofIngredients,1000)
 	If SaveText
 		{
-		Try FileDelete, U:\VQ_Helper\LabelCopies\%Product%.txt
-		FileAppend,  %ServingSize%`n%PillSize%`n`n%listofIngredients%, U:\VQ_Helper\LabelCopies\%Product%.txt
-		; FileAppend,  , U:\VQ_Helper\LabelCopies\%Product%Reg.txt
-		; FileAppend,  %listofIngredients%, U:\VQ_Helper\LabelCopies\%Product%Reg.txt
+		Try FileDelete, %A_ScriptDir%  \LabelCopies\%Product%.txt
+		FileAppend,  %ServingSize%`n%PillSize%`n`n%listofIngredients%, %A_ScriptDir%  \LabelCopies\%Product%.txt
+		; FileAppend,  , %A_ScriptDir%  \LabelCopies\%Product%Reg.txt
+		; FileAppend,  %listofIngredients%, %A_ScriptDir%  \LabelCopies\%Product%Reg.txt
 		}
 	tt(Servingsize "`n" PillSize "`n`n" listofIngredients,5000,10,10,3,190)
 
@@ -1278,7 +1278,7 @@ AddNewProduct(){ ;for naming Product code and customer,
 
 	IngredientsMenu() { ;; create a dropdown from CustomerMenu ini datafile
 		global
-		Ingredientfile:="U:\VQ_Helper\Ingredients.ini"
+		Ingredientfile:=A_ScriptDir "\Ingredients.ini"
 		try menu, IngredientsMenu, DeleteAll
 
 		Loop, Read, %Ingredientfile%
@@ -1573,8 +1573,8 @@ class SpecTab {
 }
 ClickEmptyRequirements(){
 	winactivate, NuGenesis LMS
-		ImageFile := "U:\VQ_Helper\images\dash.PNG"
-		ImageFile2 := "U:\VQ_Helper\images\emptyrdpnores.JPG"
+		ImageFile := A_ScriptDir "\images\dash.PNG"
+		ImageFile2 := A_ScriptDir "\images\emptyrdpnores.JPG"
 		WinGetPos, WinX, WinY, WinWidth, WinHeight, NuGenesis LMS
 		thirdwinwidth:=winwidth/3
 		thirdwinHeight:=winHeight/3

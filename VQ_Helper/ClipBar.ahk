@@ -54,15 +54,15 @@ clipChange(){
 		sleep 2500
 		; Clipboard:=
 		GoSub ShowScanLabelCopy
-		; FileDelete, U:\VQ_Helper\LabelCopyText.txt
-		; Try FileDelete, U:\VQ_Helper\LabelCopies\%Product%.txt
-		; FileAppend,  %labelcopytext%, U:\VQ_Helper\LabelCopies\%Product%.txt
+		; FileDelete, %A_ScriptDir%  \LabelCopyText.txt
+		; Try FileDelete, %A_ScriptDir%  \LabelCopies\%Product%.txt
+		; FileAppend,  %labelcopytext%, %A_ScriptDir%  \LabelCopies\%Product%.txt
 		return
   }
   else if InStr(Clipboard, "<<CoMPILE>>",true, 1,1){
 		Clipboard:=
     sleep 800
-    Run, "U:\VQ_Helper\RawFiles\COMPILE.exe"
+    Run, A_ScriptDir "\RawFiles\COMPILE.exe"
     exitapp
     Return
   }
@@ -199,9 +199,9 @@ Gui ClipBar:Default
 		; tt(clipboard)
 		sleep 2800
 		GoSub ShowScanLabelCopy
-		; FileDelete, U:\VQ_Helper\LabelCopyText.txt
-		; Try FileDelete, U:\VQ_Helper\LabelCopies\%Product%.txt
-		; FileAppend,  %labelcopytext%, U:\VQ_Helper\LabelCopies\%Product%.txt
+		; FileDelete, %A_ScriptDir%  \LabelCopyText.txt
+		; Try FileDelete, %A_ScriptDir%  \LabelCopies\%Product%.txt
+		; FileAppend,  %labelcopytext%, %A_ScriptDir%  \LabelCopies\%Product%.txt
 		return
   }
 ;   else if InStr(input, ">>|", true,1,1) {
@@ -236,7 +236,7 @@ Gui ClipBar:Default
 	CodesRegex(input:=""){
 		global RegexProduct, RegexBatch, RegexLot, RegexCoated, RegexSampleGUID, Product, Lot, Batch, Coated, sampleGUID, PriorSampleGUID, CodeString, CodeFile, PriorCodeString, CustomerPosition, Iteration,AllBatches, AllProducts
 		Gui ClipBar:Default
-			PreviousSampleGUIDsFile:="U:\VQ_Helper\PriorSampleGUIDs.txt"
+			PreviousSampleGUIDsFile:=A_ScriptDir "\PriorSampleGUIDs.txt"
 			PriorCodestring:=CodeString
 			PriorSampleGUID:=SampleGUID
 		codestring:=
