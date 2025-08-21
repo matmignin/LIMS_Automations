@@ -34,13 +34,21 @@
 
 	ReadIniFiles()
 	tooltipNumber=6
-	HotkeysTip := CompileTime "
-	(
-	v
-	`n
+	HotkeysTip := "
+(
 F5    :: copyLabelCopy
 ^+v   :: Paste(`;)
-	)"
+1c`;  	:: 1 capsule
+2t`;  	:: two (2) capsules
+3s`;  	:: three (3) scoops
+00`;  	:: #00 capsule / 0.917`" x 0.336`"
+3s`;  	:: three (3) scoops
+00`;  	:: #00 capsule / 0.917`" x 0.336`"
+00e`;  	:: #00 elongated capsule / 0.995`" x 0.336`"
+etc
+)"
+
+
 ; !F10 :: AddsampleLog x5
 ; !+F10  :: AddDataFromClipboard
 ; ^+w   :: get_window_info
@@ -57,7 +65,7 @@ F5    :: copyLabelCopy
 ; +!1  ::  GetAllProducts(``n)
 ; +^2  ::  GetAllBatches(`;)
 
-VariableFilePath := "\\10.1.2.118\users\vitaquest\mmignin\VQ_Helper\ClippedExcelData.txt"
+VariableFilePath := A_ScriptDir "\ClippedExcelData.txt"
 
 FileGetTime, InitialFileTime, %VariableFilePath%
 
@@ -89,7 +97,6 @@ prefix:=
 	; Menu, Tray, add, Marker, :MarkerSubMenu
 	;Menu, Tray, Add, Show Variables, ShowVariables
 	;Menu, Tray, Add, ListLines, ListLines
-	Menu, Tray, Add, Settings, SettingsFile
 	Menu, Tray, Add, mmignin, mmigninFolder
 	; Menu, Tray, Add, Copy GUID, CopyGUID
 	if (DisableAutoScroll != "YES")
@@ -105,6 +112,7 @@ else
 	Menu, Tray, Add, Hotkeys, ShowHotkeys
 	Menu, Tray, Add, &Reload, ReloadSub
 	Menu, Tray, Add, Exitsub, Exitsub
+	Menu, Tray, Add, Settings, SettingsFile
 	Menu, Tray, tip, %HotkeysTip% %HotkeysTip%
 	Menu, Tray, Default, &Reload
 
@@ -121,7 +129,7 @@ else
 	regexunit:="i)(?P<unit>\w*)"
 	RegexRequirements:="iO)(?<Prefix>(NLT |NMT |<))?(?<LowerLimit>([,|\d]*.?[\d]*))( - (?<UpperLimit>[,|\d]*.?[\d]*))? (?<Unit>(mg RAE|mcg RAE|mcg DFE|mg|mcg|g|IU|CFU\\g|ppm|ppb))"
 	RegexSampleGUID:="i)(?P<SampleguID>\b[a-z0-9]{8}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{12}\b)"
-	PreviousSampleguIDsFile:="U:\VQ_Helper\PriorSampleguIDs.txt"
+	PreviousSampleguIDsFile:=A_ScriptDir "\PriorSampleguIDs.txt"
 	; RegexCombined := "iO)(?<=[\w\d]{3})?(?P<Product>[abcdefghijklmn]\d{3}\b)|(?<!Ct#)(?P<Batch>\d{3}-\d{4}\b)|(?P<Lot>\b\d{4}\w\d\w?|\bBulk\b|G\d{7}\w?\b|VC\d{6}[ABCDEFGH]?|V[A-Z]\d{5}[A-Z]\d?|\d{5}\[A-Z]{3}\d)|(\d{4}\w\d\w?.|\bBulk\b|G\d{7}\w?\b|VC\d{6}[ABCDEFGH]?|V[A-Z]\d{5}[A-Z]\d?|\d{5}\[A-Z]{3}\d\s|coated: |ct#|ct\s?|coated\s?|ct#/s)(?P<Coated>\d{3}-\d{4})"
 	RegexCombined := "i)(?<=[\w\d]{3})?(?P<Product>[defghijklm]\d{3}\b)|(?<!Ct#)(?P<Batch>\d{3}-\d{4}\b)|(?P<Lot>\b\d{4}\w\d\w?|\bBulk\b|G\d{7}\w?\b|VC\d{6}[ABCDEFGH]?|V[A-Z]\d{5}[A-Z]\d?|\d{5}\[A-Z]{3}\d)|(\d{4}\w\d\w?.|\bBulk\b|G\d{7}\w?\b|VC\d{6}[ABCDEFGH]?|V[A-Z]\d{5}[A-Z]\d?|\d{5}\[A-Z]{3}\d\s|coated: |ct#|ct\s?|coated\s?|ct#/s)(?P<Coated>\d{3}-\d{4})"
 
@@ -129,7 +137,8 @@ else
 
 	OnClipboardChange("clipChange")
 	PasteTime:=A_TickCount
-	CodeFile:= "\\10.1.2.118\users\vitaquest\mmignin\VQ_Helper\Code.txt"
+	; CodeFile:= "\\10.1.2.118\users\vitaquest\mmignin\%A_ScriptDir% Code.txt"
+	CodeFile:= A_ScriptDir" \Code.txt"
 	OnExit("ClipBar.SaveVariables")
 	SetTimer,activeCheck, %ActiveTimerCheck%
 	SetTimer,FileCheck, 1000
@@ -150,7 +159,7 @@ Toggle_DisableAutoScroll:
     Menu, Tray, ToggleCheck, Disable AutoScroll
 
     ; save back to INI
-    IniWrite, %DisableAutoScroll%, %A_ScriptDir%\Settings.ini, Config, DisableAutoScroll
+    IniWrite, %DisableAutoScroll%, %A_ScriptDir% \Settings.ini, Config, DisableAutoScroll
 
     ; optional quick feedback
     TrayTip, Settings saved, DisableAutoScroll = %DisableAutoScroll%, 2
@@ -503,8 +512,8 @@ Loop, %FilePattern%, 1, 0
 		tt(LabelCopyText,1000)
 	If SaveText
 		{
-		Try FileDelete, U:\VQ_Helper\LabelCopies\%Product%.txt
-		FileAppend,  %labelcopytext%, U:\VQ_Helper\LabelCopies\%Product%.txt
+		Try FileDelete, %A_ScriptDir% \LabelCopies\%Product%.txt
+		FileAppend,  %labelcopytext%, %A_ScriptDir% \LabelCopies\%Product%.txt
 		}
 	; Clipboard:=listofIngredients
 		; MsgBox % riIngredients

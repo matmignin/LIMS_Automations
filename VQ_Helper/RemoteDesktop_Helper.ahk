@@ -24,11 +24,11 @@ RegexSampleGUID := "i)(?P<SampleGUID>\b[a-z0-9]{8}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0
 RegexSaomething := "i)(?P<SampleGUID>\b23[0-1][0-9]{5}|S[0-9]{8}-[0-9]{3}\b)"
 RegexBatch := "i)(?<!Ct#)(?P<Batch>\d{3}-\d{4}\b)"
 QuickPaste := "20230801000000000"
-EnterEachLine := "\\10.1.2.118\users\vitaquest\mmignin\VQ_Helper\RawFiles\EnterEachLine.ahk"
+EnterEachLine := A_ScriptDir "RawFiles\EnterEachLine.ahk"
 ; SettingsFile := "\\10.1.2.118\users\vitaquest\mmignin\VQ_Helper\RawFiles\Settings.ini"
 	iniRead, ResizeExcel, Settings.ini, Config, ResizeExcel
 	stringupper,ResizeExcel,ResizeExcel
-	
+
 full_command_line := DllCall("GetCommandLine", "str")
 
 Menu, Tray, add, EnterEachLine, ShowEnterEachLine
@@ -52,7 +52,7 @@ OnClipboardChange("clipChange")
 SetTimer,activeCheck, 300
 return
 EditEnterEachLine:
-	Run , Edit "\\10.1.2.118\users\vitaquest\mmignin\VQ_Helper\TEXTtoENTER.txt"
+	Run , Edit A_ScriptDir "\TEXTtoENTER.txt"
 return
 
 
@@ -140,7 +140,7 @@ clipChange(type) {
 	sleep 900
 	tooltip,
 	if (SampleGUID=PreviousSampleGUID) && (SampleGUID)
-		FileAppend, %SampleGUID%`n, U:\VQ_Helper\PriorSampleGUIDs.txt
+		FileAppend, %SampleGUID%`n, %A_ScriptDir% PriorSampleGUIDs.txt
 	; }
 	; If winactive("TIBCO Jaspersoft") || winactive("Dataset and Query Dialog"){
 	; 	copyTOClipboard2()
@@ -415,7 +415,7 @@ PriorSampleGUIDsMenu(ShowMenu := "") {
 	return
 
 	EditListButton:
-	Run, Edit "\\10.1.2.118\users\vitaquest\mmignin\VQ_Helper\PriorSampleGUIDs.txt"
+	Run, Edit A_ScriptDir "\PriorSampleGUIDs.txt"
 	return
 
 

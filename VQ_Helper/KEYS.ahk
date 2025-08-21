@@ -12,7 +12,7 @@ Reload
 return
 ^+`::
 	sleep 800
-	Run, "U:\VQ_Helper\RawFiles\COMPILE.exe"
+	Run, A_ScriptDir "\RawFiles\COMPILE.exe"
 	exitapp
 	Return
 $enter::Enter
@@ -1187,7 +1187,7 @@ return
 	; 	else
 	; 		return
 	; return
-; ^F7::FileRead, Clipboard, U:\VQ_Helper\ClippedExcelData.txt
+; ^F7::FileRead, Clipboard, %A_ScriptDir%  \ClippedExcelData.txt
 	; SpecTab.Table()
 	;^F10::LMS.AddSampleLog(15)
 	; F10::
@@ -1496,7 +1496,7 @@ StopTimer(){
 Exitsub(){
 	global
 	ifwinnotexist, ahk_exe explorer.exe
-		run, explorer "\\10.1.2.118\users\vitaquest\mmignin\VQ_Helper"
+		run, explorer A_ScriptDir
 	exitApp
 }
 CopyGUID(){
@@ -1574,15 +1574,15 @@ msgbox, %HotkeysTip%
 mmigninFolder(){
 	global
 	if !winexist("VQ_Helper ahk_exe explorer.exe")
-		run, explorer "\\10.1.2.118\users\vitaquest\mmignin\VQ_Helper"
+		run, explorer A_ScriptDir ;"\\10.1.2.118\users\vitaquest\mmignin\VQ_Helper"
 	else
 		winactivate, VQ_Helper ahk_exe explorer.exe
 }
 SettingsFile(){
-		Run , Edit "\\10.1.2.118\users\vitaquest\mmignin\VQ_Helper\Settings.ini"
+		Run , Edit A_ScriptDir "\Settings.ini"
 }
 EditMethodList(){
-		Run , Edit "\\10.1.2.118\users\vitaquest\mmignin\VQ_Helper\Methods.ini"
+		Run , Edit A_ScriptDir "\Methods.ini"
 }
 ShowFinalLabelCopy:
 	; run, find "\\10.1.2.118\Label Copy Final"
@@ -1620,8 +1620,8 @@ Return
 ^F10::
 TestCode:
 	sleep 500
-	autohotkeyPath := "U:\VQ_Helper\RawFiles\AHK\AutoHotkeyU64.exe"
-	scriptPath := "U:\VQ_Helper\RawFiles\TestingCode.ahk"
+	autohotkeyPath := A_ScriptDir "\RawFiles\AHK\AutoHotkeyU64.exe"
+	scriptPath := A_ScriptDir "\RawFiles\TestingCode.ahk"
 	RunWait, %autohotkeyPath% "%scriptPath%"
 return
 Showmfg:

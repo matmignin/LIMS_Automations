@@ -4,7 +4,7 @@ SetTitleMatchMode,2
 Process, Priority,, High
 WinClose VQ_Helper.ahk - AutoHotkey
 Sleep 600
-SettingsFile:="U:\VQ_Helper\Settings.ini"
+SettingsFile:=A_ScriptDir "\Settings.ini"
 ; Read the version number from the text file
 ; FileReadLine, versionNumber, %VersionFile%, 1
 FormatTime, The_Time,, h:mm:ss
@@ -20,11 +20,11 @@ iniwrite, %The_Time%, %SettingsFile%, Config, CompileTime
 compileagain:
 Try
 {
-RunWait "U:\VQ_Helper\RawFiles\AHK\Compiler\Ahk2Exe.exe"
- /in "U:\VQ_Helper\RawFiles\VQ_Helper.ahk"
- /out "U:\VQ_Helper\VQ_Helper.exe"
- /icon "U:\VQ_Helper\icon.ico"
- /base "U:\VQ_Helper\RawFiles\AHK\Compiler\Unicode 64-bit.bin"
+RunWait A_ScriptDir "\RawFiles\AHK\Compiler\Ahk2Exe.exe"
+ /in A_ScriptDir "\RawFiles\VQ_Helper.ahk"
+ /out A_ScriptDir "\VQ_Helper.exe"
+ /icon A_ScriptDir "\icon.ico"
+ /base A_ScriptDir "\RawFiles\AHK\Compiler\Unicode 64-bit.bin"
  /compress 0
 }
 Catch e
@@ -41,14 +41,14 @@ sleep 3000
 
 try
 {
-   run "U:\VQ_Helper\VQ_Helper.exe"
+   run A_ScriptDir "\VQ_Helper.exe"
 }
 catch e
 {
 	clipboard:="<<QuIT>>"
 	;msgbox, , didnt work `n %e%
 	sleep 4000
-	Run "U:\VQ_Helper\VQ_Helper.exe"
+	Run A_ScriptDir "\VQ_Helper.exe"
 }
 return
 
