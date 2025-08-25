@@ -19,7 +19,7 @@
 	SetscrolllockState, off
 	CrLf=`r`n
 	SetNumlockState Alwayson
-	setcapslockstate alwaysoff
+	; setcapslockstate alwaysoff
 	CoordMode, mouse, Window
 	CoordMode, Tooltip, screen
 	; CoordMode, Tooltip, Screen
@@ -84,17 +84,13 @@ prefix:=
 	Menu, Tray, Add,
 	Menu, Tray, Add, Save List via Clipboard, SaveClipboardToList
 	; Menu, Tray, Add, Get Requirements, GetRequirements
-	; Menu, TestSubMenu, Add, run Script, TestCode
-	; Menu, TestSubMenu, Add, Test1, TestCode1
-	; Menu, TestSubMenu, Add, Test2, TestCode2
-	; Menu, TestSubMenu, Add, Test3, TestCode3
-	; Menu, MarkerSubMenu, Add, PasteMarker, SetPasteMarker
-	; Menu, MarkerSubMenu, Add, MouseMarker, SetMouseMarker
-	; Menu, MarkerSubMenu, Add, TriggerMarker, TriggerMarker
+	 Menu, TestSubMenu, Add, run Script, TestCode
+	 Menu, TestSubMenu, Add, Test1, TestCode1
+	 Menu, TestSubMenu, Add, Test2, TestCode2
+	 Menu, TestSubMenu, Add, Test3, TestCode3
 	Menu, Tray, Add, windowSpy, windowSpy
-	; Menu, TestSubMenu, Add, run Script, TestCode
-	; Menu, Tray, add, TestCode, :TestSubMenu ;testCode
-	; Menu, Tray, add, Marker, :MarkerSubMenu
+	 Menu, TestSubMenu, Add, run Script, TestCode
+	Menu, Tray, add, TestCode, :TestSubMenu ;testCode
 	;Menu, Tray, Add, Show Variables, ShowVariables
 	;Menu, Tray, Add, ListLines, ListLines
 	Menu, Tray, Add, mmignin, mmigninFolder

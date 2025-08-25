@@ -1053,6 +1053,38 @@ AddNewProduct(){ ;for naming Product code and customer,
 
 	}
 
+SaveIngredientListtxt(){
+		Clipboard:=Trim(strReplace(StrReplace(Clipboard, "`r`n","`n"),"`t","")) ; Normalize line endings
+		lines := StrSplit(Clipboard, "`n") ; Split the string into lines
+		totalLines := lines.Length()-1
+		half := FLOOR(totalLines/2)
+		halfAmount:=-(Half)
+		Try FileDelete, Ingredients.txt
+		IngredientsString:=
+		Loop, % totalLines
+		{
+			;if (A_Index=1){
+		;		IngredientsString:="[Ingredients]"
+					continue
+			;}
+			line := lines[A_Index]
+			if (A_Index <= half)
+				lineNumber := A_Index - 2
+			else
+			{
+				HalfAmount+=1
+				If (HalfAmount=0)
+					Linenumber:="-0"
+				else
+					Linenumber:=halfAmount
+			}
+			IngredientsString.="`n"Line "," lineNumber
+			; IngredientName:= StrReplace(Line, "Allergen","")
+		}
+		sleep 300
+		FileAppend, % Trim(strReplace(IngredientsString," Allergen","")), Ingredients.txt
+		return IngredientsString
+	}
 
 
 
