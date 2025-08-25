@@ -1053,10 +1053,42 @@ AddNewProduct(){ ;for naming Product code and customer,
 
 	}
 
+SaveIngredientList(){
+		Clipboard:=Trim(strReplace(StrReplace(Clipboard, "`r`n","`n"),"`t","")) ; Normalize line endings
+		lines := StrSplit(Clipboard, "`n") ; Split the string into lines
+		totalLines := lines.Length()-1
+		half := FLOOR(totalLines/2)
+		halfAmount:=-(Half)
+		Try FileDelete, Ingredients.txt
+		IngredientsString:=
+		Loop, % totalLines
+		{
+			if (A_Index=1){
+				IngredientsString:="Count,Ingredient List"
+					continue
+			}
+			line := lines[A_Index]
+			if (A_Index <= half)
+				lineNumber := A_Index - 2
+			else
+			{
+				HalfAmount+=1
+				If (HalfAmount=0)
+					Linenumber:="-0"
+				else
+					Linenumber:=halfAmount
+			}
+			IngredientsString.="`n"lineNumber "," Line
+			; IngredientName:= StrReplace(Line, "Allergen","")
+		}
+		sleep 300
+		FileAppend, % Trim(IngredientsString), Ingredients.txt
+		return IngredientsString
+	}
 
 
 
-	SaveIngredientList(){
+	SaveIngredientListini(){
 		Clipboard:=Trim(strReplace(StrReplace(Clipboard, "`r`n","`n"),"`t","")) ; Normalize line endings
 		lines := StrSplit(Clipboard, "`n") ; Split the string into lines
 		totalLines := lines.Length()-1
@@ -3280,17 +3312,17 @@ Class WorkTab {
 			lines := StrSplit(Clipboard, "`n") ; Split the string into lines
 			; CustomerString:=
 			Try FileDelete, Customers.txt
-			FileAppend,% Trim(clipboard), Customers.txt
+			; FileAppend,% Trim(clipboard), Customers.txt
 			totalLines := lines.Length() -1
 			half := FLOOR(totalLines/2)
 			halfAmount:=-(Half)
 
-			Try FileDelete, Customers.ini
+			Try FileDelete, Customers.txt
 			CustomersString:=
 			Loop, % totalLines
 			{
 				if (A_Index=1){
-					CustomersString:="[Customers]"
+					CustomersString:="Customers,Value"
 					continue
 				}
 				line := lines[A_Index]
@@ -3301,10 +3333,10 @@ Class WorkTab {
 					Linenumber:= halfAmount
 					HalfAmount+=1
 				}
-				CustomersString.="`n"Line "=" lineNumber
+				CustomersString.="`n"LineNumber "," Line
 			}
 			sleep 300
-			FileAppend,% Trim(CustomersString), Customers.ini
+			FileAppend,% Trim(CustomersString), Customers.txt
 			return CustomersString
 		}
 

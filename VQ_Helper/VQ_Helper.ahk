@@ -19,7 +19,7 @@
 	SetscrolllockState, off
 	CrLf=`r`n
 	SetNumlockState Alwayson
-	setcapslockstate alwaysoff
+	; setcapslockstate alwaysoff
 	CoordMode, mouse, Window
 	CoordMode, Tooltip, screen
 	; CoordMode, Tooltip, Screen
@@ -34,22 +34,22 @@
 
 	ReadIniFiles()
 	tooltipNumber=6
-	HotkeysTip := "
-(
-F5    :: copyLabelCopy
-^+v   :: Paste(`;)
-1c`;  	:: 1 capsule
-2t`;  	:: two (2) capsules
-3s`;  	:: three (3) scoops
-00`;  	:: #00 capsule / 0.917`" x 0.336`"
-3s`;  	:: three (3) scoops
-00`;  	:: #00 capsule / 0.917`" x 0.336`"
-00e`;  	:: #00 elongated capsule / 0.995`" x 0.336`"
-etc
-)"
+; 	HotkeysTip := "
+; 	(
+; F5    :: copyLabelCopy
+; ^+v   :: Paste(`;)
+; 1c`;  	:: 1 capsule
+; 2t`;  	:: two (2) capsules
+; 3s`;  	:: three (3) scoops
+; 00`;  	:: #00 capsule / 0.917`" x 0.336`"
+; 3s`;  	:: three (3) scoops
+; 00`;  	:: #00 capsule / 0.917`" x 0.336`"
+; 00e`;  	:: #00 elongated capsule / 0.995`" x 0.336`"
+; etc
+; 	)"
 
 
-; !F10 :: AddsampleLog x5
+; ; !F10 :: AddsampleLog x5
 ; !+F10  :: AddDataFromClipboard
 ; ^+w   :: get_window_info
 ; ^+e   :: get_mouse_info
@@ -84,17 +84,13 @@ prefix:=
 	Menu, Tray, Add,
 	Menu, Tray, Add, Save List via Clipboard, SaveClipboardToList
 	; Menu, Tray, Add, Get Requirements, GetRequirements
-	; Menu, TestSubMenu, Add, run Script, TestCode
-	; Menu, TestSubMenu, Add, Test1, TestCode1
-	; Menu, TestSubMenu, Add, Test2, TestCode2
-	; Menu, TestSubMenu, Add, Test3, TestCode3
-	; Menu, MarkerSubMenu, Add, PasteMarker, SetPasteMarker
-	; Menu, MarkerSubMenu, Add, MouseMarker, SetMouseMarker
-	; Menu, MarkerSubMenu, Add, TriggerMarker, TriggerMarker
+	 Menu, TestSubMenu, Add, run Script, TestCode
+	 Menu, TestSubMenu, Add, Test1, TestCode1
+	 Menu, TestSubMenu, Add, Test2, TestCode2
+	 Menu, TestSubMenu, Add, Test3, TestCode3
 	Menu, Tray, Add, windowSpy, windowSpy
-	; Menu, TestSubMenu, Add, run Script, TestCode
-	; Menu, Tray, add, TestCode, :TestSubMenu ;testCode
-	; Menu, Tray, add, Marker, :MarkerSubMenu
+	 Menu, TestSubMenu, Add, run Script, TestCode
+	Menu, Tray, add, TestCode, :TestSubMenu ;testCode
 	;Menu, Tray, Add, Show Variables, ShowVariables
 	;Menu, Tray, Add, ListLines, ListLines
 	Menu, Tray, Add, mmignin, mmigninFolder
@@ -138,7 +134,7 @@ else
 	OnClipboardChange("clipChange")
 	PasteTime:=A_TickCount
 	; CodeFile:= "\\10.1.2.118\users\vitaquest\mmignin\%A_ScriptDir% Code.txt"
-	CodeFile:= A_ScriptDir" \Code.txt"
+	CodeFile:= A_ScriptDir "\Code.txt"
 	OnExit("ClipBar.SaveVariables")
 	SetTimer,activeCheck, %ActiveTimerCheck%
 	SetTimer,FileCheck, 1000
