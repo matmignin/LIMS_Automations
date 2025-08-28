@@ -22,7 +22,7 @@ copyLabelCopyDocRegex(SaveText:="",showToolTip:=""){
 	PillSize:=
 	regingredient:=[]
 	FirstLetter:=SubStr(Product, 1,1)
-FilePattern := "\\netapp\Label Copy Final\" FirstLetter "000-" FirstLetter "999\*" product "*.docx"
+FilePattern := "\\netapp\Master Folders\" FirstLetter "000-" FirstLetter "999\" Product "\Label Copy\*" product "*.docx"
 Loop, %FilePattern%, 1, 0
 		oW:=ComObjGet(A_LoopFileLongPath)
 		sleep 2000
@@ -1053,11 +1053,7 @@ AddNewProduct(){ ;for naming Product code and customer,
 
 	}
 
-<<<<<<< HEAD
 SaveIngredientList(){
-=======
-SaveIngredientListtxt(){
->>>>>>> 84985ca35c08f59eec5386640b977b5eee73ae71
 		Clipboard:=Trim(strReplace(StrReplace(Clipboard, "`r`n","`n"),"`t","")) ; Normalize line endings
 		lines := StrSplit(Clipboard, "`n") ; Split the string into lines
 		totalLines := lines.Length()-1
@@ -1067,17 +1063,10 @@ SaveIngredientListtxt(){
 		IngredientsString:=
 		Loop, % totalLines
 		{
-<<<<<<< HEAD
 			if (A_Index=1){
 				IngredientsString:="Count,Ingredient List"
 					continue
 			}
-=======
-			;if (A_Index=1){
-		;		IngredientsString:="[Ingredients]"
-					continue
-			;}
->>>>>>> 84985ca35c08f59eec5386640b977b5eee73ae71
 			line := lines[A_Index]
 			if (A_Index <= half)
 				lineNumber := A_Index - 2
@@ -1089,19 +1078,12 @@ SaveIngredientListtxt(){
 				else
 					Linenumber:=halfAmount
 			}
-<<<<<<< HEAD
 			IngredientsString.="`n"lineNumber "," Line
 			; IngredientName:= StrReplace(Line, "Allergen","")
 		}
 		sleep 300
 		FileAppend, % Trim(IngredientsString), Ingredients.txt
-=======
-			IngredientsString.="`n"Line "," lineNumber
-			; IngredientName:= StrReplace(Line, "Allergen","")
-		}
-		sleep 300
-		FileAppend, % Trim(strReplace(IngredientsString," Allergen","")), Ingredients.txt
->>>>>>> 84985ca35c08f59eec5386640b977b5eee73ae71
+
 		return IngredientsString
 	}
 

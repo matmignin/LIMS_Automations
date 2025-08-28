@@ -54,6 +54,8 @@ clipChange(){
 		sleep 2500
 		; Clipboard:=
 		GoSub ShowScanLabelCopy
+		GoSub ShowFinalLabelCopy
+
 		; FileDelete, %A_ScriptDir%  \LabelCopyText.txt
 		; Try FileDelete, %A_ScriptDir%  \LabelCopies\%Product%.txt
 		; FileAppend,  %labelcopytext%, %A_ScriptDir%  \LabelCopies\%Product%.txt
@@ -190,7 +192,7 @@ Gui ClipBar:Default
   }
 	else if InStr(Input, "<<CopyLabelCopy>>",true, 1,1){
 		; clip.codesRegex()
-		Product:=TRIM(SubStr(Input, 19,4))
+		; Product:=TRIM(SubStr(Input, 19,4))
 		Gui ClipBar:Default
 		GuiControl,ClipBar:Text, Product, %Product%
 		Clipboard:=
@@ -198,6 +200,7 @@ Gui ClipBar:Default
 		; copyLabelCopyDocRegex(1,1)
 		; tt(clipboard)
 		sleep 2800
+		GoSub ShowFinalLabelCopy
 		GoSub ShowScanLabelCopy
 		; FileDelete, %A_ScriptDir%  \LabelCopyText.txt
 		; Try FileDelete, %A_ScriptDir%  \LabelCopies\%Product%.txt
@@ -1497,7 +1500,7 @@ Class ClipBar{
 			iniwrite, %Null%, Settings.ini, SavedVariables, Batch
 		if lot
 			iniwrite, %Lot%, Settings.ini, SavedVariables, Lot
-		else455
+		else
 			iniwrite, %Null%, Settings.ini, SavedVariables, Lot
 		if Coated
 			iniwrite, %Coated%, Settings.ini, SavedVariables, Coated
@@ -1519,7 +1522,6 @@ Class ClipBar{
 			iniwrite, %SampleGUID%, Settings.ini, SavedVariables, SampleGUID
 		; if Iteration
 			iniwrite, %Iteration%, Settings.ini, SavedVariables, Iteration
-
 		; else
 			; iniwrite, %Null%, Settings.ini, SavedVariables, SampleGUID
 		; if CustomerPosition

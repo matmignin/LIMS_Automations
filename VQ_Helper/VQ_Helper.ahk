@@ -34,8 +34,8 @@
 
 	ReadIniFiles()
 	tooltipNumber=6
-; 	HotkeysTip := "
-; 	(
+	HotkeysTip := CompileTime
+	; (
 ; F5    :: copyLabelCopy
 ; ^+v   :: Paste(`;)
 ; 1c`;  	:: 1 capsule
@@ -46,7 +46,7 @@
 ; 00`;  	:: #00 capsule / 0.917`" x 0.336`"
 ; 00e`;  	:: #00 elongated capsule / 0.995`" x 0.336`"
 ; etc
-; 	)"
+	; )"
 
 
 ; ; !F10 :: AddsampleLog x5
@@ -95,21 +95,26 @@ prefix:=
 	;Menu, Tray, Add, ListLines, ListLines
 	Menu, Tray, Add, mmignin, mmigninFolder
 	; Menu, Tray, Add, Copy GUID, CopyGUID
+	if (ClipbarLocation != "YES")
+			ClipbarLocation := "NO"
+		Menu, Tray, Add, ClipBar Top or Bottom, Toggle_ClipBarLocation
+			if (ClipbarLocation := "YES")
+		Menu, Tray, Check, ClipBar Top or Bottom
+		else
+		Menu, Tray, Uncheck, ClipBar Top or Bottom
+
 	if (DisableAutoScroll != "YES")
 			DisableAutoScroll := "NO"
-
-; --- Build tray menu ---
-		Menu, Tray, Add, Disable AutoScroll, Toggle_DisableAutoScroll
-; Reflect current state with a checkmark
-		if (DisableAutoScroll := "YES")
-    Menu, Tray, Check, Disable AutoScroll
-else
-    Menu, Tray, Uncheck, Disable AutoScroll
+			Menu, Tray, Add, Disable AutoScroll, Toggle_DisableAutoScroll
+			if (DisableAutoScroll := "YES")
+		Menu, Tray, Check, Disable AutoScroll
+		else
+		Menu, Tray, Uncheck, Disable AutoScroll
 	Menu, Tray, Add, Hotkeys, ShowHotkeys
 	Menu, Tray, Add, &Reload, ReloadSub
 	Menu, Tray, Add, Exitsub, Exitsub
 	Menu, Tray, Add, Settings, SettingsFile
-	Menu, Tray, tip, %HotkeysTip% %HotkeysTip%
+	Menu, Tray, tip, %HotkeysTip%
 	Menu, Tray, Default, &Reload
 
 
@@ -159,6 +164,23 @@ Toggle_DisableAutoScroll:
 
     ; optional quick feedback
     TrayTip, Settings saved, DisableAutoScroll = %DisableAutoScroll%, 2
+}
+return
+Toggle_ClipBarLocation:
+{
+    ; flip YES/NO
+	; StringUpper,ClipbarLocation,ClipbarLocation
+    ClipBarLocation := (ClipBarLocation := "YES") ? "NO" : "YES"
+
+    ; update checkmark
+    Menu, Tray, ToggleCheck, ClipBar Top or Bottom
+
+	; StringUpper,FlipClipbarLocation,FlipClipbarLocation
+    ; save back to INI
+    IniWrite, %ClipbarLocation%, Settings.ini, Config, ClipbarLocation
+
+    ; optional quick feedback
+    TrayTip, Settings saved, ClipBarLocation = %ClipBarLocation%, 2
 }
 return
 
@@ -212,6 +234,10 @@ if (A_TimeIdlePhysical > IdleThreshold)
 	sleep 300
 	return
 }
+
+
+
+
 
 else if MouseIsOver("ClipBar"){
 	ClipBar_x1:=Clipbar_x+310
@@ -489,7 +515,8 @@ copyLabelCopyDoc(SaveText:="",showtooltip:=""){
 	Global Product,RegexIngredients
 
 	firstLetter:=SubStr(Product,1,1)
-FilePattern := "\\netapp\Label Copy Final\" firstLetter "000-" firstLetter "999\*" product "*.docx"
+	FilePattern := "\\netapp\Master Folders\" FirstLetter "000-" FirstLetter "999\" Product "\Label Copy\*" product "*.docx"
+		; FilePattern := "\\netapp\Label Copy Final\" firstLetter "000-" firstLetter "999\*" product "*.docx"
 Loop, %FilePattern%, 1, 0
 		oW:=ComObjGet(A_LoopFileLongPath)
 		; sleep 1000
@@ -506,11 +533,11 @@ Loop, %FilePattern%, 1, 0
 
 	If showTooltip
 		tt(LabelCopyText,1000)
-	If SaveText
-		{
-		Try FileDelete, %A_ScriptDir% \LabelCopies\%Product%.txt
-		FileAppend,  %labelcopytext%, %A_ScriptDir% \LabelCopies\%Product%.txt
-		}
+	; If SaveText
+	; 	{
+	; 	Try FileDelete, %A_ScriptDir% \LabelCopies\%Product%.txt
+	; 	FileAppend,  %labelcopytext%, %A_ScriptDir% \LabelCopies\%Product%.txt
+	; 	}
 	; Clipboard:=listofIngredients
 		; MsgBox % riIngredients
 	Return LabelCopyText
