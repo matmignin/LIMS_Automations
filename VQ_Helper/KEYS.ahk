@@ -65,7 +65,7 @@ F8::
 #If MouseIsOver("Methods List ahk_exe VQ_Helper.exe")
 Lbutton::send, {ctrldown}{Lbutton}{ctrlup}
 
-#If MouseIsOver("ClipBar ahk_exe VQ_Helper.exe")
+#If MouseIsOver("ClipBar ahk_id" ClipBarGUIID)
 ; ^Mbutton::
 ; 		ControlGetFocus,winControl,ClipBar
 ; 		if (winControl="Edit2"){
@@ -78,190 +78,45 @@ Lbutton::send, {ctrldown}{Lbutton}{ctrlup}
 ; ; send, {ctrldown}{Lbutton}{ctrlup}
 ; ; return
 
-RBUTTON::
+RBUTTON::LMS.menu()
 ; sendinput,{Lbutton}
 ; ControlGet,winControlR,ClipBar
-MouseGetPos,,,,winControl
-if (winControl="Edit1") ||  (winControl="Edit6") {
-try menu, AllProductsMenu, DeleteAll
-	FileRead,AllProducts,AllProducts.txt
-		; iniwrite, %AllProducts%, Settings.ini, SavedVariables, AllProducts
-		loop, parse, AllProducts, " "
-		{
-			Menu, AllProductsMenu, Add, %a_LoopField%, allproductsmenubutton
-			if (A_LoopField = product)
-				try Menu, AllProductsMenu, Check, %a_LoopField%,
-		}
-		try Menu,AllProductsMenu,show
-
-} Else if (winControl="Edit2") ||  (winControl="Edit7"){
-
-		FileRead,AllBatches,AllBatches.txt
-		; iniwrite, %AllBatches%, Settings.ini, SavedVariables, AllBatches
-	try menu, AllBatchesMenu, DeleteAll
-		loop, parse, AllBatches, " "
-		{
-			Menu, AllBatchesMenu, Add, %a_LoopField%, allbatchesmenubutton
-			if (A_LoopField = batch)
-				try Menu, AllBatchesMenu, Check, %a_LoopField%,
-		}
-		try Menu,AllBatchesMenu,show
-		GetAllBatches(" ")
-		sleep 1000
-		}
-
-	else if (winControl="Edit5")
-		WorkTab.CustomerMenu()
-		else
-			LMS.Menu()
-		; sendinput, Rbutton
-		return
-; 		if (winControl="Edit6"){
-; 			SimpleClip:=1
-; 			Clipboard:= GetAllProducts(" ")
-; 			Clipbar.Flash()
-; 			TT(AllProducts,1000,,,3)
-; 			SimpleClip:=
-; 			return
-; 		if (winControl="Edit7"){
-; 			SimpleClip:=1
-; 			Clipboard:=GetAllBatches(" ")
-; 			TT(AllBatches,1000,,,4)
-; 			SimpleClip:=
-; 			Clipbar.Flash()
-; 			 return
+; MouseGetPos,,,,winControl
+; if (winControl="Edit1") ||  (winControl="Edit6") {
+; try menu, AllProductsMenu, DeleteAll
+; 	FileRead,AllProducts,AllProducts.txt
+; 		; iniwrite, %AllProducts%, Settings.ini, SavedVariables, AllProducts
+; 		loop, parse, AllProducts, " "
+; 		{
+; 			Menu, AllProductsMenu, Add, %a_LoopField%, allproductsmenubutton
+; 			if (A_LoopField = product)
+; 				try Menu, AllProductsMenu, Check, %a_LoopField%,
 ; 		}
-		; else
-; 		; WM_LBUTTONDOWN(wParam, lParam)
-; 		return
-; !LBUTTON::
-; ControlGetFocus,winControl,ClipBar
-; 		if (winControl="Edit6"){
-; 			SimpleClip:=1
-; 			Clipboard:= GetAllProducts(";")
-; 			SimpleClip:=
-; 			Clipbar.Flash()
-; 			return
+; 		try Menu,AllProductsMenu,show
+
+; } Else if (winControl="Edit2") ||  (winControl="Edit7"){
+
+; 		FileRead,AllBatches,AllBatches.txt
+; 		; iniwrite, %AllBatches%, Settings.ini, SavedVariables, AllBatches
+; 	try menu, AllBatchesMenu, DeleteAll
+; 		loop, parse, AllBatches, " "
+; 		{
+; 			Menu, AllBatchesMenu, Add, %a_LoopField%, allbatchesmenubutton
+; 			if (A_LoopField = batch)
+; 				try Menu, AllBatchesMenu, Check, %a_LoopField%,
 ; 		}
-; 		if (winControl="Edit7"){
-; 			SimpleClip:=1
-; 			Clipboard:=GetAllBatches(";")
-; 			SimpleClip:=
-; 			Clipbar.Flash()
-; 			 return
+; 		try Menu,AllBatchesMenu,show
+; 		GetAllBatches(" ")
+; 		sleep 1000
 ; 		}
+
+; 	else if (winControl="Edit5")
+; 		WorkTab.CustomerMenu()
 ; 		else
 ; 			LMS.Menu()
+; 		; sendinput, Rbutton
 ; 		return
-; +LBUTTON::
-; ControlGetFocus,winControl,ClipBar
-; 		if (winControl="Edit6"){
-; 			SimpleClip:=1
-; 			Clipboard:= GetAllProducts("`r`n")
-; 			SimpleClip:=
-; 			Clipbar.Flash()
-; 			return
-; 		}
-; 		if (winControl="Edit7"){
-; 			SimpleClip:=1
-; 			Clipboard:=GetAllBatches("`r`n")
-; 			SimpleClip:=
-; 			Clipbar.Flash()
-; 			return
-; 		}
-; 		else
-; 			LMS.Menu()
-; 		return
-
-	; F7::copyLabelCopyDoc()
-; 	; wheelup::
-; 	; If NAdd
-; 	;   {
-; 	; 	; sleep 500
-; 	;   return
-; 	;   }
-; 	; 	NAdd:=1
-; 	; 	blockinput, On
-; 	; ControlGetFocus,winControl,ClipBar
-; 	; settimer, Block_Input,-500
-; if (wincontrol="Edit5"){
-; 	Clipbar.AddIteration(100)
-; 	return
-; 	}
-
-; 	if (winControl="Edit1"){
-; 		sleep 400
-; 	  GetAllProducts(" ", 1)
-; 		clipboard:=AllProducts
-; 	TT(AllProducts,2000,ClipBar_x2,35,2,250)
-; 		return
-; 	  }
-; if (winControl="Edit2"){
-; 	GetAllBatches(" ", 1)
-; 		sleep 400
-; 		clipboard:=AllBatches
-; 	TT(AllBatches,2000,ClipBar_x2,35,2,250)
-; 		return
-; 	}
-; 	if (winControl="Edit3")
-; 	  PriorCodesMenu(1)
-; 	if (winControl="Edit4")
-; 	  PriorCodesMenu(1)
-; 	if (winControl="Edit6"){
-; 	  WholeBatchMenu()
-; 	    ; ControlsetText, Edit6,%AllBatches%,ClipBar
-; 	    ; TT(AllBatches,2000,ClipBar_x2,35,2,250)
-; 	  }
-; else ;(winControl="Edit3")
-; 	wincontrol:=
-; 	  sleep 500
-; 	  ; NAdd:=
-; 	return
-
-
-
-
-; 	wheeldown::
-; 	If Nsub
-; 	  {
-; 		; sleep 500
-; 	  Return
-; 	  }
-; 	ControlGetFocus,winControl,ClipBar
-; Nsub:=1
-; 		settimer, Block_Input,-500
-; if (wincontrol="Edit5"){
-; 	Clipbar.SubIteration(100)
-; 	return
-; }
-; 	if (winControl="Edit1"){
-; 		sleep 400
-; 	  GetAllProducts("`r`n")
-; 		clipboard:=AllProducts
-; 	; TT(AllProducts,2000,ClipBar_x2,35,2,250)
-; 		return
-; 	  }
-; if (winControl="Edit2"){
-; 	GetAllBatches("`r`n")
-; 		sleep 400
-; 		clipboard:=AllBatches
-; 	; TT(AllBatches,2000,ClipBar_x2,35,2,250)
-; 	return
-; }
-; 	if (winControl="Edit3")
-; 	  PriorCodesMenu(1)
-; ; 	if (winControl="Edit4")
-; ; 	  PriorCodesMenu(1)
-; ; 	 if (winControl="Edit6"){
-; ; 	  MsgBox, 4, Delete file, Do you want to delete WholeBatches.txt?
-; ; 	  IfMsgBox, OK
-; ; 	      FileDelete, WholeBatches.txt
-; ; 	  }
-; ; else ;(winControl="Edit3")
-; ; 	wincontrol:=
-; ; 	  sleep 500
-; return
-
+;
 
 Mbutton::
 	ControlGetFocus,winControl,ClipBar
@@ -285,13 +140,14 @@ Mbutton::
 			; clipboard:=Sampleguid
 		else
 			MenuCodeSelect()
-		tt(Clipboard)
+			TrayTip, Copied to Clipboard, %clipboard%, 2
+		; tt(Clipboard)
 	return
 
 
 #if
 
-#Ifwinactive, ClipBar ahk_exe VQ_Helper.exe
+#Ifwinactive, ClipBar
 	enter::
 		GUI, ClipBar:default
 	Send, ^{a}^{c}
@@ -421,6 +277,7 @@ F7::WinMove, ahk_class XLMAIN ahk_exe EXCEL.EXE,, %NuX%, %NuY%, 1250, 1200
 			^enter::clk2(854, 658) ;select okay
 			F6::clk2(511, 337) ;move over test
 			; F6::clk2(511, 375) ;move test back over
+			Mbutton & Wheeldown::LMS.menu()
 			F9::LMS.Menu()
 			; F8::clk2(854, 658) ;select okay
 			mbutton::
@@ -437,7 +294,6 @@ F7::WinMove, ahk_class XLMAIN ahk_exe EXCEL.EXE,, %NuX%, %NuY%, 1250, 1200
 			F10::
 			F8::WorkTab.SelectTestSample()
 			+enter::Clk(503, 290) ;click okay
-			F9::send % Clk(250, 70) ;"{up}" ; click okay.
 			F7::Clk(853, 657) ;click arrow
 				; Clk(853, 657) ;click okay
 				; return
@@ -703,6 +559,7 @@ F7::WinMove, ahk_class XLMAIN ahk_exe EXCEL.EXE,, %NuX%, %NuY%, 1250, 1200
 				mousemove, 280, 558, 0
 				Tooltip
 			return
+			Mbutton & Wheeldown::ProductTab.IngredientsMenu()
 			F9::ProductTab.IngredientsMenu()
 				:*:1s`;::
 					sendinput, ^{a}* Heavy Metals results are based on a daily dose of (1) scoop (%ShapeAndSize% g){left 2}
@@ -746,6 +603,7 @@ F7::WinMove, ahk_class XLMAIN ahk_exe EXCEL.EXE,, %NuX%, %NuY%, 1250, 1200
 
 ;;\\  		    Edit sample																	_
 		#ifwinactive, Edit sample (
+		Mbutton & Wheeldown::worktab.CustomerMenu()
 		F9::worktab.CustomerMenu()
 		Mbutton::Worktab.Dropdown_CustomerSelect(Iteration)
 
@@ -804,6 +662,7 @@ F7::WinMove, ahk_class XLMAIN ahk_exe EXCEL.EXE,, %NuX%, %NuY%, 1250, 1200
 
 		;mbutton::Spectab.PasteClipboardIntoSpec()
 			F7::lmsclick.edit()
+			Mbutton & Wheeldown::LMS.menu()
 			F9::lms.menu()
 			Backspace::LMSClick.Remove()
 		;Backspace::sendinput, {Click %RemoveButton%}
@@ -811,6 +670,7 @@ F7::WinMove, ahk_class XLMAIN ahk_exe EXCEL.EXE,, %NuX%, %NuY%, 1250, 1200
 ;;\\  		    Results																	_
 		#ifwinactive, Results
 			F7::lmsclick.edit()
+			Mbutton & Wheeldown::LMS.menu()
 			F9::lms.menu()
 			Mbutton::SpecTab.AutoInputResultEditor()
 			+mbutton::SpecTab.ResultEditor(MinLimit,MaxLimit,Units,Percision,1,FullRequirements)
@@ -937,6 +797,7 @@ F7::WinMove, ahk_class XLMAIN ahk_exe EXCEL.EXE,, %NuX%, %NuY%, 1250, 1200
 			F8::Sendinput, {Click 160 130}^{a}Fixing Rotation{Click 240 237 0}
 			Enter::clk2(241, 236)
 			+Enter::sendinput, {enter}
+			+F10::
 			F9::sendinput, {tab 2}{space}{down}{enter}{tab 2}{Click 240 237 0} ; use revious reason
 
 
@@ -1244,7 +1105,7 @@ mbutton::
 	; Else
 		; Send, ^{mbutton}
 return
-
+Mbutton & Wheeldown::LMS.menu()
 	F9::lms.Menu()
 	+F9::lms.Menu("shift")
 	F7::
@@ -1342,6 +1203,7 @@ return
 ^F5::Clipboard:=SampleGUID
 	; +mbutton::lms.Menu()
 	+F9::lms.Menu("Shift")
+	Mbutton & Wheeldown::LMS.menu()
 	F9::lms.Menu()
 
 	; <!left::GetAllProducts()
@@ -1392,11 +1254,10 @@ return
 
 ;;\\____explorer.exe ______
 #ifwinactive, ahk_class CabinetWClass ahk_exe explorer.exe
-	+F9::send, ^e
 	^w::
 				winactivate, ahk_exe explorer.exe
         Send, !f
-				sleep 150
+				sleep 250
         Send, !c
 				Send, !{f4}
     return
@@ -1574,7 +1435,7 @@ msgbox, %HotkeysTip%
 
 mmigninFolder(){
 	global
-	if !winexist("VQ_Helper ahk_exe explorer.exe")
+	if !winexist("VQ_Helper")
 		run, explorer A_ScriptDir ;"\\10.1.2.118\users\vitaquest\mmignin\VQ_Helper"
 	else
 		winactivate, VQ_Helper ahk_exe explorer.exe
@@ -1588,7 +1449,9 @@ EditMethodList(){
 ShowFinalLabelCopy:
 	; run, find "\\10.1.2.118\Label Copy Final"
 	firstLetter:=SubStr(Product,1,1)
-	runwait, find "\\10.1.2.118\Master Folders\" FirstLetter "000 - " FirstLetter "999\" Product "\Label Copy"
+	runwait, find "\\10.1.2.118\Master Folders\" FirstLetter "000 - " FirstLetter "999\" Product "\Label Copy", , UseErrorLevel
+		if Errorlevel
+	runwait, find "\\10.1.2.118\Master Folders",
 	; runwait, find "\\netapp\Master Folders"
 	; sleep 550
 	; winmaximize, Search Results
@@ -1599,9 +1462,10 @@ ShowFinalLabelCopy:
 	; SelectPreviewPane(Product)
 return
 ShowScanLabelCopy:
-	runwait, find "\\10.1.2.118\share\QC LAB\Label Copy Scans"
-	; runwait, find "\\netapp\share\QC LAB\Label Copy Scans"
-	sleep 150
+	runwait, find "\\10.1.2.118\share\QC LAB\Label Copy Scans",, UseErrorLevel
+	if Errorlevel
+		runwait, find "\\netapp\share\QC LAB\Label Copy Scans"
+	sleep 250
 	; winmaximize, Search Results
 	WinMove, *%Product%* ahk_exe explorer.exe,, 5, 10, 1250, 1200
 	winactivate, *%Product%* ahk_exe explorer.exe
@@ -2014,7 +1878,7 @@ class Breaking {
 		; 		SpecMenuClosed:=
 		; 		Exit
 		; 	}
-		If GetKeyState("Lbutton", "P") || break ||GetKeyState("Rwin", "P") || GetKeyState("Rcontrol", "P") ||GetKeyState("Shift", "P") || GetKeyState("RShift", "P") || GetKeyState("LShift", "P") || (A_PriorKey="RShift")|| (A_PriorKey="Rcontrol") || (A_PriorKey="rbutton") {
+		If GetKeyState("Lbutton", "P") || break ||GetKeyState("Rwin", "P") || GetKeyState("Rcontrol", "P") || GetKeyState("Shift", "P") || GetKeyState("RShift", "P") || GetKeyState("LShift", "P") || (A_PriorKey="RShift")|| (A_PriorKey="Rcontrol") || (A_PriorKey="Rbutton") {
 			blockinput, off
 				TT("-`n`n        Broken        `n`n-",3000,100,100,,255,"M")
 			Clipbar.Flash()
@@ -2031,7 +1895,7 @@ class Breaking {
 		{
 			blockinput, off
 			; Clipbar.Flash()
-				TT("-`n`n        Broken        `n`n-",3000,,,,255,"M")
+				TT("-`n`n        Broke Loop        `n`n-",3000,,,,255,"M")
 			Exit
 		}
 	}

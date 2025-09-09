@@ -93,16 +93,8 @@ prefix:=
 	Menu, Tray, add, TestCode, :TestSubMenu ;testCode
 	;Menu, Tray, Add, Show Variables, ShowVariables
 	;Menu, Tray, Add, ListLines, ListLines
-	Menu, Tray, Add, mmignin, mmigninFolder
+	Menu, Tray, Add, ApplicationFolder, mmigninFolder
 	; Menu, Tray, Add, Copy GUID, CopyGUID
-	if (ClipbarLocation != "YES")
-			ClipbarLocation := "NO"
-		Menu, Tray, Add, ClipBar Top or Bottom, Toggle_ClipBarLocation
-			if (ClipbarLocation := "YES")
-		Menu, Tray, Check, ClipBar Top or Bottom
-		else
-		Menu, Tray, Uncheck, ClipBar Top or Bottom
-
 	if (DisableAutoScroll != "YES")
 			DisableAutoScroll := "NO"
 			Menu, Tray, Add, Disable AutoScroll, Toggle_DisableAutoScroll
@@ -240,11 +232,10 @@ if (A_TimeIdlePhysical > IdleThreshold)
 
 
 else if MouseIsOver("ClipBar"){
-	ClipBar_x1:=Clipbar_x+310
-	ClipBar_x2:=Clipbar_x+50
-	ClipBar_x6:=Clipbar_x+265
-	mousegetpos,MouseClipbarx, MouseClipbarY,,winControl
-		TT("Double Click To Copy",3000,80,MouseClipbarY,2,200,"M")
+	; ClipBar_x1:=Clipbar_x+310
+	; ClipBar_x2:=Clipbar_x+50
+	; ClipBar_x6:=Clipbar_x+265
+	; mousegetpos,MouseClipbarx, MouseClipbarY,,winControl
 
 	return
 }
@@ -463,12 +454,12 @@ copyLabelCopyDoc(SaveText:="",showtooltip:=""){
 	Global Product,RegexIngredients
 
 	firstLetter:=SubStr(Product,1,1)
-	FilePattern := "\\10.1.2.118\Master Folders\" FirstLetter "000 - " FirstLetter "999\" Product "\Label Copy\*" product "*.docx"
+	FilePattern := "\\10.1.2.118\Master Folders\" FirstLetter "000 - " FirstLetter "999\" Product "\Label Copy\*" Product "*.docx"
 		; FilePattern := "\\netapp\Label Copy Final\" firstLetter "000-" firstLetter "999\*" product "*.docx"
 Loop, %FilePattern%, 1, 0
 		oW:=ComObjGet(A_LoopFileLongPath)
 		; sleep 1000
-		sleep 200
+		sleep 500
 		oW.Range.FormattedText.Copy
 		clipwait,6,0
 		if errorlevel

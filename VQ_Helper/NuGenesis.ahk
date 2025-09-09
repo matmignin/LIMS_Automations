@@ -22,10 +22,10 @@ copyLabelCopyDocRegex(SaveText:="",showToolTip:=""){
 	PillSize:=
 	regingredient:=[]
 	FirstLetter:=SubStr(Product, 1,1)
-FilePattern := "\\10.1.2.118\Master Folders\" FirstLetter "000 - " FirstLetter "999\" Product "\Label Copy\*" product "*.docx"
+FilePattern := "\\10.1.2.118\Master Folders\" FirstLetter "000 - " FirstLetter "999\" Product "\Label Copy\*" Product "*.docx"
 Loop, %FilePattern%, 1, 0
 		oW:=ComObjGet(A_LoopFileLongPath)
-		sleep 2000
+		sleep 1000
 		; oW.Visible :=0
 		oW.Range.FormattedText.Copy
 		; oW.Close()
@@ -86,28 +86,33 @@ Class LMS {
 			SpecTab.ShowSpecMenu()
 			return
 		}
+		else
+		{
+		Menu, Menu, add, paste All &Products from clipboard, PasteAllProducts
+		Menu, Menu, add, Paste All &Batches from clipboard, PasteAllBatches
+		}
 		; If AltMode
 			; Menu, Menu, add, &Products from clipboard  (';), PasteAllProductsAlt
 				; else
 			; Menu, Menu, add, &Products from clipboard, PasteAllProducts
 
-		If (AltMode :="SHIFT")
+		If (AltMode :="SHIFT") || GetKeyState("Shift","P")
 		{
+		Menu, Menu, add,
 			Menu, Menu, add, Copy All &Products from clipboard (New Line), PasteAllProductsShift
 			Menu, Menu, add, Copy All &Batches from clipboard (New Line), PasteAllBatchesShift
 			; Menu, Menu, Add, Copy GUID, CopyGUID
+			Menu, Menu, add,
 		}
-		If (AltMode :="ALT")
+		If (AltMode :="ALT") || GetKeyState("Alt","P") GetKeyState("Option","P")
 		{
+		Menu, Menu, add,
 			Menu, Menu, add, Copy All &Products from clipboard (';), PasteAllProductsAlt
 			Menu, Menu, add, Copy All &Batches from clipboard (';), PasteAllBatchesAlt
+		Menu, Menu, add,
 			; Menu, Menu, Add, Copy GUID, CopyGUID
 		}
-		else
-		{
-		Menu, Menu, add, Copy All &Products from clipboard, PasteAllProducts
-		Menu, Menu, add, Copy All &Batches from clipboard, PasteAllBatches
-		}
+		; else
 		; Menu, Menu, add, &Paste Spec from Clipboard, PasteSpec
 		Menu, Menu, add,
 		Menu, Menu, add, &Final Label Copy`t[%Product%], ShowFinalLabelCopy
@@ -119,24 +124,24 @@ Class LMS {
 		; Menu, Menu, add, Manual &COAs folder, ShowManualCOA
 		Menu, Menu, add,
 		If AltMode
-			Menu, Menu, add, mmignin, mmigninFolder
+			Menu, Menu, add, Application Folder, mmigninFolder
 
 		Menu, Menu, add,
 		; Menu, Menu, add, TestCode, :TestSubMenu
 			; Menu, Menu, Add, Get Requirements,GetRequirements
 		; Menu, Menu, add, Marker, :MarkerSubMenu
 			; Try Menu,menu,show
-if MouseIsOver("ClipBar"){
-		try Menu,Menu, deleteAll
-		; Menu, Menu, add, &Batches from clipboard (';), PasteAllBatchesAlt
-		Menu, Menu, Add, mmignin, mmigninFolder
-		Menu, Menu, Add, Settings, SettingsFile
-		Menu, Menu, Add, Copy GUID, CopyGUID
-		Menu, Menu, Add, &Reload, ReloadSub
-		Menu, Menu, Add, Exitsub, exitsub
-		Try Menu,menu,show
-		return
-}
+; if MouseIsOver("ClipBar"){
+; 		try Menu,Menu, deleteAll
+; 		; Menu, Menu, add, &Batches from clipboard (';), PasteAllBatchesAlt
+; 		Menu, Menu, Add, mmignin, mmigninFolder
+; 		Menu, Menu, Add, Settings, SettingsFile
+; 		Menu, Menu, Add, Copy GUID, CopyGUID
+; 		Menu, Menu, Add, &Reload, ReloadSub
+; 		Menu, Menu, Add, Exitsub, exitsub
+; 		Try Menu,menu,show
+; 		return
+; }
 		; Menu, Menu, add, Restart, Reloadsub
 			if GetKeyState("Shift","P"){
 			Try Menu,menu,show
@@ -688,28 +693,32 @@ sleep 20
 	PasteAllBatchesAlt:
 		; Clk(getx,getY)
 		simpleclip:=1
-			Clipboard:=Trim(GetAllBatches("`;"))
+			Clipboard:= Trim(GetAllBatches("`;"))
 		simpleclip:=
-		TT(clipboard)
+		TrayTip, Copied to Clipboard, %clipboard%, 2
+		; TT(clipboard)
 			return
 				PasteAllProductsAlt:
 		simpleclip:=1
 			Clipboard:=Trim(GetAllProducts("`;"))
 		simpleclip:=
-		TT(clipboard)
+		TrayTip, Copied to Clipboard, %clipboard%, 2
+		; TT(clipboard)
 		return
 	PasteAllBatchesShift:
 		simpleclip:=1
 			Clipboard:=Trim(GetAllBatches("`r`n"))
 		simpleclip:=
-		TT(clipboard)
+		TrayTip, Copied to Clipboard, %clipboard%, 2
+		; TT(clipboard)
 			return
-				PasteAllProductsShift:
+	PasteAllProductsShift:
 		; Clk(getx,getY)
 		simpleclip:=1
 			Clipboard:=Trim(GetAllProducts("`r`n"))
 		simpleclip:=
-		TT(clipboard)
+		TrayTip, Copied to Clipboard, %clipboard%, 2
+		; TT(clipboard)
 		return
 	PasteSpec:
 		Clk(getx,getY)
@@ -718,16 +727,19 @@ sleep 20
 	PasteAllBatches:
 	simpleclip:=1
 	;	Clk(getx,getY)
-		Clipboard:=Trim(AllBatches)
-		TT(AllBatches,1000,,,2,200)
+		sendinput % Trim(GetAllBatches())
+		; Clipboard:=Trim(AllBatches)
+		TrayTip, Copied to Clipboard, %AllBatches%, 2
+		; TT(AllBatches,1000,,,,200)
 		sleep 200
 	simpleclip:=
 	return
 	PasteAllProducts:
 	simpleclip:=1
-		Clipboard:=Trim(AllProducts)
-		TT(AllProducts,1000,0,0,3,150)
-
+		sendinput % Trim(GetAllBatches())
+		; Clipboard:=Trim(AllProducts)
+		TrayTip, Copied to Clipboard, %AllProducts%, 2
+		; TT(AllProducts,1000,0,0,,200)
 		sleep 200
 	simpleclip:=
 	return
@@ -2404,14 +2416,14 @@ If winactive("Results Definition") {
 		mousemove, %Okay_x%, %Okay_y% ;Move mouse to Save/Okay
 		Breaking.Point()
 		; msgbox, %Results_w%  %Results_h%
-		if ContinueToRun
-			click
-		WinWaitClose, Results,, 4
+		; if ContinueToRun
+			; click
+		; WinWaitClose, Results,, 4
 		; winwaitactive, Test Definition Editor,, 7
-		if ContinueToRun
-			click 342, 614
-		else
-			sleep 200
+		; if ContinueToRun
+			; click 342, 614
+		; else
+			; sleep 200
 			; WinWaitActive, Test Definition Editor
 			; msgbox, This point C
 		wingetpos, Test_X, Test_y, Test_w, Test_h, Test Definition Editor
@@ -2420,12 +2432,12 @@ If winactive("Results Definition") {
 		Breaking.Point()
 		mousemove, %Save_x%, %Save_y% ;Move mouse to Save/Okay
 		sleep 200
-		if ContinueToRun
-		{
-			winwaitactive, NuGenesis LMS,,5
-			if errorlevel
-			msgbox, This Point D
-		}
+		; if ContinueToRun
+		; {
+		; 	winwaitactive, NuGenesis LMS,,5
+		; 	if errorlevel
+		; 	msgbox, This Point D
+		; }
 		sleep 300
 		return
 	}
@@ -2555,9 +2567,12 @@ If winactive("Results Definition") {
 		Breaking.Point()
 		click, 70, 518 ;edit sample method
 		winwaitactive, Edit sample template,,8
-		; if !errorlevel
+			if errorlevel
+			Breaking.Point(2)
 		Breaking.Point()
 		Sendinput,{tab}{^a}
+		If !Product
+			Breaking.Point(2)
 		sendinput, % Product ",{space}{shift down}I{shift up}n{shift down}{space}P{shift up}rocess`,{space}{shift down}A{Shift up}nalytical"
 		sleep 400
 		Breaking.Point()
@@ -2593,11 +2608,14 @@ If winactive("Results Definition") {
 			exit
 		sleep 300
 		Breaking.Point()
-		click, 70, 518 ;edit sample method
-		winwaitactive, Edit sample template,,6
-		; if !errorlevel
+		click, 70, 518 ;edit sample template
+		winwaitactive, Edit sample template,,4
+		if errorlevel
+			Breaking.Point(2)
 		Breaking.Point()
 		Sendinput,{tab}^{a}
+		If !Product
+			Breaking.Point(2)
 		sendinput, % Product ",{space}{shift down}I{shift up}n{shift down}{space}P{shift up}rocess`,{space}{shift down}P{shift up}hysical"
 		; sendinput, {enter}
 		sleep 400
@@ -2623,13 +2641,15 @@ If winactive("Results Definition") {
 		send, {enter}
 		Breaking.Point()
 		; click, 340, 622 ;click okay
-		ifwinactive, Warning,
-			exit
+		if winactive("Warning,")
+			return
 		winwaitactive, NuGenesis LMS, ,7
 		if !errorlevel
 			LMSclick.Edit_Sample_Template()
 		Breaking.Point()
 		Sendinput,{tab}^{a}
+		If !Product
+			Breaking.Point(2)
 		sendinput, % Product ",{space}{Shift down}C{shift up}oated`,{space}{shift down}R{shift up}etain"
 		sleep 400
 		Breaking.Point()
@@ -2662,6 +2682,8 @@ If winactive("Results Definition") {
 			LMSclick.Edit_Sample_Template()
 		Breaking.Point()
 		Sendinput,{tab}^{a}
+		If !Product
+			Breaking.Point(2)
 		sendinput, % Product ",{space}{Shift down}C{shift up}oated`,{space}{shift down}P{shift up}hysical"
 		sleep 300
 		Breaking.Point()
@@ -2694,6 +2716,8 @@ If winactive("Results Definition") {
 		LMSclick.Edit_Sample_Template()
 		Breaking.Point()
 		Sendinput,{tab}^{a}
+		If !Product
+			Breaking.Point(2)
 		sendinput, % Product ",{space}{shift down}I{shift up}n{space}{shift down}P{shift up}rocess`,{space}{shift down}R{shift up}etain"
 		sleep 400
 		Breaking.Point()
@@ -2725,25 +2749,29 @@ If winactive("Results Definition") {
 		Sendinput,%Product%`,{space}{shift down}F{shift up}inished`,{space}{shift down}M{shift up}icro{tab 4}^a%Product%{tab 2}
 		Sendinput,{Space}
 		winwaitactive, Products List,,2
+			if errorlevel
+				Breaking.Point(2)
+		Breaking.Point()
 		Sendinput,{enter 2}
 		Sendinput,{tab}
 		Breaking.Point()
 		Sendinput,{right}{tab}  ; to select finish --> {left 2}
 		send, {enter}
 		winwaitactive, NuGenesis LMS,,7
+		if errorlevel
+			Breaking.Point(2)
 		; if !errorlevel
 		Breaking.Point()
 		LMSclick.Edit_Sample_Template()
 		Breaking.Point()
 		sendinput, {tab}^{a}
+		if !Product
+			Breaking.Point(2)
 		sendinput, % Product "`,{space}{shift down}F{shift up}inished`,{space}{shift down}M{shift up}icro"
 		sleep 400
 		Breaking.Point()
 		send, {enter}
 		winwaitactive, NuGenesis LMS,,5
-		; If !ErrorLevel
-		; MouseMove, %premx%, %premy%, 0
-		; click
 		return
 	}
 
@@ -3861,6 +3889,8 @@ Class WorkTab {
 			winactivate, NuGenesis LMS
 			click 70, 518
 			winwaitactive, Edit sample template,, 3
+			if errorlevel
+				Breaking.Point(2)
 			return
 		}
 

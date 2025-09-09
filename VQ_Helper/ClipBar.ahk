@@ -550,7 +550,7 @@ EditBoxOld(Input:=""){
   else
     result := Input
     sleep 200
-	Gui EditBox: +AlwaysOnTop +Toolwindow +Resize +owner +HwndGUIID
+	Gui EditBox: +AlwaysOnTop +Toolwindow +Resize +owner +HwndEditBoxGUIID
 		GUI, EditBox:Font, s12 cBlack, Consolas
     gui, EditBox:Margin,1,1
 		GUI, EditBox:Add, Edit, x0 y0 +Resize vEditBox , % Result
@@ -604,7 +604,7 @@ EditBox(Input:=""){
   else
     result := Input
     sleep 200
-	Gui EditBox: +AlwaysOnTop +Toolwindow +Resize +owner +HwndGUIID
+	Gui EditBox: +AlwaysOnTop +Toolwindow +Resize +owner +HwndEditBoxGUIID
 		GUI, EditBox:Font, s12 cBlack, Consolas
     gui, EditBox:Margin,1,1
 		GUI, EditBox:Add, Edit, x0 y0 +Resize vEditBox , % Result
@@ -1232,21 +1232,20 @@ Class ClipBar{
 		wingetpos, Win_X, Win_y, Win_w, Win_h, A
 		ClipBar_H=33
 		ClipBar_H_max=56
-		ClipBar_T:=235
-		ClipBar_W=640
+		ClipBar_T:=205
+		ClipBar_W=440
 		IF (ClipbarLocation= "BOTTOMR") || (ClipbarLocation= "RIGHT") || (ClipbarLocation= "TOPR")
 			ClipBar_x:=Nugenesis_W-(Nugenesis_W//6)
 		else
 			ClipBar_x:=Nugenesis_X+(Nugenesis_W//6)
 		; ClipBar_x:=1
 		IF (ClipbarLocation= "BOTTOM") || (ClipbarLocation= "BOTTOMR") || (ClipbarLocation= "RIGHT")
-			ClipBar_Y:=Nugenesis_h + Nugenesis_y - 44
+			ClipBar_Y:=Nugenesis_h + Nugenesis_y - 40
 		else
 			ClipBar_Y:=Nugenesis_y -0
-		Gui ClipBar: +AlwaysOnTop -Caption +Toolwindow +owner +HwndGUIID
+		Gui ClipBar: +AlwaysOnTop -Caption +Toolwindow +owner +HwndClipBarGUIID
 		Gui ClipBar:Default
 		; Gui, ClipBar:+Delimiter`n
-		; winSet, Transparent, 80, %GUIID%
 		GUI, ClipBar:color,ff6c56,ffffff
 			GUI,ClipBar:Font,		ce66000	 s18 Bold , consolas
 			; GUI,ClipBar:Add,edit,		vProduct +wrap -multi	gclipbarhandler left h33 x7 y-1 w65,	%Product%
@@ -1256,8 +1255,8 @@ Class ClipBar{
 		this.AddEdit("Coated",	 "left h16 y+0 w77",		"8 c909B00, Arial Narrow")
 		GUI, ClipBar:font, cffffff s9 Norm w500 , Consolas
 		This.AddEdit("Iteration", "x+0 h33 left y0 w62 Center",			 "17 Bold 107C41, Consolas")	; Text1
-		this.AddEdit("GeneralBox",	 "x+0 h17 left y0 w288",		"8, Arial")
-		this.AddEdit("GeneralBox2",	 "h16 left y+0 w288",		"8, Arial")
+		this.AddEdit("GeneralBox",	 "x+0 h17 left y0 w100",		"7, Arial")
+		this.AddEdit("GeneralBox2",	 "h16 left y+0 w100",		"7, Arial")
 		this.AddBoxes()
 		CoordMode, mouse, screen
 		try GUI, ClipBar:Show, x%ClipBar_X% y%ClipBar_y% w%ClipBar_w% h%ClipBar_H% Noactivate, ClipBar
@@ -1273,7 +1272,7 @@ Class ClipBar{
 			; OnMessage(0x203,  "VariableBar_Relocate")
 		; OnMessage(0x002C, "ODDDL_MeasureItem") ; WM_MEASUREITEM
 		; OnMessage(0x002B, "ODDDL_DrawItem") ; WM_DRAWITEM
-		winSet, Transparent, %ClipBar_T%, AHK_id %GUIID%
+		winSet, Transparent, %ClipBar_T%, AHK_id %ClipBarGUIID%
 		Return
 
 		ClipBarHandler:
@@ -1302,10 +1301,10 @@ Class ClipBar{
 		Loop 1
 		{
 			GUI, ClipBar:color,ff0000,ff0000
-			winSet, Transparent, 255, AHK_id %GUIID%
+			winSet, Transparent, 255, AHK_id %ClipBarGUIID%
 			sleep 100
 			GUI, ClipBar:color,DC734F,ffffff
-			winSet, Transparent, 255, AHK_id %GUIID%
+			winSet, Transparent, 255, AHK_id %ClipBarGUIID%
 			sleep 50
 		}
 	}
@@ -1317,9 +1316,6 @@ Class ClipBar{
 			sleep 200
 			Gui, Font, cBlack s16  ; This just tells what color to change to
 			GuiControl, Font, Edit5
-			; GUI, ClipBar:color,DC734F,97BA7F
-			; winSet, Transparent, 250, AHK_id %GUIID%
-			; GUI, ClipBar:Show, x%ClipBar_X% y%ClipBar_y%+30 w%ClipBar_w% h%ClipBar_H% Noactivate, ClipBar
 	}
 	AddEdit(Variable,Dimensions:="",Font:=""){
 		global
