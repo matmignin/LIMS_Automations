@@ -1588,14 +1588,14 @@ EditMethodList(){
 ShowFinalLabelCopy:
 	; run, find "\\10.1.2.118\Label Copy Final"
 	firstLetter:=SubStr(Product,1,1)
-	runwait, find "\\netapp\Master Folders\" FirstLetter "000-" FirstLetter "999\" Product "\Label Copy"
+	runwait, find "\\10.1.2.118\Master Folders\" FirstLetter "000 - " FirstLetter "999\" Product "\Label Copy"
 	; runwait, find "\\netapp\Master Folders"
 	; sleep 550
 	; winmaximize, Search Results
 	winactivate, ahk_class CabinetWClass ahk_exe explorer.exe
-	; send, {*}%Product%.docx{enter}
-	; sleep 400
-	; send, ^{e}{tab 2}{right}
+	send, {*}%Product%{*}.docx{enter}
+	sleep 400
+	send, ^{e}{tab 2}{right}
 	; SelectPreviewPane(Product)
 return
 ShowScanLabelCopy:

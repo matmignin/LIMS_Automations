@@ -22,7 +22,7 @@ copyLabelCopyDocRegex(SaveText:="",showToolTip:=""){
 	PillSize:=
 	regingredient:=[]
 	FirstLetter:=SubStr(Product, 1,1)
-FilePattern := "\\netapp\Master Folders\" FirstLetter "000-" FirstLetter "999\" Product "\Label Copy\*" product "*.docx"
+FilePattern := "\\10.1.2.118\Master Folders\" FirstLetter "000 - " FirstLetter "999\" Product "\Label Copy\*" product "*.docx"
 Loop, %FilePattern%, 1, 0
 		oW:=ComObjGet(A_LoopFileLongPath)
 		sleep 2000
@@ -52,19 +52,19 @@ Loop, %FilePattern%, 1, 0
 	 	 listofIngredients.=Trim(strReplace(listofIngredientsPreTrim2, "`r",""))
 		;  regingredient.insert(listofIngredientsPreTrim2)
 			}
-		; FileDelete, %A_ScriptDir%  \LabelCopyText.txt
-			; sleep 400
-	; FileAppend,  %listofIngredients%, %A_ScriptDir%  \LabelCopyText.txt
+		FileDelete, LabelCopyText.txt
+			sleep 400
+	FileAppend,  %listofIngredients%, LabelCopyText.txt
 	; sleep 500
 	Clipboard:=listofIngredients
 	If showTooltip
 		tt(listofIngredients,1000)
 	If SaveText
 		{
-		Try FileDelete, %A_ScriptDir%  \LabelCopies\%Product%.txt
-		FileAppend,  %ServingSize%`n%PillSize%`n`n%listofIngredients%, %A_ScriptDir%  \LabelCopies\%Product%.txt
-		; FileAppend,  , %A_ScriptDir%  \LabelCopies\%Product%Reg.txt
-		; FileAppend,  %listofIngredients%, %A_ScriptDir%  \LabelCopies\%Product%Reg.txt
+		Try FileDelete, LabelCopies\%Product%.txt
+		FileAppend,  %ServingSize%`n%PillSize%`n`n%listofIngredients%, LabelCopies\%Product%.txt
+		FileAppend,  , LabelCopies\%Product%Reg.txt
+		FileAppend,  %listofIngredients%, LabelCopies\%Product%Reg.txt
 		}
 	tt(Servingsize "`n" PillSize "`n`n" listofIngredients,5000,10,10,3,190)
 

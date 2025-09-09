@@ -243,61 +243,9 @@ else if MouseIsOver("ClipBar"){
 	ClipBar_x1:=Clipbar_x+310
 	ClipBar_x2:=Clipbar_x+50
 	ClipBar_x6:=Clipbar_x+265
-	; CoordMode, mouse, Screen
 	mousegetpos,MouseClipbarx, MouseClipbarY,,winControl
-	; CoordMode, mouse, Window
-	; ControlGetFocus,winControl,ClipBar
 		TT("Double Click To Copy",3000,80,MouseClipbarY,2,200,"M")
-	; if (winControl="Edit1"){
-	; 	; try menu, AllProductsMenu, DeleteAll
-	; 	; loop, parse, AllProducts, " "
-	; 	; {
-	; 		; Menu, AllProductsMenu, Add, %a_LoopField%, allproductsmenubutton
-	; 		; if (A_LoopField = product)
-	; 			; try Menu, AllProductsMenu, Check, %a_LoopField%,
-	; 	; }
-	; 	; try Menu,AllProductsMenu,show
-	; }
-	; else if (winControl="Edit2"){
-	; 	TT("Double Click To Copy",1000,1,0,2,250,"M")
-	; 	; try menu, AllBatchesMenu, DeleteAll
-	; 	; loop, parse, AllBatches, " "
-	; 	; {
-	; 		; Menu, AllBatchesMenu, Add, %a_LoopField%, allbatchesmenubutton
-	; 		; if (A_LoopField = batch)
-	; 			; try Menu, AllBatchesMenu, Check, %a_LoopField%,
-	; 	; }
-	; 	; try Menu,AllBatchesMenu,show
-	; 	; GetAllBatches(" ")
-	; 	; sleep 1000
-	; }
 
-	; else if (winControl="Edit3"){
-	; 	TT("Double Click To Copy",1000,1,0,2,250,"M")
-	; 	return
-	; 	; TT("Whole Batches")
-	; 	;  GetAllWholeBatches("`n")
-	; }
-	; else if (winControl="Edit4"){
-	; 	TT("Double Click To Copy",1000,1,0,2,250,"M")
-	; 	; sleep 1000
-	; 	; tt(sampleguid,7000,100,20,7,220,"M")
-	; 	; Clipboard:=SAMPLEGUID
-	; 	; ControlsetText, Edit4,%SAMPLEGUID%,ClipBar
-	; 	return
-	; }
-	; ; else if (winControl="Edit5")
-	; 	; return
-	; else if (winControl="Edit6") {
-	; 	TT("Double Click To Copy",1000,1,0,2,250,"M")
-	; 	; BothGeneralBoxes:= "`n" GeneralBox2
-	; 	; tt(BothGeneralBoxes,7000,100,2,6,220,"M")
-	; }
-	; else if (winControl="Edit7"){
-	; 	TT("Double Click to Copy",1000,1,0,2,250,"M")
-	; 	; tt(sampleguid,7000,100,20,7,220,"M")
-
-	; }
 	return
 }
 else if winactive("Error ahk_exe eln.exe") && !(DisableAutoScroll="YES"){
@@ -515,29 +463,29 @@ copyLabelCopyDoc(SaveText:="",showtooltip:=""){
 	Global Product,RegexIngredients
 
 	firstLetter:=SubStr(Product,1,1)
-	FilePattern := "\\netapp\Master Folders\" FirstLetter "000-" FirstLetter "999\" Product "\Label Copy\*" product "*.docx"
+	FilePattern := "\\10.1.2.118\Master Folders\" FirstLetter "000 - " FirstLetter "999\" Product "\Label Copy\*" product "*.docx"
 		; FilePattern := "\\netapp\Label Copy Final\" firstLetter "000-" firstLetter "999\*" product "*.docx"
 Loop, %FilePattern%, 1, 0
 		oW:=ComObjGet(A_LoopFileLongPath)
 		; sleep 1000
 		sleep 200
 		oW.Range.FormattedText.Copy
-		clipwait,4,0
+		clipwait,6,0
 		if errorlevel
 			msgbox, didnt  find labelcopy
 	LabelCopyText:=Clipboard
 
 	Ingredients:= RegexMatch(LabelCopyText, RegexIngredients,ri)
 
-		 ;Clipboard:=LabelCopyText
+		; Clipboard:=LabelCopyText
 
 	If showTooltip
 		tt(LabelCopyText,1000)
-	; If SaveText
-	; 	{
-	; 	Try FileDelete, %A_ScriptDir% \LabelCopies\%Product%.txt
-	; 	FileAppend,  %labelcopytext%, %A_ScriptDir% \LabelCopies\%Product%.txt
-	; 	}
+	If SaveText
+		{
+		Try FileDelete, LabelCopies\%Product%.txt
+		FileAppend,  %labelcopytext%, LabelCopies\%Product%.txt
+		}
 	; Clipboard:=listofIngredients
 		; MsgBox % riIngredients
 	Return LabelCopyText
@@ -591,11 +539,13 @@ If (RegexMatch(Parse, RegexRequirements, subpat)){
 
 TestCode3:
 copyLabelCopyDoc(1,1)
+
 Return
 TestCode2:
 GetRequirements()
 Return
 TestCode1:
 copyLabelCopyDocRegex(1)
+
 return
 

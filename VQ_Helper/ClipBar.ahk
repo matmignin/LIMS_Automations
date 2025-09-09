@@ -39,23 +39,28 @@ clipChange(){
     return
   }
 	else if InStr(Clipboard, "<<CopyLabelCopy>>",true, 1,1){
-		; Product:=TRIM(SubStr(Clipboard, 19,4))
-		clip.codesRegex()
+		simpleclip:=1
 		Gui ClipBar:Default
+IF (SubStr(Clipboard, 19,4) != "Temp"){
+		Product:=TRIM(SubStr(Clipboard, 19,4))
+		sleep 200
 		GuiControl,ClipBar:Text, Product, %Product%
+}
+		; clip.codesRegex()
+		; Product:=RegexMatch(Clipboard, RegexProduct,r) ? rProduct : Product
 		; clipBar.Flash()
 		; ControlsetText, Edit1,%Product%,ClipBar  ;clip.codesRegex()
 		; SLEEP 100
 		Clipboard:=
+		; GoSub ShowFinalLabelCopy
 		; sleep 100
 		copyLabelCopyDoc(1)
 		; Clipwait,5,0
-		; tt(clipboard)
 		sleep 2500
-		; Clipboard:=
 		GoSub ShowScanLabelCopy
-		GoSub ShowFinalLabelCopy
-
+		; tt(clipboard)
+		; Clipboard:=
+simpleclip:=
 		; FileDelete, %A_ScriptDir%  \LabelCopyText.txt
 		; Try FileDelete, %A_ScriptDir%  \LabelCopies\%Product%.txt
 		; FileAppend,  %labelcopytext%, %A_ScriptDir%  \LabelCopies\%Product%.txt
@@ -192,19 +197,28 @@ Gui ClipBar:Default
   }
 	else if InStr(Input, "<<CopyLabelCopy>>",true, 1,1){
 		; clip.codesRegex()
-		; Product:=TRIM(SubStr(Input, 19,4))
+		simpleclip:=1
+		; clip.codesRegex()
 		Gui ClipBar:Default
-		GuiControl,ClipBar:Text, Product, %Product%
+		IF (SubStr(Clipboard, 19,4) != "Temp"){
+			Product:=TRIM(SubStr(Input, 19,4))
+			sleep 200
+			GuiControl,ClipBar:Text, Product, %Product%
+		}
+		; else
+			; return
+		; Product:=RegexMatch(Clipboard, RegexProduct,r) ? rProduct : Product
 		Clipboard:=
-		copyLabelCopyDoc()
 		; copyLabelCopyDocRegex(1,1)
+		copyLabelCopyDoc(1)
 		; tt(clipboard)
 		sleep 2800
-		GoSub ShowFinalLabelCopy
+		; GoSub ShowFinalLabelCopy
 		GoSub ShowScanLabelCopy
 		; FileDelete, %A_ScriptDir%  \LabelCopyText.txt
 		; Try FileDelete, %A_ScriptDir%  \LabelCopies\%Product%.txt
 		; FileAppend,  %labelcopytext%, %A_ScriptDir%  \LabelCopies\%Product%.txt
+		simpleclip:=
 		return
   }
 ;   else if InStr(input, ">>|", true,1,1) {
@@ -239,9 +253,9 @@ Gui ClipBar:Default
 	CodesRegex(input:=""){
 		global RegexProduct, RegexBatch, RegexLot, RegexCoated, RegexSampleGUID, Product, Lot, Batch, Coated, sampleGUID, PriorSampleGUID, CodeString, CodeFile, PriorCodeString, CustomerPosition, Iteration,AllBatches, AllProducts
 		Gui ClipBar:Default
-			PreviousSampleGUIDsFile:=A_ScriptDir "\PriorSampleGUIDs.txt"
-			PriorCodestring:=CodeString
-			PriorSampleGUID:=SampleGUID
+			; PreviousSampleGUIDsFile:=A_ScriptDir "\PriorSampleGUIDs.txt"
+			; PriorCodestring:=CodeString
+			; PriorSampleGUID:=SampleGUID
 		codestring:=
 			; AllProducts:=
 			coated:=
@@ -256,32 +270,6 @@ Gui ClipBar:Default
 			Lot:=RegexMatch(Parse, RegexLot, r) ? rLot : Lot
 			Coated:=RegExMatch(Parse, RegexCoated, r) ? rCoated : Coated
 			SampleGUID:=RegExMatch(Parse, RegexSampleGUID, r) ? rSampleGUID : SampleGUID
-
-			; If rProduct {
-			; 	Gui, Font, cYellow s17
-			; 	GuiControl, Font, Edit1
-			; }
-			; If rBatch {
-			; 	Gui, Font, cYellow s13
-			; GuiControl, Font, Edit2
-			; }
-			; If rLot {
-			; 	Gui, Font, cYellow s9
-			; GuiControl, Font, Edit3
-			; }
-			; If rCoated {
-			; 	Gui, Font, cYellow s8
-			; GuiControl, Font, Edit4
-			; }
-			; sleep 200
-			; Gui, Font, cBlack s17
-			; GuiControl, Font, Edit1
-			; Gui, Font, cBlack s13
-			; GuiControl, Font, Edit2
-			; Gui, Font, cBlack s9
-			; GuiControl, Font, Edit4
-			; Gui, Font, cBlack s8
-			; GuiControl, Font, Edit3
 
 				Ct:=Coated ? " ct#" : ""
 				; Coated:=RegExMatch(Parse, RegexCoated, r) ? rCoated : Coated
@@ -318,28 +306,9 @@ Gui ClipBar:Default
 					codeString:=trim(Product " " Batch " " Lot " ct#" Coated)
 				else
 					codeString:=trim(Product " " Batch " " Lot)
-				; if (PriorCodestring!=Codestring)
-				; {
-				; 	FileAppend, %CodeString%`n, WholeBatches.txt
-				; 	FileDelete, %CodeFile%
-				; 	sleep 200
-				; 	FileAppend, %CodeString%, %CodeFile%
-				; }
-				; if rproduct & rBatch & rlot & (PriorCodestring!=Codestring){
-				; ControlsetText, Edit6,%CodeString%,ClipBar ahk_exe VQ_Helper
-				; }
+
 		If (SampleGUID){
 			iniwrite, %SampleGUID%, Settings.ini, SavedVariables, SampleGUID
-			;tt(SAMPLEGUID,4000,100,100,4)
-				; ControlsetText, Edit7,%SampleGUID%,ClipBar ahk_exe VQ_Helper
-				; FileRead, oPreviousSampleGUIDs, % PreviousSampleIGUDsFile
-				  ; {
-				; NewPreviousSampleGUIDs:=RemoveDuplicates(PreviousSampleGUIDs)
-					; FileDelete, %PreviousSampleGUIDsFile%
-					; sleep 200
-					; FileAppend, %NewPreviousSampleGUIDs%`n%SampleGUID%, %PreviousSampleGUIDsFile%
-						; return
-			; }
 		}
 
 				TT(trim(Product " " Batch " " Lot Ct Coated "`n" SampleGUID),800,10,100,5,180,"M")
@@ -1580,7 +1549,8 @@ Class ClipBar{
 				} else if (winControl = "Edit7") {
 					ControlGetText, clipboard, Edit7, ClipBar
 				}
-				TT(Clipboard)
+				TrayTip, Copied to Clipboard, %clipboard%, 2
+				; TT(Clipboard)
 				return
 		}
 
