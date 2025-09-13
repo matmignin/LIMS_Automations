@@ -24,17 +24,15 @@ clipChange(){
   }
   else if InStr(Clipboard, ">>|", true,1,1) {
     if (Iteration >=25) || (Iteration < 0) || !(Iteration)
-		{
       iteration:=1
 			; Clipbar.FlashIteration()
-		}
-    ClippedData:=Clipboard
-		UsedLimits:=
+   ;  ClippedData:=Clipboard
+	; 	UsedLimits:=
 
-		AllowPrefixes:=
-    FileDelete, ClippedExcelData.txt
-    sleep 400
-    FileAppend, %ClippedData%, ClippedExcelData.txt
+	; 	AllowPrefixes:=
+   ;  FileDelete, ClippedExcelData.txt
+   ;  sleep 400
+   ;  FileAppend, %ClippedData%, ClippedExcelData.txt
     LMS.AddDataFromClipboard()
     return
   }
@@ -52,12 +50,11 @@ IF (SubStr(Clipboard, 19,4) != "Temp"){
 		; ControlsetText, Edit1,%Product%,ClipBar  ;clip.codesRegex()
 		; SLEEP 100
 		Clipboard:=
+		copyLabelCopyDoc()
 		; GoSub ShowFinalLabelCopy
 		; sleep 100
-		copyLabelCopyDoc(1)
 		; Clipwait,5,0
-		sleep 2500
-		GoSub ShowScanLabelCopy
+
 		; tt(clipboard)
 		; Clipboard:=
 simpleclip:=
@@ -69,28 +66,35 @@ simpleclip:=
   else if InStr(Clipboard, "<<CoMPILE>>",true, 1,1){
 		Clipboard:=
     sleep 800
-    Run, A_ScriptDir "\RawFiles\COMPILE.exe"
+    Run, "\\10.1.2.118\users\vitaquest\mmignin\VQ_Helper\RawFiles\COMPILE.exe"
     exitapp
     Return
   }
 
-  ; else if (Winactive("NuGenesis LMS") && InStr(Clipboard, "5-HTP=0`r`n5-MTHF=1`r`n",true, 1,1)){
-	; 	NewIngredientsString:="[Ingredients]`r`n" Clipboard
-	; 	filedelete, Ingredients.ini
-	; 	fileappend, %NewIngredientsString%, Ingredients.ini
-  ;   sleep 400
-  ;   Return
-  ; }
-	; else if (Winactive("NuGenesis LMS") && InStr(Clipboard, "Value",true, 1,1)){
-	; 	if instr(Clipboard, "111Skin Limited",true,1,1)
-	; 		WorkTab.SaveCustomerList()
-	; 	else if instr(Clipboard, "5-HTP",true,1,1)
-	; 		ProductTab.SaveIngredientList()
-	; 	else
-	; 		clip.codesRegex()
-	; 	; sleep 800
-	; 	Return
-	; }
+;   else if (Winactive("NuGenesis LMS") && InStr(Clipboard, "5-HTP=0`r`n5-MTHF=1`r`n",true, 1,1)){
+; 		NewIngredientsString:="[Ingredients]`r`n" Clipboard
+; 		filedelete, Ingredients.ini
+; 		fileappend, %NewIngredientsString%, Ingredients.ini
+;     sleep 400
+;     Return
+		;   }
+	else if (Winactive("NuGenesis LMS") && InStr(Clipboard, "Value",true, 1,1)){
+			TrimmedList:=Trim(RegExReplace(Clipboard, "^\s*Value[^\S\r\n]*\R", "", "", 1))
+		if instr(Clipboard, "111Skin Limited",true,1,1){
+			WorkTab.SaveCustomerList()
+			clipboard:=TrimmedList
+			msgbox,, Cleaned & Copied the Customer List,
+		}
+		else if instr(Clipboard, "5-HTP",true,1,1){
+			ProductTab.SaveIngredientList()
+			clipboard:=TrimmedList
+			Msgbox,, Cleaned & Copied the Ingredients List,
+		}
+		else
+			clip.codesRegex()
+		; sleep 800
+		Return
+	}
   ; else if Winactive("Test Definition Editior"){
   ;   DESCRIPTION:=Trim(Clipboard,"`r`n")
   ;   ; TT(Description,2000)
@@ -253,9 +257,6 @@ Gui ClipBar:Default
 	CodesRegex(input:=""){
 		global RegexProduct, RegexBatch, RegexLot, RegexCoated, RegexSampleGUID, Product, Lot, Batch, Coated, sampleGUID, PriorSampleGUID, CodeString, CodeFile, PriorCodeString, CustomerPosition, Iteration,AllBatches, AllProducts
 		Gui ClipBar:Default
-			; PreviousSampleGUIDsFile:=A_ScriptDir "\PriorSampleGUIDs.txt"
-			; PriorCodestring:=CodeString
-			; PriorSampleGUID:=SampleGUID
 		codestring:=
 			; AllProducts:=
 			coated:=

@@ -20,11 +20,11 @@ iniwrite, %The_Time%, %SettingsFile%, Config, CompileTime
 compileagain:
 Try
 {
-RunWait A_ScriptDir "\RawFiles\AHK\Compiler\Ahk2Exe.exe"
- /in A_ScriptDir "\RawFiles\VQ_Helper.ahk"
- /out A_ScriptDir "\VQ_Helper.exe"
- /icon A_ScriptDir "\icon.ico"
- /base A_ScriptDir "\RawFiles\AHK\Compiler\Unicode 64-bit.bin"
+RunWait  "\\10.1.2.118\users\vitaquest\mmignin\VQ_Helper\RawFiles\AHK\Compiler\Ahk2Exe.exe"
+ /in  "\\10.1.2.118\users\vitaquest\mmignin\VQ_Helper\RawFiles\VQ_Helper.ahk"
+ /out  "\\10.1.2.118\users\vitaquest\mmignin\VQ_Helper\VQ_Helper.exe"
+ /icon  "\\10.1.2.118\users\vitaquest\mmignin\VQ_Helper\icon.ico"
+ /base  "\\10.1.2.118\users\vitaquest\mmignin\VQ_Helper\RawFiles\AHK\Compiler\Unicode 64-bit.bin"
  /compress 0
 }
 Catch e

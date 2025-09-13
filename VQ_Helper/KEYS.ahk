@@ -12,7 +12,7 @@ Reload
 return
 ^+`::
 	sleep 800
-	Run, "U:\VQ_Helper\RawFiles\COMPILE.exe"
+	Run, "\\10.1.2.118\users\vitaquest\mmignin\VQ_Helper\RawFiles\COMPILE.exe"
 	; Run, A_ScriptDir "\RawFiles\COMPILE.exe"
 	exitapp
 	Return
@@ -38,24 +38,24 @@ return
 
 
 
-F7::
-	Winactivate, NuGenesis LMS
-	preclk()
-	LMS.SearchBar(Batch,"{enter}",0)
-	postclk()
-	Return
-F6::
-	Winactivate, NuGenesis LMS
-	preclk()
-	LMS.SearchBar(Product,"{enter}",0)
-	postclk()
-	Return
-F8::
-	Winactivate, NuGenesis LMS
-	preclk()
-	LMS.SearchBar("",,"False")
-	postclk()
-	Return
+; F7::
+; 	Winactivate, NuGenesis LMS
+; 	preclk()
+; 	LMS.SearchBar(Batch,"{enter}",0)
+; 	postclk()
+; 	Return
+; F6::
+; 	Winactivate, NuGenesis LMS
+; 	preclk()
+; 	LMS.SearchBar(Product,"{enter}",0)
+; 	postclk()
+; 	Return
+; F8::
+; 	Winactivate, NuGenesis LMS
+; 	preclk()
+; 	LMS.SearchBar("",,"False")
+; 	postclk()
+; 	Return
 
 
 
@@ -640,11 +640,11 @@ F7::WinMove, ahk_class XLMAIN ahk_exe EXCEL.EXE,, %NuX%, %NuY%, 1250, 1200
 			; F6::WorkTab.CorrectTestResults(0,5)
 
 			Mbutton::WorkTab.CorrectTestResults("Toggle")
+			^Mbutton::WorkTab.CorrectTestResults(0,"")
 			Mbutton & Wheeldown::LMS.menu()
 			F9::LMS.Menu()
 			F10::WorkTab.CorrectTestResults(0,"","Test")
-			lctrl::WorkTab.CorrectTestResults(0,"","Test")
-			^Mbutton::WorkTab.CorrectTestResults(0,"","Test")
+
 			F8::numbermenu(6)
 
 ;;\\  		    Results Definition																	_
@@ -1019,40 +1019,9 @@ return
 +Enter::LMS.SaveCode()
 +^F11::LMS.OrientSearchbar()
 !F4::Return
-; ^F9::
-; 	send, ^c
-; 	sleep 500
-; 		If (SampleguID){
-; 				; FileRead, PreviousSampleguIDs, % PreviousSampleguIDsFile
-; 				  ; {
-; 				; NewPreviousSampleguIDs:=Trim(RemoveDuplicates(PreviousSampleguIDs)"`n"SampleguID)
-; 					FileDelete, %PreviousSampleguIDsFile%
-; 					sleep 200
-; 					FileAppend, %NewPreviousSampleguIDs%, %PreviousSampleguIDsFile%
-; 						; return
-; 			; }
-; 		}
-; 		clipboard:=sampleguid
-; 		TT(Sampleguid)
-; 	return
-	; !F10::LMS.AddsampleLog(5)
-	; !F9::
-	; 	If (LMS.DetectTab() != "Requests"){
-	; 		send, {click 40 40}
-	; 		sleep 50
-	; 		send,{click 50 75 0}
-	; 		sleep 50
-	; 		send,{click 280 75 0}
-	; 		sleep 100
-	; 		send,{click 280 220}
-	; 	}
-	; 	else
-	; 		return
-	; return
-; ^F7::FileRead, Clipboard, %A_ScriptDir%  \ClippedExcelData.txt
-	; SpecTab.Table()
-	;^F10::LMS.AddSampleLog(15)
-	; F10::
+
+
+
 mbutton::
 	Tab:=LMS.DetectTab()
 	if (Tab = "Specs"){
@@ -1449,6 +1418,7 @@ EditMethodList(){
 ShowFinalLabelCopy:
 	; run, find "\\10.1.2.118\Label Copy Final"
 	firstLetter:=SubStr(Product,1,1)
+	sleep 200
 	runwait, find "\\10.1.2.118\Master Folders\" FirstLetter "000 - " FirstLetter "999\" Product "\Label Copy", , UseErrorLevel
 		if Errorlevel
 	runwait, find "\\10.1.2.118\Master Folders",
@@ -1467,8 +1437,8 @@ ShowScanLabelCopy:
 		runwait, find "\\netapp\share\QC LAB\Label Copy Scans"
 	sleep 250
 	; winmaximize, Search Results
-	WinMove, *%Product%* ahk_exe explorer.exe,, 5, 10, 1250, 1200
 	winactivate, *%Product%* ahk_exe explorer.exe
+	WinMove, *%Product%* ahk_exe explorer.exe,, 5, 10, 1250, 1200
 	send, {*}%Product%{*}{enter}
 	sleep 700
 	send, ^{e}{tab 2}{Right}

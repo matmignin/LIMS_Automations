@@ -84,13 +84,13 @@ prefix:=
 	Menu, Tray, Add,
 	Menu, Tray, Add, Save List via Clipboard, SaveClipboardToList
 	; Menu, Tray, Add, Get Requirements, GetRequirements
-	 Menu, TestSubMenu, Add, run Script, TestCode
-	 Menu, TestSubMenu, Add, Test1, TestCode1
-	 Menu, TestSubMenu, Add, Test2, TestCode2
-	 Menu, TestSubMenu, Add, Test3, TestCode3
-	Menu, Tray, Add, windowSpy, windowSpy
-	 Menu, TestSubMenu, Add, run Script, TestCode
-	Menu, Tray, add, TestCode, :TestSubMenu ;testCode
+	;  Menu, TestSubMenu, Add, run Script, TestCode
+	;  Menu, TestSubMenu, Add, Test1, TestCode1
+	;  Menu, TestSubMenu, Add, Test2, TestCode2
+	;  Menu, TestSubMenu, Add, Test3, TestCode3
+	; Menu, Tray, Add, windowSpy, windowSpy
+	;  Menu, TestSubMenu, Add, run Script, TestCode
+	; Menu, Tray, add, TestCode, :TestSubMenu ;testCode
 	;Menu, Tray, Add, Show Variables, ShowVariables
 	;Menu, Tray, Add, ListLines, ListLines
 	Menu, Tray, Add, ApplicationFolder, mmigninFolder
@@ -102,10 +102,10 @@ prefix:=
 		Menu, Tray, Check, Disable AutoScroll
 		else
 		Menu, Tray, Uncheck, Disable AutoScroll
-	Menu, Tray, Add, Hotkeys, ShowHotkeys
+	; Menu, Tray, Add, Hotkeys, ShowHotkeys
 	Menu, Tray, Add, &Reload, ReloadSub
 	Menu, Tray, Add, Exitsub, Exitsub
-	Menu, Tray, Add, Settings, SettingsFile
+	; Menu, Tray, Add, Settings, SettingsFile
 	Menu, Tray, tip, %HotkeysTip%
 	Menu, Tray, Default, &Reload
 
@@ -122,7 +122,7 @@ prefix:=
 	regexunit:="i)(?P<unit>\w*)"
 	RegexRequirements:="iO)(?<Prefix>(NLT |NMT |<))?(?<LowerLimit>([,|\d]*.?[\d]*))( - (?<UpperLimit>[,|\d]*.?[\d]*))? (?<Unit>(mg RAE|mcg RAE|mcg DFE|mg|mcg|g|IU|CFU\\g|ppm|ppb))"
 	RegexSampleGUID:="i)(?P<SampleguID>\b[a-z0-9]{8}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{12}\b)"
-	PreviousSampleguIDsFile:=A_ScriptDir "\PriorSampleguIDs.txt"
+	; PreviousSampleguIDsFile:=A_ScriptDir "\PriorSampleguIDs.txt"
 	; RegexCombined := "iO)(?<=[\w\d]{3})?(?P<Product>[abcdefghijklmn]\d{3}\b)|(?<!Ct#)(?P<Batch>\d{3}-\d{4}\b)|(?P<Lot>\b\d{4}\w\d\w?|\bBulk\b|G\d{7}\w?\b|VC\d{6}[ABCDEFGH]?|V[A-Z]\d{5}[A-Z]\d?|\d{5}\[A-Z]{3}\d)|(\d{4}\w\d\w?.|\bBulk\b|G\d{7}\w?\b|VC\d{6}[ABCDEFGH]?|V[A-Z]\d{5}[A-Z]\d?|\d{5}\[A-Z]{3}\d\s|coated: |ct#|ct\s?|coated\s?|ct#/s)(?P<Coated>\d{3}-\d{4})"
 	RegexCombined := "i)(?<=[\w\d]{3})?(?P<Product>[defghijklm]\d{3}\b)|(?<!Ct#)(?P<Batch>\d{3}-\d{4}\b)|(?P<Lot>\b\d{4}\w\d\w?|\bBulk\b|G\d{7}\w?\b|VC\d{6}[ABCDEFGH]?|V[A-Z]\d{5}[A-Z]\d?|\d{5}\[A-Z]{3}\d)|(\d{4}\w\d\w?.|\bBulk\b|G\d{7}\w?\b|VC\d{6}[ABCDEFGH]?|V[A-Z]\d{5}[A-Z]\d?|\d{5}\[A-Z]{3}\d\s|coated: |ct#|ct\s?|coated\s?|ct#/s)(?P<Coated>\d{3}-\d{4})"
 
@@ -134,7 +134,7 @@ prefix:=
 	CodeFile:= A_ScriptDir "\Code.txt"
 	OnExit("ClipBar.SaveVariables")
 	SetTimer,activeCheck, %ActiveTimerCheck%
-	SetTimer,FileCheck, 1000
+	; SetTimer,FileCheck, 1000
 	LMS.Orient()
 	ClipBar.Show()
 	sleep 200
@@ -450,33 +450,61 @@ Return
 		#include Markers.ahk
 
 
+
+
+
 copyLabelCopyDoc(SaveText:="",showtooltip:=""){
-	Global Product,RegexIngredients
+	Global Product,RegexIngredients,FirstLetter
 
 	firstLetter:=SubStr(Product,1,1)
+	sleep 200
 	FilePattern := "\\10.1.2.118\Master Folders\" FirstLetter "000 - " FirstLetter "999\" Product "\Label Copy\*" Product "*.docx"
 		; FilePattern := "\\netapp\Label Copy Final\" firstLetter "000-" firstLetter "999\*" product "*.docx"
+		Try {
 Loop, %FilePattern%, 1, 0
 		oW:=ComObjGet(A_LoopFileLongPath)
 		; sleep 1000
 		sleep 500
 		oW.Range.FormattedText.Copy
-		clipwait,6,0
-		if errorlevel
-			msgbox, didnt  find labelcopy
-	LabelCopyText:=Clipboard
+		clipwait,9,0
+			; if errorlevel {
+				; msgbox, errorlevel
+			; }
+		LabelCopyText:=Clipboard
+		}
+		catch
+		{
+			; msgbox, caught
+			TT( "Couldnt Extract label Copy, `n `n Manually Copy the full text and paste in Workbook",2300)
+					; runwait, find "\\10.1.2.118\Master Folders\" FirstLetter "000 - " FirstLetter "999\" Product "\Label Copy\*" Product "*.docx", , UseErrorLevel
+				runwait, % "explorer.exe " "\\10.1.2.118\Master Folders\" firstLetter "000 - " firstLetter "999\" Product "\Label Copy"
+				winactivate, ahk_exe explorer.exe
+				sendinput, {*}%Product%{*}.docx
+			; gosub ShowFinalLabelCopy
+		}
 
-	Ingredients:= RegexMatch(LabelCopyText, RegexIngredients,ri)
+	; Ingredients:= RegexMatch(LabelCopyText, RegexIngredients,ri)
 
 		; Clipboard:=LabelCopyText
-
+		sleep 2500
+		; GoSub ShowScanLabelCopy
+				runwait, find "\\10.1.2.118\share\QC LAB\Label Copy Scans",, UseErrorLevel
+				if Errorlevel
+					runwait, find "\\netapp\share\QC LAB\Label Copy Scans"
+				sleep 250
+				; winmaximize, Search Results
+				winactivate,
+				send, {*}%Product%{*}.pdf
+				sleep 700
+				WinMove, *%Product%*.pdf ahk_exe explorer.exe,, 5, 10, 1250, 1200
+				send, ^{e}{tab 2}{Right}
 	If showTooltip
 		tt(LabelCopyText,1000)
-	If SaveText
-		{
-		Try FileDelete, LabelCopies\%Product%.txt
-		FileAppend,  %labelcopytext%, LabelCopies\%Product%.txt
-		}
+	; If SaveText
+	; 	{
+	; 	Try FileDelete, LabelCopies\%Product%.txt
+	; 	FileAppend,  %labelcopytext%, LabelCopies\%Product%.txt
+	; 	}
 	; Clipboard:=listofIngredients
 		; MsgBox % riIngredients
 	Return LabelCopyText

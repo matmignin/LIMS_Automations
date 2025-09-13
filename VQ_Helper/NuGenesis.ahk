@@ -74,7 +74,7 @@ Loop, %FilePattern%, 1, 0
 
 
 ;;----------------------------------------------------------
-;;[[                  General LMS                         ]]
+;;--[[                 GENERAL LMS
 Class LMS {
 
 	Menu(Altmode:=""){
@@ -88,30 +88,30 @@ Class LMS {
 		}
 		else
 		{
-		Menu, Menu, add, paste All &Products from clipboard, PasteAllProducts
-		Menu, Menu, add, Paste All &Batches from clipboard, PasteAllBatches
+		Menu, Menu, add, Paste All &Products in clipboard, PasteAllProducts
+		Menu, Menu, add, Paste All &Batches in clipboard, PasteAllBatches
 		}
 		; If AltMode
 			; Menu, Menu, add, &Products from clipboard  (';), PasteAllProductsAlt
 				; else
 			; Menu, Menu, add, &Products from clipboard, PasteAllProducts
 
-		If (AltMode :="SHIFT") || GetKeyState("Shift","P")
-		{
-		Menu, Menu, add,
-			Menu, Menu, add, Copy All &Products from clipboard (New Line), PasteAllProductsShift
-			Menu, Menu, add, Copy All &Batches from clipboard (New Line), PasteAllBatchesShift
-			; Menu, Menu, Add, Copy GUID, CopyGUID
-			Menu, Menu, add,
-		}
-		If (AltMode :="ALT") || GetKeyState("Alt","P") GetKeyState("Option","P")
-		{
-		Menu, Menu, add,
-			Menu, Menu, add, Copy All &Products from clipboard (';), PasteAllProductsAlt
-			Menu, Menu, add, Copy All &Batches from clipboard (';), PasteAllBatchesAlt
-		Menu, Menu, add,
-			; Menu, Menu, Add, Copy GUID, CopyGUID
-		}
+		; If (AltMode :="SHIFT" || GetKeyState("Shift","P"))
+		; {
+		; Menu, Menu, add,
+		; 	Menu, Menu, add, Copy All &Products in clipboard (New Line), PasteAllProductsShift
+		; 	Menu, Menu, add, Copy All &Batches in clipboard (New Line), PasteAllBatchesShift
+		; 	; Menu, Menu, Add, Copy GUID, CopyGUID
+		; 	Menu, Menu, add,
+		; }
+		; If (AltMode :="ALT" || GetKeyState("Alt","P") GetKeyState("Option","P"))
+		; {
+		; Menu, Menu, add,
+		; 	Menu, Menu, add, Copy All &Products in clipboard (';), PasteAllProductsAlt
+		; 	Menu, Menu, add, Copy All &Batches in clipboard (';), PasteAllBatchesAlt
+		; Menu, Menu, add,
+		; 	; Menu, Menu, Add, Copy GUID, CopyGUID
+		; }
 		; else
 		; Menu, Menu, add, &Paste Spec from Clipboard, PasteSpec
 		Menu, Menu, add,
@@ -123,10 +123,11 @@ Class LMS {
 		Menu, Menu, add, C_O_A, ShowC_O_A
 		; Menu, Menu, add, Manual &COAs folder, ShowManualCOA
 		Menu, Menu, add,
-		If AltMode
-			Menu, Menu, add, Application Folder, mmigninFolder
+		Menu, Menu, Add, Save List via Clipboard, SaveClipboardToList
+		; If AltMode
+			; Menu, Menu, add, Application Folder, mmigninFolder
 
-		Menu, Menu, add,
+		; Menu, Menu, add,
 		; Menu, Menu, add, TestCode, :TestSubMenu
 			; Menu, Menu, Add, Get Requirements,GetRequirements
 		; Menu, Menu, add, Marker, :MarkerSubMenu
@@ -813,7 +814,7 @@ sleep 20
 
 
 ;;----------------------------------------------------------
-;;{{                      PRODUCT                          }}
+;;--[                      PRODUCT                          }}
 Class ProductTab {
 
 
@@ -1363,7 +1364,7 @@ return
 
 
 ;;----------------------------------------------------------
-;;{{                 SPECIFICATION                        }}
+;;--[                SPECIFICATION                        }}
 class SpecTab {
 
 	Table(){
@@ -1417,6 +1418,7 @@ class SpecTab {
 		catch GUI, Spec_Table:Show, x%ScreenEdge_X% y%ScreenEdge_Y% w310, %Product% Spec Table
 			CoordMode, mouse, window
 		OnMessage(0x0201, "WM_Lbuttondown")
+		winSet, Transparent, 210, % "ahk_id" SpecTableGUIID
 		return
 	}
 	ShowSpecMenu(){
@@ -1441,15 +1443,13 @@ class SpecTab {
 		; try Menu, SpecMenu, DeleteAll
 		i:=1
 		if Table_height > 12
-			Table_height :=16
+			Table_height :=13
 		else if Table_height > 8
-			Table_height :=12
+			Table_height :=10
 		else if !Table_height
-			Table_height := 8
-		Gui Spec_Table:+LastFound +Toolwindow +Owner +AlwaysOnTop -SysMenu +MinimizeBox
+			Table_height := 6
+		Gui Spec_Table:+LastFound +Toolwindow +Owner +AlwaysOnTop -SysMenu +MinimizeBox +HwndSpecTableGUIID
 		GUI, Spec_Table:Font, s10 cBlack, Arial Narrow
-		; GUI, Spec_Table:Add, ListView, x2 y0 w358 r%table_height% Grid checked altSubmit -hdr gSpec_Table, `t%Product%|`t%Name%|MinLimit|MaxLimit|Units|Percision|Description|Method
-		; GUI, Spec_Table:Add, ListView, x2 y0 w358 r%table_height% Grid checked altSubmit -hdr gSpec_Table, `t%Product%|`t%Name%|MinLimit|MaxLimit|Units|Percision|Description|Method
 		GUI, Spec_Table:Add, ListView, x2 y0 w300 r%table_height% Grid checked altSubmit -hdr gSpec_Table, `t%Product%|`t%Name%|MinLimit|MaxLimit|Units|Percision|Description|Method
 		Gui, Spec_Table:Add, Button, X25 y+0 h18 w145 gAddSpecTableMethods, Add Methods
 		;Gui, Spec_Table:Add, Button, X+3 h18 w105 gAutoAddSpecs, Auto Specs
@@ -1461,6 +1461,7 @@ class SpecTab {
 			; Menu, SpecMenu, Add, % "&" Name[A_Index] "`t " Requirement[A_Index], SpecMenuButton
 			Test:= Name[A_index]
 		}
+
 			; Menu, SpecMenu, Add,
 			; Menu, SpecMenu, Add, Close, SpecMenuButtonESC
 		return
@@ -1501,6 +1502,7 @@ class SpecTab {
 				sleep 300
 				click 506, 341 ;move over
 			}
+			sleep 200
 		}
 		return
 
@@ -1527,7 +1529,7 @@ class SpecTab {
 			Menu, SpecMenu, Check, %A_ThisMenuItem%
 			SpecTab.GetRowText(A_ThisMenuItemPos)
 			winactivate, ahk_exe eln.exe
-			sleep 200
+			sleep 250
 			SpecTab.Autofill()
 		}
 		return
@@ -3271,7 +3273,7 @@ Spec_TableGuiClose:
 return
 
 ;;----------------------------------------------------------
-;;{{                        MY WORK                       }}
+;;--[[                        MY WORK                       }}
 Class WorkTab {
 	NewTestRequestLink(){
 		Global
@@ -3581,9 +3583,9 @@ Class WorkTab {
 
 			;Breaking.Point()
 			Sendinput,{tab 9}^a
-			Breaking.Point()
+			; Breaking.Point()
 			if ((Iteration != 0) && !(Iteration > 8) && !(Iteration < 0) && !(A_Priorkey="Rshift") && !(A_ThisHotkey="Space") && !(A_Priorkey="Space") && !GetKeyState("Lbutton","P"))
-			Send, %iteration%
+				Send, %iteration%
 			;if !Checkbox_Toggle ; Not Contains toggle
 			mousemove, xpos, ypos+26,0
 			blockinput, off
