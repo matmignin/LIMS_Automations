@@ -83,12 +83,12 @@ simpleclip:=
 		if instr(Clipboard, "111Skin Limited",true,1,1){
 			WorkTab.SaveCustomerList()
 			clipboard:=TrimmedList
-			msgbox,, Cleaned & Copied the Customer List,
+			msgbox,Cleaned & Copied the Customer List `n `n Now Paste clipboard in Cell [P2] of the "Source Tables" Worksheet
 		}
 		else if instr(Clipboard, "5-HTP",true,1,1){
 			ProductTab.SaveIngredientList()
 			clipboard:=TrimmedList
-			Msgbox,, Cleaned & Copied the Ingredients List,
+			Msgbox  Cleaned & Copied the Ingredients List `n `n Now Paste clipboard in Cell [S2] of the "Source Tables" Worksheet 
 		}
 		else
 			clip.codesRegex()
