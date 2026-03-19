@@ -1985,7 +1985,7 @@ ClickEmptyRequirements(){
 		global
 		winactivate, Edit specification
 		Sendinput,{click 376, 87}{home}
-		Sendinput, %Product%`,{space}{Shift down}I{Shift up}n{space}{Shift down}P{Shift up}rocess`,{space}{Shift down}A{Shift up}nalytical{tab 4}^a%Product%{tab}{enter}{tab}{space}{enter 2}{Tab}{right}{tab}{right 4}{tab}
+		Sendinput, %Product%`,{space}{Shift down}I{Shift up}n{space}{Shift down}P{Shift up}rocess`,{space}{Shift down}A{Shift up}nalytical{tab 4}^a%Product%{tab}{enter}{tab}{space}{enter 2}{Tab}{right}{tab}{right 2}{tab}
 		Breaking.Point()
 		Sendinput,{right 6}{Tab 2}{Space}{tab 2}{right}{tab}{right}
 		sleep 400
