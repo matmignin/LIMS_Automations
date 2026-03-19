@@ -51,6 +51,7 @@
 
 ; ; !F10 :: AddsampleLog x5
 ; !+F10  :: AddDataFromClipboard
+
 ; ^+w   :: get_window_info
 ; ^+e   :: get_mouse_info
 ; ^F7	  :: Copy Clipped excel
@@ -114,8 +115,6 @@ prefix:=
 	RegexProduct:="i)(?<=[\w\d]{3})?(?P<Product>\b[defghijklmn]\d{3}\b)"
 	RegexBatch:= "i)(?<!Ct#)(?P<Batch>\d{3}-\d{4})"
 	RegexLot:= "i)(?P<Lot>\b\d{4}[A-Z]\d[A-Z]?-?[A-Z]?[0-9]?|\bBulk\b|\bG\d{7}[A-Z]?\b|\bVC\d{6}[ABCDEFGH]?|\bV[A-Z]\d{5}[A-Z]\d?\b|\d{5}\[A-Z]{3}\d\b)"
-
-
 	RegexCoated:= "i)(\d{4}\w\d\w?.|\bBulk\b|G\d{7}\w?\b|VC\d{6}[ABCDEFGH]?|V[A-Z]\d{5}[A-Z]\d?|\d{5}\[A-Z]{3}\d\s|coated: |ct#|ct\s?|coated\s?|ct#/s)(?P<Coated>\d{3}-\d{4})"
 	regexMaxLimit:="i)(<| - |NMT )(?P<maxLimit>[0-9,.]*)\s\w*"
 	regexMaxLimit:="i)(<|NLT )?(?P<minLimit>(?<!NMT )[0-9.,]*)"

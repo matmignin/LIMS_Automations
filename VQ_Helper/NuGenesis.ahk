@@ -899,7 +899,7 @@ AddNewProduct(){ ;for naming Product code and customer,
 		sleep 20
 		if !(customer)
 			exit
-		sendinput, {tab 2}%Customer%{tab 2}{End}{tab}{right 3}{tab}%Product%{tab 2} ; new vitaquest selection
+		sendinput, {tab 2}%Customer%{tab 2}{End}{tab}{right 1}{tab}%Product%{tab 2} ; new vitaquest selection
 		sleep 200
 		Sendraw,%ProductName%
 		sendinput, {tab 8}
@@ -1370,7 +1370,7 @@ class SpecTab {
 	Table(){
 		Global
 		ShiftTable_X:=-355
-		ShiftTable_Y:=200
+		ShiftTable_Y:=150
 		Try GUI, Spec_Table:destroy
 		CoordMode, mouse, window
 		ifwinnotactive, ahk_exe eln.exe
@@ -1380,7 +1380,7 @@ class SpecTab {
 		SpecTable_X:=LMS_X+10
 		; SpecTable_X:=LMS_w+LMS_X+ShiftTable_X
 		; SpecTable_Y:=LMS_Y+ShiftTable_Y
-		SpecTable_Y:=LMS_Y+ShiftTable_Y+600
+		SpecTable_Y:=LMS_Y+ShiftTable_Y
 		CoordMode, mouse, screen
 		SpecTab.CreateGUI()
 		SpecTab.ModifyColumns()
@@ -1418,7 +1418,7 @@ class SpecTab {
 		catch GUI, Spec_Table:Show, x%ScreenEdge_X% y%ScreenEdge_Y% w310, %Product% Spec Table
 			CoordMode, mouse, window
 		OnMessage(0x0201, "WM_Lbuttondown")
-		winSet, Transparent, 210, % "ahk_id" SpecTableGUIID
+		; winSet, Transparent, 20, % "ahk_id" SpecTableGUIID
 		return
 	}
 	ShowSpecMenu(){

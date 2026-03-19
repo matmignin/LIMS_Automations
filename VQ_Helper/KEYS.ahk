@@ -23,12 +23,11 @@ return
 
 
 LabelCopyDoc:
-msgbox, % copyLabelCopyDoc(1)
+msgbox % copyLabelCopyDoc(1)
 return
 copyLabelCopyDocRegex:
 Msgbox % copyLabelCopyDocRegex(1)
 Return
-
 
 
 
@@ -322,126 +321,126 @@ F7::WinMove, ahk_class XLMAIN ahk_exe EXCEL.EXE,, %NuX%, %NuY%, 1250, 1200
 					clk(123,68,"Left",2)
 					Spectab.MethodsDropdown()
 					return
-				Mbutton::
-				AddAppearanceTest:  ; to a smple
-					winactivate, Select tests for request
-					click 312, 72 ;click dropdown
-					; mousemove, 312, 72, 0
-					sleep 200
-					; sleep 100
-					click 312, 72 ;click dropdown again
-					; clk(312,72) ;click dropdown
-					sleep 200
-					send, {down}{enter}
-					; click 250, 135 ;click methods
-					; clk(250,140) ;click methods
-					; click 123, 70, 2 ;click x
-					sleep 200
-					click 513, 340 ;click move over
-					; clk(123,70)
-					; SpecTab.MethodsDropdown()
-					Breaking.Point()
-					sleep 200
-					Breaking.Point()
-					mousemove, 854, 659, 0 ; move to okay
-					Breaking.Point()
-					sleep 500
-					Breaking.Point()
-					click
-					Breaking.Point()
-					winwaitactive,Edit request,,5
-						if ErrorLevel
-							return
-					mousemove, 337, 618, 0 ;move to save
-					Breaking.Point()
-					sleep 400
-					Breaking.Point()
-					click
-					Breaking.Point()
-					return
-					RemoveAppearanceTestFromSpec:  ; to a smple
-					winactivate, NuGenesis LMS
-					click 60, 737 ;click dropdown
-					Breaking.Point()
-					winwaitactive, Delete Test,,3
-						if ErrorLevel
-							return
-						else
-							sendinput, {enter}
-					sleep 100
+				Mbutton::SpecTab.Methods()
+					AddAppearanceTest:  ; to a smple
+							winactivate, Select tests for request
+							click 312, 72 ;click dropdown
+							; mousemove, 312, 72, 0
+							sleep 200
+							; sleep 100
+							click 312, 72 ;click dropdown again
+							; clk(312,72) ;click dropdown
+							sleep 200
+							send, {down}{enter}
+							; click 250, 135 ;click methods
+							; clk(250,140) ;click methods
+							; click 123, 70, 2 ;click x
+							sleep 200
+							click 513, 340 ;click move over
+							; clk(123,70)
+							; SpecTab.MethodsDropdown()
+							Breaking.Point()
+							sleep 200
+							Breaking.Point()
+							mousemove, 854, 659, 0 ; move to okay
+							Breaking.Point()
+							sleep 500
+							Breaking.Point()
+							click
+							Breaking.Point()
+							winwaitactive,Edit request,,5
+								if ErrorLevel
+									return
+							mousemove, 337, 618, 0 ;move to save
+							Breaking.Point()
+							sleep 400
+							Breaking.Point()
+							click
+							Breaking.Point()
+						return
+						RemoveAppearanceTestFromSpec:  ; to a smple
+							winactivate, NuGenesis LMS
+							click 60, 737 ;click dropdown
+							Breaking.Point()
+							winwaitactive, Delete Test,,3
+								if ErrorLevel
+									return
+								else
+									sendinput, {enter}
+							sleep 100
+								Breaking.Point()
+						return
+					AddAppearanceTestToSpec:  ; to a smple
+							winactivate, Select tests for request
+							click 312, 72 ;click dropdown
+							; mousemove, 312, 72, 0
+							sleep 200
+							; sleep 100
+							click 312, 72 ;click dropdown again
+							; clk(312,72) ;click dropdown
+							sleep 200
+							send, {down}{enter}
+							; click 250, 135 ;click methods
+							; clk(250,140) ;click methods
+							; click 123, 70, 2 ;click x
+							sleep 200
+							click 513, 340 ;click move over
+							; clk(123,70)
+							; SpecTab.MethodsDropdown()
+							Breaking.Point()
+							sleep 200
+							Breaking.Point()
+							mousemove, 854, 659, 0 ; move to okay
+							Breaking.Point()
+							sleep 500
+							Breaking.Point()
+							click
+							Breaking.Point()
+							winwaitactive,Edit request,,5
+								if ErrorLevel
+									return
+							mousemove, 337, 618, 0 ;move to save
+							Breaking.Point()
+							sleep 400
+							Breaking.Point()
+							click
+							Breaking.Point()
+						return
+					CreateNewSpecVer:  ; to a smple
+						winactivate, Select tests for request
+						click 312, 72 ;click dropdown
+						; mousemove, 312, 72, 0
+						sleep 200
+						; sleep 100
+						click 312, 72 ;click dropdown again
+						; clk(312,72) ;click dropdown
+						sleep 200
+						send, {down}{enter}
+						; click 250, 135 ;click methods
+						; clk(250,140) ;click methods
+						; click 123, 70, 2 ;click x
+						sleep 200
+						click 513, 340 ;click move over
+						; clk(123,70)
+						; SpecTab.MethodsDropdown()
 						Breaking.Point()
-					return
-				AddAppearanceTestToSpec:  ; to a smple
-					winactivate, Select tests for request
-					click 312, 72 ;click dropdown
-					; mousemove, 312, 72, 0
-					sleep 200
-					; sleep 100
-					click 312, 72 ;click dropdown again
-					; clk(312,72) ;click dropdown
-					sleep 200
-					send, {down}{enter}
-					; click 250, 135 ;click methods
-					; clk(250,140) ;click methods
-					; click 123, 70, 2 ;click x
-					sleep 200
-					click 513, 340 ;click move over
-					; clk(123,70)
-					; SpecTab.MethodsDropdown()
-					Breaking.Point()
-					sleep 200
-					Breaking.Point()
-					mousemove, 854, 659, 0 ; move to okay
-					Breaking.Point()
-					sleep 500
-					Breaking.Point()
-					click
-					Breaking.Point()
-					winwaitactive,Edit request,,5
-						if ErrorLevel
-							return
-					mousemove, 337, 618, 0 ;move to save
-					Breaking.Point()
-					sleep 400
-					Breaking.Point()
-					click
-					Breaking.Point()
-					return
-				CreateNewSpecVer:  ; to a smple
-					winactivate, Select tests for request
-					click 312, 72 ;click dropdown
-					; mousemove, 312, 72, 0
-					sleep 200
-					; sleep 100
-					click 312, 72 ;click dropdown again
-					; clk(312,72) ;click dropdown
-					sleep 200
-					send, {down}{enter}
-					; click 250, 135 ;click methods
-					; clk(250,140) ;click methods
-					; click 123, 70, 2 ;click x
-					sleep 200
-					click 513, 340 ;click move over
-					; clk(123,70)
-					; SpecTab.MethodsDropdown()
-					Breaking.Point()
-					sleep 200
-					Breaking.Point()
-					mousemove, 854, 659, 0 ; move to okay
-					Breaking.Point()
-					sleep 500
-					Breaking.Point()
-					click
-					Breaking.Point()
-					winwaitactive,Edit request,,5
-						if ErrorLevel
-							return
-					mousemove, 337, 618, 0 ;move to save
-					Breaking.Point()
-					sleep 400
-					Breaking.Point()
-					click
-					Breaking.Point()
+						sleep 200
+						Breaking.Point()
+						mousemove, 854, 659, 0 ; move to okay
+						Breaking.Point()
+						sleep 500
+						Breaking.Point()
+						click
+						Breaking.Point()
+						winwaitactive,Edit request,,5
+							if ErrorLevel
+								return
+						mousemove, 337, 618, 0 ;move to save
+						Breaking.Point()
+						sleep 400
+						Breaking.Point()
+						click
+						Breaking.Point()
 					return
 				^mbutton::SpecTab.Methods()
 				F7::WorkTab.SelectTestSample()
@@ -806,7 +805,7 @@ F7::WinMove, ahk_class XLMAIN ahk_exe EXCEL.EXE,, %NuX%, %NuY%, 1250, 1200
 
 ;;\\____ NuGenesis MAIN                                     .
 #Ifwinactive, NuGenesis LMS
-
+Mbutton & Wheelup::SpecTab.Table()
 +^F10:: ;add new spec ver and method
 	MouseGetPos, m_x, m_Y
 	CoordMode, ToolTip, Relative
